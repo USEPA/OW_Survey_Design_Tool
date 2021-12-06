@@ -3,7 +3,7 @@ This R Shiny app presents an easy-to-use user interface for the calculation of s
 
 The output of the Survey Design Tool contains sampling locations which are designed and balanced by user specified inputs and allows the user to export these locations as a point shapefile or a flat file. The output provides design weights which can be used in categorical and continuous variable analyses (i.e., population estimates). The tool also gives the user the ability to adjust initial survey design weights when implementation results in the use of replacement sites or when it is desired to have the final weights sum to a known frame size. 
 
-* For further survey design discussion and use cases, review the spurvey vignette for [Spatially Balanced Sampling](https://cran.r-project.org/web/packages/spsurvey/vignettes/sampling.html) and EPAs [National Aquatic Resource Surveys (NARS)](https://www.epa.gov/national-aquatic-resource-surveys) which are designed to assess the quality of the nation's rivers and streams, lakes and reservoirs, wetlands, and coastal waters using GRTS survey designs. 
+* For further survey design discussion and use cases, review the spsurvey vignette for [Spatially Balanced Sampling](https://cran.r-project.org/web/packages/spsurvey/vignettes/sampling.html) and EPAs [National Aquatic Resource Surveys (NARS)](https://www.epa.gov/national-aquatic-resource-surveys) which are designed to assess the quality of the nation's rivers and streams, lakes and reservoirs, wetlands, and coastal waters using GRTS survey designs. 
 * For Survey Design Tool questions, bugs, feedback, or tool modification suggestions, please contact Garrett Stillings at: Stillings.Garrett@epa.gov. 
 
 ## Disclaimer
