@@ -1,6 +1,6 @@
 # OW_Survey_Design_Tool
 This R Shiny app allows for the calculation of spatially balanced survey designs of point, linear, or areal resources (i.e. lakes, streams, wetlands and coastal resources) using 
-the Generalized Random-Tessellation Stratified (GRTS) algorithm (Stevens and Olson 2004). The tool utilizes functions found within the R package, spsurvey: Spatial Sampling Design 
+the Generalized Random-Tessellation Stratified (GRTS) algorithm ([Stevens and Olson 2004](https://cfpub.epa.gov/ncer_abstracts/index.cfm/fuseaction/display.files/fileID/13339). The tool utilizes functions found within the R package, spsurvey: Spatial Sampling Design 
 and Analysis and presents an easy-to-use user interface for many sampling design features including stratification, unequal and proportional inclusion probabilities, replacement 
 (oversample) sites, and legacy (historical) sites.
 The output of the Survey Design Tool contains sampling locations designed and balanced by user specified inputs and allows the user to export these locations as a point shapefile 
