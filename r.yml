@@ -1,0 +1,23 @@
+packages:
+- cran_mirror: https://cloud.r-project.org
+  num_threads: 2
+  packages:
+    - name: spsurvey
+    - name: janitor
+    - name: DT
+    - name: zip
+    - name: foreign
+    - name: sf
+    - name: sp
+    - name: leaflet
+    - name: mapview
+    - name: ggspatial
+    - name: shinythemes
+    - name: shinybusy
+    - name: spsurvey
+    - name: shinycssloaders
+    - name: shinyhelper
+    - name: shinyBS
+    - name: dplyr
+    - name: tidyr
+
