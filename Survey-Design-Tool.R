@@ -9,7 +9,7 @@ lapply(packages, library, character.only = TRUE)
 
 
 rseed <- sample(10000,1)
-#state_name <- state.name
+# state_name <- state.name
 
 #Allows the upload of large files
 options(shiny.maxRequestSize = 10000*1024^2)
