@@ -9,7 +9,7 @@ lapply(packages, library, character.only = TRUE)
 
 
 rseed <- sample(10000,1)
-# state_name <- state.name
+#state_name <- state.name
 
 #Allows the upload of large files
 options(shiny.maxRequestSize = 10000*1024^2)
@@ -30,16 +30,16 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                                                       style = "font-weight: bold; font-size: 18px"), value='instructions',
                               bsCollapse(id = "instructions",   
                                   bsCollapsePanel(title = h1(strong("Overview")), value="Overview",
-                                     p("This R Shiny app presents an easty-to-use user interface for the calculation of spatially balanced survey designs of point, linear, or areal resources using the Generalized Random-Tessellation Stratified (GRTS) algorithm,", tags$a(href= "https://cfpub.epa.gov/ncer_abstracts/index.cfm/fuseaction/display.files/fileID/13339", "Stevens and Olsen (2004).", target="blank"), 
-                                      "The Survey Design Tool utilizes functions found within the R package", tags$a(href="https://cran.r-project.org/package=spsurvey",
-                                      "spsurvey: Spatial Sampling Design and Analysis", target="blank"), " and contains many sampling design features including stratification, unequal and proportional inclusion probabilities, replacement (oversample) sites, and legacy (historical) sites. 
-                                      The output of the Survey Design Tool contains sites which are designed and balanced by user specified inputs and allows the user to export sampling locations as a point shapefile or a flat file. The output also provides design weights which can be used in categorical and continuous variable analyses (i.e., population estimates). 
-                                      The tool gives the user the ability to adjust initial survey design weights when implementation results in the use of replacement sites or when it is desired to have the final weights sum to a known frame size."), 
+                                     p("This R Shiny app allows for the calculation of spatially balanced survey designs of point, linear, or areal resources using the Generalized Random-Tessellation Stratified (GRTS) algorithm,", tags$a(href= "https://cfpub.epa.gov/ncer_abstracts/index.cfm/fuseaction/display.files/fileID/13339", "Stevens and Olsen (2004).", target="blank"), 
+                                       "The Survey Design Tool utilizes functions found within the R package", tags$a(href="https://cran.r-project.org/package=spsurvey",
+                                      "spsurvey: Spatial Sampling Design and Analysis", target="blank"), "and presents an easy-to-use user interface for many sampling design features including stratification, unequal and proportional inclusion probabilities, replacement (oversample) sites, and legacy (historical) sites. 
+                                      The output of the Survey Design Tool contains sites designed and balanced by user specified inputs and allows the user to export sampling locations as a point shapefile or a flat file. The output also provides design weights which can be used in categorical and continuous variable analyses (i.e., population estimates). 
+                                      The tool also gives the user the ability to adjust initial survey design weights when implementation results in the use of replacement sites or when it is desired to have final weights sum to a known frame size."), 
                                       
-                                     p("This app does not include all possible design options and functions found in the spsurvey package. Please review the package", tags$a(href= "https://www.rdocumentation.org/packages/spsurvey", "Documentation", target="blank"), "and", tags$a(href= "https://github.com/USEPA/spsurvey", "Vignettes", target="blank"), "for more options and details.  
+                                      p("This app does not include all possible design options and tools found in the spsurvey package. Please review the package", tags$a(href= "https://www.rdocumentation.org/packages/spsurvey", "Documentation", target="blank"), "and", tags$a(href= "https://github.com/USEPA/spsurvey", "Vignettes", target="blank"), "for more options and details.  
                                       For further survey discussion and use cases, visit the website for", tags$a(href="https://www.epa.gov/national-aquatic-resource-surveys", "EPAs National Aquatic Resource Surveys (NARS)", target="blank"), 
-                                      "which are designed to assess the quality of the nation's rivers and streams, lakes and reservoirs, wetlands, and coastal waters using GRTS survey designs. We encourage users to consult with a statistician about your design to prevent design issues and errors."),
-                                    p("For Survey Design Tool questions, bugs, feedback, or tool modification suggestions, please contact Garrett Stillings at", tags$a(href="mailto:stillings.garrett@epa.gov", "stillings.garrett@epa.gov", target="blank")),
+                                      "which are designed to assess the quality of the nation's coastal waters, lakes and reservoirs, rivers and streams, and wetlands using GRTS survey designs. We encourage users to consult with a statistician about your design to prevent design issues and errors."),
+                                      p("For Survey Design Tool questions, bugs, feedback, or tool modification suggestions, please contact Garrett Stillings at", tags$a(href="mailto:stillings.garrett@epa.gov", "stillings.garrett@epa.gov", target="blank")),
                                       h4(strong("Vignette")),
                                     h4(strong(tags$ul(
                                       tags$li(tags$a(href="https://cran.r-project.org/web/packages/spsurvey/vignettes/sampling.html",
@@ -49,6 +49,7 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                                     tags$ol(
                                     h4(strong("Requirements")),
                                       tags$ul(
+                                        tags$li("The coordinate reference system (crs) for the sample frame should use projected coordinates NOT geographic coordinates."),
                                         tags$li("All design attribute variables, such as the Strata and Categories, must be contained in the user's sample frame file. You may run the design without these inputs as an unstratified equal probability design."),
                                         tags$li("When constructing your design, the user must identify how they want their survey to be designed and which random selection to use:"),
                                             tags$ul(
@@ -73,13 +74,13 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                                     )),
                                     tags$ol(
                                       bsCollapsePanel(title = h4(strong("Set Survey Sample Sizes")), value="samplesize",
-                                      p("Setting an appropriate sample size and considering how they should be allocated across a sample frame is a fundamental step in designing a successful survey. Many surveys, especially those used for environmental monitoring, are limited by budgetary and logistical constraints. The designer must determine a sample size which can overcome these constraints while ensuring the survey estimates the parameter(s) of interest with a low margin of error. 
+                                      p("Setting an appropriate sample size and considering how they should be allocated across a sample frame is a fundamental step in designing a successful survey. Many surveys, especially those used for environmental monitoring, are limited by budgetary and logistical constraints. The designer must determine a sample size which can overcome these constraints while ensuring the survey estimates the parameter(s) of interest with a low margin of error.
                                       The designer can consider a few elements when determining a survey sample size:"),
                                       tags$ul(
                                         tags$li("Select a spatially balanced survey using the spatial balance metrics provided. Typically, estimates from spatially balanced surveys are more precise (vary less) than estimates from non-spatially balanced surveys."),
-                                        tags$li("Consider what will be measured in the survey. If you anticipate the parameter of interest to result in low variation across the survey, a smaller sample size can yield a low margin of error. Conversely, if you anticipate the parameter of interest to result in high variation, you should consider increasing the sample size to account for a higher margin of error."),
+                                        tags$li("Consider what will be measured in the survey. If you anticipate the parameter of interest to result in low variation across the survey, a smaller sample size can yield a low margin of error estimate. Conversely, if you anticipate the parameter of interest to result in high variation, you should consider increasing the sample size to account for a higher margin of error."),
                                         tags$li("Allocate additional sampling time to survey extra sites if needed. When designing the survey, be sure to generate replacement sites to use for oversampling.")),
-                                      p(),
+                                      p("To aid the user, in the 'Survey Design tab' simulated population estimates will be calculated using the users defined sample sizes. This can give the user insight on the survey estimates potential margin of error if the sample size(s) chosen is used."),
                                       tags$li("For unstratified equal probability designs, set the desired Base site sample size."),
                                       tags$li("If you supplied a Stratum attribute, a tab is populated for each Stratum of the design."),
                                       tags$li("Set the sample size of Base sites you desire for each stratum."),
@@ -93,6 +94,8 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                                       h4(strong("Survey Design")),
                                       tags$li("The process of calculating your Survey Design can take a while. The spinner will stop when your Survey Design is complete. If you have errors in your Design inputs, a message with the error will be displayed under 'Design Errors'. "),
                                       tags$li("A table of your Survey Design will appear if successful. A table will be displayed with totals of your sample sizes allocated across strata and categories, if used."),
+                                      tags$li("The Population Estimate Simulation module can give the user insight on the survey estimates potential margin of error if the input sample size(s) are used. Condition classes assigned to each site are randomly selected using user specified probability weights. Typically, margin of error will decrease if the condition class distribution is unequally distributed.
+                                               The user can choose the number of condition classes used, modify the probability of being selected, and refresh the simulation to view different condition scenarios. The user can adjust the sample size and refresh the design to determine an appropriate margin of error for the survey."),
                                       tags$li("Choose a Spatial Balance Metric. All spatial balance metrics provided have a lower bound of zero, which indicates perfect spatial balance. As the metric value increases, the spatial balance decreases. This is useful in comparing survey designs."),
                                       tags$li("Click the 'Download Survey Site Shapefile' button to download a zip file which contains a POINT shapefile of your designs survey sample sites."),
                                       tags$li("To download the design attributes table, use the buttons to choose how you would like it to be saved."),
@@ -253,6 +256,7 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                                         helper(type = "inline",
                                                title = "Survey Sample Frame",
                                                content = c("A Survey Sample Frame is an ESRI shapefile which contains geographic features represented by points, lines or polygons which is used in the selection of the sample. Maximum size is currently 10GB.",
+                                                           "The coordinate reference system (crs) for the sample frame should use projected coordinates.",
                                                            "<b>Required Files:</b>",
                                                            "<b>Shapefiles (.shp, .dbf, .prj, .shx)</b>"),
                                                            
@@ -368,15 +372,44 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                                         DT::dataTableOutput("summary")),
                                       conditionalPanel(condition = "output.summary",
                                       br(), hr(),
-                                      h4(HTML("<center><b>Design Spatial Balance</b></center>")) %>%
-                                        #Spatial Balance helper
+                                                       h4(HTML("<center><b>Population Estimate Simulation</b></center>")) %>%
+                                                         #Simulation helper
+                                                         helper(type = "inline",
+                                                                title = "Population Estimate Simulation",
+                                                                content = c("This module assists the user in simulating proportion estimates of a population based on the sample size used in the survey design. Error bars displayed show the Margin of Error for a condition using a 95% confidence limit.
+                                                            The condition classes are randomly assigned by user specified probability weights and can be refreshed with new probability weights to simulate the change in conditions. 
+                                                            Adjust the sample size of the design to increase or decrease the Margin of Error estimate."),
+                                                            size = "s", easyClose = TRUE, fade = TRUE),
+                                                       radioButtons(inputId="connumber", 
+                                                                    label=strong("Choose Condition Class Size"), 
+                                                                    choices=c("2","3","4","5"), 
+                                                                    selected = "3",
+                                                                    inline=TRUE) %>%
+                                        #Condition Class helper
                                         helper(type = "inline",
-                                               title = "Spatial Balance",
-                                               content = c("All spatial balance metrics have a lower bound of zero, which indicates perfect spatial balance. As the metric value increases, the spatial balance decreases."),
+                                               title = "Conditional Class Size",
+                                               content = c("Choose the condition class size of your indicator. Assign random selection probabilities for each condition class to simulate potential population estimate results.
+                                                            Indicators with larger condition class sizes often have lower margin of error estimates.",
+                                                           "<b>If condition probabilities do not sum to 100%, weights will be normalized to sum to 100%.</b>"),
                                                size = "s", easyClose = TRUE, fade = TRUE),
-                                        verbatimTextOutput("balance")),
-                                      conditionalPanel(condition = "output.balance",
+                                      uiOutput('conditionprb')),
+                                      conditionalPanel(condition = "input.CON2",
+                                                       plotOutput("ssplot") %>% withSpinner(color="#0275d8"),
+                                                       actionButton("ssbtn", strong("Refresh Simulation"), icon=icon("redo"), 
+                                                                    style="color: #fff; background-color: #337ab7; border-color: #2e6da4")),
+                                                       hr(),
+                                      conditionalPanel(condition = "output.ssplot",
+                                                       h4(HTML("<center><b>Design Spatial Balance</b></center>")) %>%
+                                                         #Spatial Balance helper
+                                                         helper(type = "inline",
+                                                                title = "Spatial Balance",
+                                                                content = c("All spatial balance metrics have a lower bound of zero, which indicates perfect spatial balance. As the metric value increases, the spatial balance decreases."),
+                                                                size = "s", easyClose = TRUE, fade = TRUE),
+                                                       verbatimTextOutput("balance", placeholder = TRUE) %>% withSpinner(color="#0275d8"),
+                                                       actionButton("balancebtn", strong("Calculate Spatial Balance"), icon=icon("play-circle"), 
+                                                                    style="color: #fff; background-color: #337ab7; border-color: #2e6da4"),
                                       radioButtons("balance", strong("Spatial Balance Metric:"),
+                                                   selected = "pielou",
                                                    c("Pielou's Evenness Index" = "pielou",
                                                      "Simpsons Evenness Index" = "simpsons",
                                                      "Root-Mean-Squared Error" = "rmse",
@@ -394,7 +427,8 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                                                            "<b>Median-Absolute Error</b> This statistic can take on a value between zero and infinity.",
                                                            "<b>Mean-Absolute Error</b> This statistic can take on a value between zero and infinity.",
                                                            "<b>Chi-Squared Loss</b> This statistic can take on a value between zero and infinity."),
-                                               size = "s", easyClose = TRUE, fade = TRUE))
+                                               size = "s", easyClose = TRUE, fade = TRUE)),
+                                      
                                     ),#sidebarPanel
                                     mainPanel(
                                       tabsetPanel(
@@ -402,6 +436,7 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                                                  mainPanel(
                                                    fluidRow(
                                                      column(12, offset= 3,
+                                                    br(),
                                                    conditionalPanel(condition = "output.table",
                                                    h3(HTML("<center><b>Probability Survey Site Results</b></center>"))))),
                                                    br(),
@@ -413,7 +448,7 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                                         
                                         tabPanel(title=strong("Survey Map"),
                                                  br(),
-                                                 conditionalPanel(condition = "output.table",
+                                                 conditionalPanel(condition = "output.ssplot",
                                                  h3(HTML("<center><b>Interactive and Static Maps</b></center>")),
                                                  
                                                  fluidRow(column(3, offset = 3,
@@ -1192,7 +1227,7 @@ server <- function(input, output, session) {
   })
   
   
-  
+  ####Design Errors####
   output$error <- renderTable({
   if(is.data.frame(DESIGN())) {
     DESIGN()
@@ -1203,27 +1238,7 @@ server <- function(input, output, session) {
     
   })
   
-  ####Design Output####
-  output$balance <-  renderPrint({
-    req(input$caty == "None")
-    
-    sfobject <- sfobject()
-    design <- DESIGN()
-    
-    if(is.null(input$balance)) {
-      balance <- "pielou"
-    } else {
-      balance <- input$balance
-    }
-  
-    if(input$stratum != "None") {
-      sp_balance(design$sites_base, sfobject, stratum_var = input$stratum, metrics = balance)
-    } else if (input$stratum == "None") {
-      sp_balance(design$sites_base, sfobject, metrics = balance)  
-    } else {print("Not applicable for unequal selection probabilities.")}
-    
-  })
-  
+  ####SS Summary####
   output$summary <- renderDataTable({
     
     Summary <- sp_rbind(DESIGN())
@@ -1244,13 +1259,191 @@ server <- function(input, output, session) {
                   fontWeight = styleEqual(c("-"), c('bold')))
   })
   
+  ####PopEst Sim UI####
+  output$conditionprb <- renderUI({
+    
+    if(input$connumber == "2") {
+      fluidRow(
+        splitLayout(
+      numericInput(inputId = "CON2", 
+                 label = "Good Probability (%)", 
+                 value = 50, min = 0, max = 100., width = "80px"),
+      numericInput(inputId = "CON4", 
+                 label = "Poor Probability (%)", 
+                 value = 50, min = 0, max = 100, width = "80px")))
+    } else if(input$connumber == "3") {
+      fluidRow(
+        splitLayout(
+      numericInput(inputId = "CON2", 
+                   label = HTML("Good</br> Probability (%)"), 
+                   value = 33, min = 0, max = 100, width = "80px"),
+      numericInput(inputId = "CON3", 
+                   label = HTML("Fair</br> Probability (%)"), 
+                   value = 33, min = 0, max = 100, width = "80px"),
+      numericInput(inputId = "CON4", 
+                   label = HTML("Poor</br> Probability (%)"), 
+                   value = 33, min = 0, max = 100, width = "80px")))
+    } else if(input$connumber == "4") {
+      fluidRow(
+        splitLayout(
+        numericInput(inputId = "CON2", 
+                     label = HTML("Good</br> Probability (%)"), 
+                     value = 25, min = 0, max = 100, width = "80px"),
+        numericInput(inputId = "CON3", 
+                     label = HTML("Fair</br> Probability (%)"), 
+                     value = 25, min = 0, max = 100, width = "80px"),
+        numericInput(inputId = "CON4", 
+                     label = HTML("Poor</br> Probability (%)"), 
+                     value = 25, min = 0, max = 100, width = "80px")),
+        numericInput(inputId = "CON5", 
+                     label = HTML("Very Poor</br> Probability (%)"), 
+                     value = 25, min = 0, max = 100, width = "80px"))
+    } else{
+      fluidRow(
+        splitLayout(
+        numericInput(inputId = "CON1", 
+                     label = HTML("Very Good</br> Probability (%)"), 
+                     value = 20, min = 0, max = 100, width = "80px"),
+        numericInput(inputId = "CON2", 
+                     label = HTML("Good</br> Probability (%)"), 
+                     value = 20, min = 0, max = 100, width = "80px"),
+        numericInput(inputId = "CON3", 
+                     label = HTML("Fair</br> Probability (%)"), 
+                     value = 20, min = 0, max = 100, width = "80px")),
+        column(9,
+        splitLayout(
+        numericInput(inputId = "CON4", 
+                     label = HTML("Poor</br> Probability (%)"), 
+                     value = 20, min = 0, max = 100, width = "80px"),
+        numericInput(inputId = "CON5", 
+                     label = HTML("Very Poor</br> Probability (%)"), 
+                     value = 20, min = 0, max = 100, width = "80px"))))
+    }
+  })
+  
+  ####PopEst Simulation####
+  samplesize <- eventReactive(c(input$ssbtn, input$goButton), {
+    #req(input$CON2, input$CON4)
+    
+    forcat <- DESIGN()$sites_base
+    units(forcat$wgt) <- NULL
+    
+    
+    
+    if (input$connumber == "2"){
+      forcat$Condition <- sample(c("Good", "Poor"), size = nrow(forcat), replace = TRUE, prob = c(input$CON2, input$CON4))
+      colors <- c("#f55b5b", "#5796d1")
+    }
+    if (input$connumber == "3"){
+      forcat$Condition <- sample(c("Good", "Fair", "Poor"), size = nrow(forcat), replace = TRUE, prob = c(input$CON2, input$CON3, input$CON4))
+      colors <- c("#f55b5b", "#EE9A00", "#5796d1")
+    }
+    if (input$connumber == "4"){
+      forcat$Condition <- sample(c("Good", "Fair", "Poor", "Very Poor"), size = nrow(forcat), replace = TRUE, prob = c(input$CON2, input$CON3, input$CON4, input$CON5))
+      colors <- c("#d15fee", "#f55b5b", "#EE9A00", "#5796d1")
+    }
+    if (input$connumber == "5"){
+      forcat$Condition <- sample(c("Very Good", "Good", "Fair", "Poor", "Very Poor"), size = nrow(forcat), replace = TRUE, prob = c(input$CON1, input$CON2, input$CON3, input$CON4, input$CON5))
+      colors <- c("#d15fee", "#f55b5b", "#EE9A00", "#5796d1", "blue")
+    }
+    
+    if (input$stratum == "None") { 
+      cat_ests <- cat_analysis(
+        forcat,
+        siteID = "siteID",
+        vars = "Condition",
+        weight = "wgt")
+    }
+    
+    if (input$stratum != "None") {
+      stratum_var <- input$stratum
+      cat_ests <- cat_analysis(
+        forcat,
+        siteID = "siteID",
+        vars = "Condition",
+        weight = "wgt",
+        stratumID = stratum_var)
+    }
+    
+    cat_ests <- cat_ests %>%
+      filter(!(Category == "Total")) %>%
+      mutate(Category = factor(Category, levels=c("Very Poor", "Poor", "Fair", "Good", "Very Good"))) %>%
+      mutate(Estimate.P = round(Estimate.P, 0),
+             UCB95Pct.P = round(UCB95Pct.P, 0),
+             LCB95Pct.P = round(LCB95Pct.P, 0),
+             MarginofError.P = round(MarginofError.P, 0))
+    
+    avgMOE <- mean(cat_ests$MarginofError.P)
+    avgMOE <- round(cat_ests$MarginofError.P, 0)
+    nResp <- sum(cat_ests$nResp)
+    #Create Plots
+    plot <- ggplot(cat_ests, aes(x = Category, y = Estimate.P)) +
+      geom_bar(aes(fill = Category, color = Category), alpha = 0.5, stat="identity", position = position_dodge()) +
+      geom_errorbar(aes(ymin = LCB95Pct.P, ymax = UCB95Pct.P, color = Category), size=2, width=0) +
+      scale_x_discrete(labels = function(x) str_wrap(x, width = 8)) +
+      scale_fill_manual(values = colors) +
+      scale_color_manual(values = colors) +
+      theme_bw() +
+      labs(
+        title = paste0("Average Margin of Error: ±", avgMOE,"%"),
+        subtitle = paste0("   n=", nResp),
+        x = "",
+        y = "Percent of Resource") +
+      theme(
+        plot.title = element_text(size = 16, face = "bold", family="sans", hjust=0.5),
+        plot.subtitle = element_text(size = 15, face = "bold", family="sans"),
+        panel.grid.minor = element_blank(),
+        panel.background = element_rect(fill = "aliceblue"),
+        legend.position="none",
+        axis.text.x=element_text(face = "bold", size=14),
+        axis.text.y=element_text(face = "bold", size=13),
+        axis.title.y = element_text(face = "bold", size=14),
+        axis.title.x = element_text(face = "bold", size=14)) +
+      geom_text(aes(label=paste(format(Estimate.P),"%",
+                                sep=""), y=Estimate.P), hjust = -.05, size = 4, fontface = "bold", color = "#4D4D4D", family="sans", position = position_nudge(x = -0.2)) +
+      scale_y_continuous(labels = scales::percent_format(scale = 1), breaks=c(0,25,50,75,100)) +
+      coord_flip(ylim=c(-2, 110)) +
+      geom_text(aes(label=paste(format(LCB95Pct.P),"%",
+                                sep=""), y=LCB95Pct.P), hjust = 1.1, size = 3.5, fontface = "bold", 
+                color = "#4D4D4D", family="sans", position = position_nudge(x = 0.15)) +
+      geom_text(aes(label=paste(format(UCB95Pct.P),"%",
+                                sep=""), y=UCB95Pct.P), hjust = -.15,size = 3.5, fontface = "bold", 
+                color = "#4D4D4D", family="sans", position = position_nudge(x = 0.15))
+    plot
+  })
+  
+  
+  output$ssplot <- renderPlot({
+    samplesize()
+  })
+  
+  ####Spatial Balance####
+  sbresult <- eventReactive(input$balancebtn, {
+    req(input$caty == "None")
+    
+    if(input$stratum != "None") {
+      sp_balance(DESIGN()$sites_base, sfobject(), stratum_var = input$stratum, metrics = input$balance)
+    } else {
+      sp_balance(DESIGN()$sites_base, sfobject(), metrics = input$balance)  
+    } 
+  })
+  
+  output$balance <-  renderPrint({
+    sbresult()
+  })
+  
+  ####Design Table####
   output$table <- renderDataTable(server = FALSE, {
     req(!is.data.frame(DESIGN()))
     if (input$addoptions == TRUE) {
       rseed <- input$seed
     }
     
-    DES_SD <- sp_rbind(DESIGN())
+    DES_SD <- sp_rbind(DESIGN())  
+    #Add xcoord/ycoord
+    DES_SD <- DES_SD %>% 
+      mutate(xcoord = unlist(map(DES_SD$geometry, 1)),
+             ycoord = unlist(map(DES_SD$geometry, 2)), .after = lat_WGS84)
     st_geometry(DES_SD) <- NULL
     DESIGN<- DES_SD %>% filter(!(is.na(wgt))) %>% 
       select(-None) %>% 
@@ -1299,7 +1492,9 @@ server <- function(input, output, session) {
           
           if (length(Sys.glob(name.glob)) > 0) file.remove(Sys.glob(name.glob))
           DES_SD <- sp_rbind(DESIGN())
-          DES_SD <- DES_SD %>% filter(!(is.na(wgt))) %>% select(-None) 
+          DES_SD <- DES_SD %>% filter(!(is.na(wgt))) %>% select(-None) %>% 
+            mutate(xcoord = unlist(map(DES_SD$geometry, 1)),
+                   ycoord = unlist(map(DES_SD$geometry, 2)), .after = lat_WGS84) 
           
           st_write(DES_SD, dsn = name.shp, ## layer = "shpExport",
                        driver = "ESRI Shapefile", quiet = TRUE)
