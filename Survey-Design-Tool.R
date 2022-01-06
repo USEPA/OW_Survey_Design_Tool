@@ -73,14 +73,15 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                                       tags$li("If your Legacy sample frame has different Strata, Category or Auxiliary variable names than your design sample frame, select the corresponding attribute(s) from the legacy sample frame. These inputs will not appear if the names match your design sample frame.")
                                     )),
                                     tags$ol(
-                                      bsCollapsePanel(title = h4(strong("Set Survey Sample Sizes")), value="samplesize",
+                                      bsCollapsePanel(title = h4(strong("Determine Survey Sample Sizes")), value="samplesize",
                                       p("Setting an appropriate sample size and considering how they should be allocated across a sample frame is a fundamental step in designing a successful survey. Many surveys, especially those used for environmental monitoring, are limited by budgetary and logistical constraints. The designer must determine a sample size which can overcome these constraints while ensuring the survey estimates the parameter(s) of interest with a low margin of error.
                                       The designer can consider a few elements when determining a survey sample size:"),
                                       tags$ul(
                                         tags$li("Select a spatially balanced survey using the spatial balance metrics provided. Typically, estimates from spatially balanced surveys are more precise (vary less) than estimates from non-spatially balanced surveys."),
                                         tags$li("Consider what will be measured in the survey. If you anticipate the parameter of interest to result in low variation across the survey, a smaller sample size can yield a low margin of error estimate. Conversely, if you anticipate the parameter of interest to result in high variation, you should consider increasing the sample size to account for a higher margin of error."),
                                         tags$li("Allocate additional sampling time to survey extra sites if needed. When designing the survey, be sure to generate replacement sites to use for oversampling.")),
-                                      p("To aid the user, in the 'Survey Design tab' simulated population estimates will be calculated using the users defined sample sizes. This can give the user insight on the survey estimates potential margin of error if the sample size(s) chosen is used."),
+                                      p("To aid the user, in the 'Survey Design tab' simulated population estimates using the local neighborhood variance estimator (uses a site's nearest neighbors to estimate variance, tending to result in smaller 
+                                         variance values) will be calculated using the users defined sample sizes. This can give the user insight on the survey estimates potential margin of error if the sample size(s) chosen is used."),
                                       tags$li("For unstratified equal probability designs, set the desired Base site sample size."),
                                       tags$li("If you supplied a Stratum attribute, a tab is populated for each Stratum of the design."),
                                       tags$li("Set the sample size of Base sites you desire for each stratum."),
@@ -250,7 +251,7 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                                         inputId = "filemap",
                                         label = strong("Choose all files of the Sample Frame"),
                                         multiple = TRUE,
-                                        accept = c(".gdb", ".shp", ".prj", ".shx", ".dbf", ".sbn", ".sbx", ".cpg", ".gpkg"), 
+                                        accept = c(".shp", ".prj", ".shx", ".dbf", ".sbn", ".sbx", ".cpg"), 
                                         width = "600px") %>%
                                         #User Sample Frame helper
                                         helper(type = "inline",
@@ -337,10 +338,8 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                                       h4(strong(HTML("<center>Legacy Site Attributes (Optional)<center/>"))),
                                       ####Legacy####
                                       uiOutput("legacyfile"),
-                                     
                                 
                                       uiOutput("legacyvar"),
-                                
                                       
                                       uiOutput('legacystrat'),
                                 
@@ -372,7 +371,7 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                                         DT::dataTableOutput("summary")),
                                       conditionalPanel(condition = "output.summary",
                                       br(), hr(),
-                                                       h4(HTML("<center><b>Population Estimate Simulation</b></center>")) %>%
+                                     h4(HTML("<center><b>Population Estimate Simulation</b></center>")) %>%
                                                          #Simulation helper
                                                          helper(type = "inline",
                                                                 title = "Population Estimate Simulation",
@@ -392,7 +391,12 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                                                             Indicators with larger condition class sizes often have lower margin of error estimates.",
                                                            "<b>If condition probabilities do not sum to 100%, weights will be normalized to sum to 100%.</b>"),
                                                size = "s", easyClose = TRUE, fade = TRUE),
-                                      uiOutput('conditionprb')),
+                                      uiOutput('conditionprb'),
+                                     radioButtons(inputId="conflim", 
+                                                  label=strong("Choose Confidence Limit"), 
+                                                  choices=c("90%","95%"), 
+                                                  selected = "95%",
+                                                  inline=TRUE)),
                                       conditionalPanel(condition = "input.CON2",
                                                        plotOutput("ssplot") %>% withSpinner(color="#0275d8"),
                                                        actionButton("ssbtn", strong("Refresh Simulation"), icon=icon("redo"), 
@@ -1322,7 +1326,7 @@ server <- function(input, output, session) {
   })
   
   ####PopEst Simulation####
-  samplesize <- eventReactive(c(input$ssbtn, input$goButton), {
+  samplesize <- eventReactive(c(input$ssbtn, input$conflim, input$goButton), {
     #req(input$CON2, input$CON4)
     
     forcat <- DESIGN()$sites_base
@@ -1347,30 +1351,51 @@ server <- function(input, output, session) {
       colors <- c("#d15fee", "#f55b5b", "#EE9A00", "#5796d1", "blue")
     }
     
-    if (input$stratum == "None") { 
+    if (input$stratum == "None") {
+      if(input$conflim == "95%") {
       cat_ests <- cat_analysis(
         forcat,
         siteID = "siteID",
         vars = "Condition",
         weight = "wgt")
+      } else {
+        cat_ests <- cat_analysis(
+          forcat,
+          siteID = "siteID",
+          vars = "Condition",
+          weight = "wgt",
+          conf = 90)
+      }
     }
     
     if (input$stratum != "None") {
       stratum_var <- input$stratum
+    if(input$conflim == "95%") {
       cat_ests <- cat_analysis(
         forcat,
         siteID = "siteID",
         vars = "Condition",
         weight = "wgt",
         stratumID = stratum_var)
+    } else {
+      cat_ests <- cat_analysis(
+        forcat,
+        siteID = "siteID",
+        vars = "Condition",
+        weight = "wgt",
+        stratumID = stratum_var,
+        conf = 90)
+      }
     }
     
     cat_ests <- cat_ests %>%
       filter(!(Category == "Total")) %>%
       mutate(Category = factor(Category, levels=c("Very Poor", "Poor", "Fair", "Good", "Very Good"))) %>%
+      rename(UCB = contains("UCB") & contains("Pct.P"),
+             LCB = contains("LCB") & contains("Pct.P")) %>%
       mutate(Estimate.P = round(Estimate.P, 0),
-             UCB95Pct.P = round(UCB95Pct.P, 0),
-             LCB95Pct.P = round(LCB95Pct.P, 0),
+             UCB = round(UCB, 0),
+             LCB = round(LCB, 0),
              MarginofError.P = round(MarginofError.P, 0))
     
     avgMOE <- mean(cat_ests$MarginofError.P)
@@ -1379,7 +1404,7 @@ server <- function(input, output, session) {
     #Create Plots
     plot <- ggplot(cat_ests, aes(x = Category, y = Estimate.P)) +
       geom_bar(aes(fill = Category, color = Category), alpha = 0.5, stat="identity", position = position_dodge()) +
-      geom_errorbar(aes(ymin = LCB95Pct.P, ymax = UCB95Pct.P, color = Category), size=2, width=0) +
+      geom_errorbar(aes(ymin = LCB, ymax = UCB, color = Category), size=2, width=0) +
       scale_x_discrete(labels = function(x) str_wrap(x, width = 8)) +
       scale_fill_manual(values = colors) +
       scale_color_manual(values = colors) +
@@ -1403,11 +1428,11 @@ server <- function(input, output, session) {
                                 sep=""), y=Estimate.P), hjust = -.05, size = 4, fontface = "bold", color = "#4D4D4D", family="sans", position = position_nudge(x = -0.2)) +
       scale_y_continuous(labels = scales::percent_format(scale = 1), breaks=c(0,25,50,75,100)) +
       coord_flip(ylim=c(-2, 110)) +
-      geom_text(aes(label=paste(format(LCB95Pct.P),"%",
-                                sep=""), y=LCB95Pct.P), hjust = 1.1, size = 3.5, fontface = "bold", 
+      geom_text(aes(label=paste(format(LCB),"%",
+                                sep=""), y=LCB), hjust = 1.1, size = 3.5, fontface = "bold", 
                 color = "#4D4D4D", family="sans", position = position_nudge(x = 0.15)) +
-      geom_text(aes(label=paste(format(UCB95Pct.P),"%",
-                                sep=""), y=UCB95Pct.P), hjust = -.15,size = 3.5, fontface = "bold", 
+      geom_text(aes(label=paste(format(UCB),"%",
+                                sep=""), y=UCB), hjust = -.15,size = 3.5, fontface = "bold", 
                 color = "#4D4D4D", family="sans", position = position_nudge(x = 0.15))
     plot
   })
