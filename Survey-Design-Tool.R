@@ -8,6 +8,7 @@ if (any(installed_packages == FALSE)) {
 lapply(packages, library, character.only = TRUE)
 
 
+
 rseed <- sample(10000,1)
 #state_name <- state.name
 
@@ -21,7 +22,7 @@ options(shiny.maxRequestSize = 10000*1024^2)
 ui <- fluidPage(theme = shinytheme("yeti"), 
                 # Application title 
                 navbarPage(id = "inTabset", 
-                           title = span("Survey Design Tool (v. 1.0.0)", 
+                           title = span("Survey Design Tool (v. 1.0.1)", 
                                         style = "font-weight: bold; font-size: 28px"),
                            selected='instructions', position='static-top',
                            # Panel with instructions for using this tool
@@ -99,7 +100,7 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                                                The user can choose the number of condition classes used, modify the probability of being selected, and refresh the simulation to view different condition scenarios. The user can adjust the sample size and refresh the design to determine an appropriate margin of error for the survey."),
                                       tags$li("Choose a Spatial Balance Metric. All spatial balance metrics provided have a lower bound of zero, which indicates perfect spatial balance. As the metric value increases, the spatial balance decreases. This is useful in comparing survey designs."),
                                       tags$li("Click the 'Download Survey Site Shapefile' button to download a zip file which contains a POINT shapefile of your designs survey sample sites."),
-                                      tags$li("To download the design attributes table, use the buttons to choose how you would like it to be saved."),
+                                      tags$li("To download the design attributes table, use the buttons to choose how you would like it to be saved. Please note the Lat/Longs are transformed to WGS84 coordinate system. The xcoord and ycoord are the survey sites spatial geometry and can be used for the local neighborhood variance estimator when calculating population estimates."),
                                       h4(strong("Survey Map")),
                                       tags$li("The Survey Map tab provides an interactive and static map of the sample frame and the survey sample sites.")
                                     )),
@@ -257,11 +258,15 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                                         helper(type = "inline",
                                                title = "Survey Sample Frame",
                                                content = c("A Survey Sample Frame is an ESRI shapefile which contains geographic features represented by points, lines or polygons which is used in the selection of the sample. Maximum size is currently 10GB.",
-                                                           "The coordinate reference system (crs) for the sample frame should use projected coordinates.",
+                                                           "The coordinate reference system (CRS) for the sample frame should use projected coordinates. The user may choose to transform the CRS to NAD83 / Conus Albers (a projected CRS) by checking the box below.",
                                                            "<b>Required Files:</b>",
                                                            "<b>Shapefiles (.shp, .dbf, .prj, .shx)</b>"),
                                                            
                                                size = "s", easyClose = TRUE, fade = TRUE),
+                                      checkboxInput(inputId = "NAD83", 
+                                                    label= strong("Transform CRS to NAD83 / Conus Albers"), 
+                                                    value = FALSE, 
+                                                    width = NULL),
                                       
                                   #    h4(strong(HTML("<center><p>OR</p><center/>"))),
                                   #    h5(strong(HTML("<center>(Coming Soon!) <p> Subset A NARS Sample Frame By State</p></center>"))),
@@ -454,8 +459,15 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                                                  br(),
                                                  conditionalPanel(condition = "output.ssplot",
                                                  h3(HTML("<center><b>Interactive and Static Maps</b></center>")),
-                                                 
-                                                 fluidRow(column(3, offset = 3,
+                                                 fluidRow(
+                                                  tags$head(tags$style(HTML("#maptype ~ .selectize-control.single .selectize-input {background-color: #FFD133;}"))),
+                                                   selectInput(inputId = "maptype",
+                                                                      label = strong("Select Type of Map"),
+                                                                      choices = c("Interactive", "Static"),
+                                                                      selected = NULL,
+                                                                      multiple = FALSE, 
+                                                                      width = "200px"), 
+                                                   column(3, offset = 3,
                                                                   selectInput(inputId = "color",
                                                                               label = strong("Select Color Attribute"),
                                                                               choices = c("Site Use" = "siteuse", 
@@ -465,6 +477,7 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                                                                               multiple = FALSE, 
                                                                               width = "200px")),
                                                 column(3, offset = 1,
+                                                conditionalPanel(condition = "input.maptype == 'Static'",
                                                                   selectInput(inputId = "shape",
                                                                               label = strong("Select Shape Attribute"),
                                                                               choices = c("Site Use" = "siteuse", 
@@ -472,9 +485,11 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                                                                                           "Category" = "caty"),
                                                                               selected = "stratum",
                                                                               multiple = FALSE, 
-                                                                              width = "200px"))),
-                                                 leafletOutput("map") %>% withSpinner(color="#0275d8"),
-                                                 plotOutput("plot") %>% withSpinner(color="#0275d8")) 
+                                                                              width = "200px")))),
+                                                conditionalPanel(condition = "input.maptype == 'Interactive'",
+                                                 leafletOutput("map") %>% withSpinner(color="#0275d8")),
+                                                conditionalPanel(condition = "input.maptype == 'Static'",
+                                                 plotOutput("plot") %>% withSpinner(color="#0275d8"))) 
                                         )#tabPanel(Survey Map)
                                       )#tabsetPanel
                                     )#mainPanel
@@ -626,9 +641,10 @@ server <- function(input, output, session) {
     setwd(previouswd)
     
     map <- st_read(paste(uploaddirectory, shpdf$name[grep(pattern="*.shp$", shpdf$name)], sep="/")) %>% 
-      mutate(None="None") %>% relocate(None)
+      mutate(None="None") %>% relocate(None) #
     
     map <- st_zm(map)
+  
   })
   
   #Identifies geometry type of sample frame for legacy inputs
@@ -653,8 +669,9 @@ server <- function(input, output, session) {
     setwd(previouswd)
     
     map <- st_read(paste(uploaddirectory, shpdf$name[grep(pattern="*.shp$", shpdf$name)], sep="/")) %>% 
-      mutate(None="None") %>% relocate(None)
+      mutate(None="None") %>% relocate(None) #%>% st_transform(crs = 5070)
     map <- st_zm(map)
+    
   })
   
   #Stratum Event
@@ -750,7 +767,7 @@ server <- function(input, output, session) {
       #User legacy helper
       helper(type = "inline",
              title = "Legacy Sample Frame",
-             content = c("Legacy Sample Frame is a POINT or MULTIPOINT shapefile which contains sites that have been selected in a previous probability sample and are to be automatically included in a current probability sample."),
+             content = c("Legacy Sample Frame is a POINT or MULTIPOINT shapefile which contains sites that have been selected in a previous probability sample and are to be automatically included in a current probability sample. If the users transforms the samples frames CRS to NAD83/Albers Conus, the legacy object will also be transformed."),
              size = "s", easyClose = TRUE, fade = TRUE)
   })
   
@@ -1126,7 +1143,10 @@ server <- function(input, output, session) {
  
     ####Legacy Conditionals####    
 
-    if(!is.null(input$legacy)) {
+    if(!is.null(input$legacy) && input$NAD83 == TRUE) {
+      legacyobject <- legacyobject()
+      legacyobject <- st_transform(legacyobject, crs = 5070)
+    } else if(!is.null(input$legacy)) {
       legacyobject <- legacyobject()
     } else {
       legacyobject <- NULL
@@ -1174,6 +1194,11 @@ server <- function(input, output, session) {
     } 
     
     sfobject <- sfobject()
+    
+    if(input$NAD83 == TRUE) {
+      sfobject <- st_transform(sfobject, crs = 5070)
+    }
+    
     
     #Removes stop_df if calculate button has been previously pressed
     if(exists('stop_df')) {
@@ -1464,7 +1489,9 @@ server <- function(input, output, session) {
       rseed <- input$seed
     }
     
-    DES_SD <- sp_rbind(DESIGN())  
+    DES_SD <- sp_rbind(DESIGN()) 
+    
+    
     #Add xcoord/ycoord
     DES_SD <- DES_SD %>% 
       mutate(xcoord = unlist(map(DES_SD$geometry, 1)),
@@ -1472,7 +1499,8 @@ server <- function(input, output, session) {
     st_geometry(DES_SD) <- NULL
     DESIGN<- DES_SD %>% filter(!(is.na(wgt))) %>% 
       select(-None) %>% 
-      mutate(rep_seed = rseed, .after= "caty")
+      mutate(rep_seed = rseed, .after= "caty") 
+    
     
     DT::datatable(
       DESIGN,
