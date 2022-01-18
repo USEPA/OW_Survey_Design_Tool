@@ -1,4 +1,5 @@
 # Survey Design Tool
+*Current version: 1.0.1 Last updated: 1/18/2021
 ## How to Launch the Tool
 * To launch, download the file <b>Survey-Design-Tool.R</b> and open the file in RStudio for local app deployment. RStudio will recognize the Shiny script and provide a Run App button at the top of the editor pane (look for the green play triangle).
      * <b>Note:</b> Requires the R package <b>spsurvey Version <span>&#8805;</span>5.1.0</b>.
