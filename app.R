@@ -1725,7 +1725,7 @@ server <- function(input, output, session) {
     frame <- sfobject %>%
       st_transform(CRS("+proj=longlat  +datum=WGS84")) 
     
-    m<-mapview(surveypts, zcol = input$color, burst = TRUE)
+    m<-mapview(surveypts, zcol = input$color)
     
     
     if(frame_type=="linear") {
