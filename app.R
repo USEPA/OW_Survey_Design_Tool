@@ -19,13 +19,7 @@ library(ggplot2)
 library(purrr)
 library(tidyr)
 library(stringr)
-#packages <- c("shiny", "spsurvey", "janitor", "DT", "zip", "foreign", "sf", "sp", "leaflet", "mapview", "ggspatial", "shinythemes", "shinybusy", "shinycssloaders", "shinyhelper", "shinyBS", "dplyr", "ggplot2", "purrr", "tidyr", "stringr")
-#installed_packages <- packages %in% rownames(installed.packages())
-#if (any(installed_packages == FALSE)) {
-#  install.packages(packages[!installed_packages])
-#}
-# Packages loading
-#lapply(packages, library, character.only = TRUE)
+
 
 rseed <- sample(10000,1)
 #state_name <- state.name
@@ -110,7 +104,7 @@ ui <- fluidPage(theme = shinytheme("yeti"),
        </div>
        </div>
        <div class='main-column clearfix'><!--googleon:all-->
-        <h1  class='page-title'>Survey Design Tool (v. 1.0.0)</h1>
+        <h1  class='page-title'>Survey Design Tool (v. 1.0.1)</h1>
        <div class='panel-pane pane-node-content'>
        <div class='pane-content'>
        <div class='node node-page clearfix view-mode-full'>"),
@@ -118,28 +112,27 @@ ui <- fluidPage(theme = shinytheme("yeti"),
   navbarPage(id = "inTabset", 
              title = "",
              selected='instructions', position='static-top',
+             inverse = TRUE,
              # Panel with instructions for using this tool
              
              tabPanel(title=span(strong("Step 1: Instructions for Use"), 
                                  style = "font-weight: bold; font-size: 16px"), value='instructions',
                       bsCollapse(id = "instructions",   
                                  bsCollapsePanel(title = h1(strong("Overview")), value="Overview",
-                                                 p("This R Shiny app presents an easy-to-use user interface for the calculation of spatially balanced survey designs of point, linear, or areal resources using the Generalized Random-Tessellation Stratified (GRTS) algorithm,", tags$a(href= "https://cfpub.epa.gov/ncer_abstracts/index.cfm/fuseaction/display.files/fileID/13339", "Stevens and Olsen (2004).", target="blank"), 
-                                                   "The tool utilizes functions found within the R package", tags$a(href="https://cran.r-project.org/package=spsurvey",
-                                                                                                                    "spsurvey: Spatial Sampling Design and Analysis", target="blank"), " and contains many sampling design features including stratification, unequal and proportional inclusion probabilities, replacement (oversample) sites, and legacy (historical) sites. 
-                                      The output of the Survey Design Tool contains sites which are designed and balanced by user specified inputs and allows the user to export sampling locations as a point shapefile or a flat file. The output also provides design weights which can be used in categorical and continuous variable analyses (i.e., population estimates). 
-                                      The tool gives the user the ability to adjust initial survey design weights when implementation results in the use of replacement sites or when it is desired to have the final weights sum to a known frame size."), 
+                                      p("This R Shiny app allows for the calculation of spatially balanced survey designs of point, linear, or areal resources using the Generalized Random-Tessellation Stratified (GRTS) algorithm,", tags$a(href= "https://cfpub.epa.gov/ncer_abstracts/index.cfm/fuseaction/display.files/fileID/13339", "Stevens and Olsen (2004).", target="blank"), 
+                                        "The Survey Design Tool utilizes functions found within the R package", tags$a(href="https://cran.r-project.org/package=spsurvey",
+                                                                                                                                  "spsurvey: Spatial Sampling Design and Analysis", target="blank"), "and presents an easy-to-use user interface for many sampling design features including stratification, unequal and proportional inclusion probabilities, replacement (oversample) sites, and legacy (historical) sites. 
+                                      The output of the Survey Design Tool contains sites designed and balanced by user specified inputs and allows the user to export sampling locations as a point shapefile or a flat file. The output also provides design weights which can be used in categorical and continuous variable analyses (i.e., population estimates). 
+                                      The tool also gives the user the ability to adjust initial survey design weights when implementation results in the use of replacement sites or when it is desired to have final weights sum to a known frame size."), 
                                       
-                                      p("This app does not include all possible design options and functions found in the spsurvey package. Please review the package", tags$a(href= "https://www.rdocumentation.org/packages/spsurvey", "Documentation", target="blank"), "and", tags$a(href= "https://github.com/USEPA/spsurvey", "Vignettes", target="blank"), "for more options and details.  
+                                      p("This app does not include all possible design options and tools found in the spsurvey package. Please review the package", tags$a(href= "https://www.rdocumentation.org/packages/spsurvey", "Documentation", target="blank"), "and", tags$a(href= "https://github.com/USEPA/spsurvey", "Vignettes", target="blank"), "for more options and details.  
                                       For further survey discussion and use cases, visit the website for", tags$a(href="https://www.epa.gov/national-aquatic-resource-surveys", "EPAs National Aquatic Resource Surveys (NARS)", target="blank"), 
-                                      "which are designed to assess the quality of the nation's rivers and streams, lakes and reservoirs, wetlands, and coastal waters using GRTS survey designs. We encourage users to consult with a statistician about your design to prevent design issues and errors."),
+                                      "which are designed to assess the quality of the nation's coastal waters, lakes and reservoirs, rivers and streams, and wetlands using GRTS survey designs. We encourage users to consult with a statistician about your design to prevent design issues and errors."),
                                       p("For Survey Design Tool questions, bugs, feedback, or tool modification suggestions, please contact Garrett Stillings at", tags$a(href="mailto:stillings.garrett@epa.gov", "stillings.garrett@epa.gov", target="blank")),
-                                      p("For For review of the application code, please visit the ", tags$a(href="Survey Design Tools GitHub Repository", "https://github.com/USEPA/OW_Survey_Design_Tool", target="blank")),
                                       h4(strong("Vignette")),
                                       h4(strong(tags$ul(
                                         tags$li(tags$a(href="https://cran.r-project.org/web/packages/spsurvey/vignettes/sampling.html",
                                                        "Spatially Balanced Sampling", target="blank")))))),
-                                 #br(),hr(),
                                  bsCollapsePanel(title = h3(strong("Prepare Survey Design Tab")), value="prepare",
                                                  tags$ol(
                                                    h4(strong("Requirements")),
@@ -148,9 +141,10 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                                                      tags$li("All design attribute variables, such as the Strata and Categories, must be contained in the user's sample frame file. You may run the design without these inputs as an unstratified equal probability design."),
                                                      tags$li("When constructing your design, the user must identify how they want their survey to be designed and which random selection to use:"),
                                                      tags$ul(
-                                                       tags$li(strong("Equal")," - equal inclusion probability. Selection where all units of the population have the same probability of being selected."), 
-                                                       tags$li(strong("Unequal")," - unequal inclusion probability. Selection where the chance of being included is set according to categorical variables. For example, this can give smaller populations a greater chance of being selected."), 
-                                                       tags$li(strong("Proportional")," - proportional inclusion probability. Selection where the chance of being included is proportional to the values of a positive auxiliary variable. For example, if you have a large number of strata in your design, this will ensure each stratum has a sample."))),
+                                                       tags$li(strong("Equal Probability Sampling")," - equal inclusion probability. Selection where all units of the population have the same probability of being selected."),
+                                                       tags$li(strong("Stratified Sampling")," - Selection where the sample frame is divided into non-overlapping strata which independent random samples are calculated."),
+                                                       tags$li(strong("Unequal Probability Sampling")," - unequal inclusion probability. Selection where the chance of being included is calculated relative to the distribution of a categorical variable across the population. This type of sampling can give smaller populations a greater chance of being selected."), 
+                                                       tags$li(strong("Proportional Probability Sampling")," - proportional inclusion probability. Selection where the chance of being included is proportional to the values of a positive auxiliary variable. For example, if you have many strata in your design, this will ensure each stratum has a sample."))),
                                                    bsCollapsePanel(title = h4(strong("Designing the Survey")), value="design",
                                                                    tags$li("Select the Sample Frame. Sample frames must be an ESRI shapefile. The user must select all parts of the shapefiles which include .shp, .dbf, .shx. and .prj files (Tip: Hold down ctrl and select each file). The coordinate system for the sample frame must be one where distance for the coordinates is meaningful. The attributes in the file will populate as possible inputs for the design. Maximum size is currently 10GB."),
                                                                    tags$li("Choose your desired Design Type:",
@@ -177,7 +171,7 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                                         tags$li("Allocate additional sampling time to survey extra sites if needed. When designing the survey, be sure to generate replacement sites to use for oversampling.")),
                                       br(),
                                       p("To aid the user, in the 'Survey Design tab' simulated population estimates using the local neighborhood variance estimator (uses a site's nearest neighbors to estimate variance, tending to result in smaller 
-                                         variance values) will be calculated using the users defined sample sizes. This can give the user insight on the survey estimates potential margin of error if the sample size(s) chosen is used."),
+                                         variance values) and will be calculated using the users defined sample sizes. This can give the user insight on the survey estimates potential margin of error if the sample size(s) chosen is used."),
                                       tags$li("For unstratified equal probability designs, set the desired Base site sample size."),
                                       tags$li("If you supplied a Stratum attribute, a tab is populated for each Stratum of the design."),
                                       tags$li("Set the sample size of Base sites you desire for each stratum."),
@@ -362,34 +356,10 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                                       label= strong("Transform CRS to NAD83 / Conus Albers"), 
                                       value = FALSE, 
                                       width = NULL),
-                        
-                        #    h4(strong(HTML("<center><p>OR</p><center/>"))),
-                        #    h5(strong(HTML("<center>(Coming Soon!) <p> Subset A NARS Sample Frame By State</p></center>"))),
-                        # Choose NARS Sample Frame
-                        
-                        #      radioButtons(inputId="narsframe", 
-                        #                   label=strong("NARS Sample Frame"), 
-                        #                  choices=c("NRSA","NWCA", "NCCA", "NLA"), 
-                        #                 selected = FALSE,
-                        #                inline=TRUE) %>%
-                        #NARS Sample Frame helper
-                        #      helper(type = "inline",
-                        #            title = "National Aquatic Resource Surveys",
-                        #           content = c("<b>NRSA:</b> National Rivers and Streams Assessment",
-                        #                      "<b>NWCA:</b> National Wetland Condition Assessment",
-                        #                     "<b>NCCA:</b> National Coastal Condition Assessment",
-                        #                    "<b>NLA:</b> National Lakes Assessment"),
-                        #       size = "s", easyClose = TRUE, fade = TRUE),
-                        
-                        #  selectInput(inputId = "state",
-                        #              label = strong("Choose State(s) to Subset"),
-                        #              choices = c("", as.character(state_name)),
-                        #             selected = NULL,
-                        #             multiple = TRUE, 
-                        #             width = "300px"),
-                        
                         hr(),
                         h4(strong(HTML("<center>Design Attributes<center/>"))),
+                        fluidRow(
+                          column(7,
                         #Design Type Input
                         radioButtons(inputId="designtype", 
                                      label=strong("Choose Design Type"), 
@@ -400,7 +370,7 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                                  title = "Design Type",
                                  content = c("<b>GRTS:</b> Generalized Random Tessellation Stratified-for spatially balanced samples",
                                              "<b>IRS:</b> Independent Random Sample- for non-spatially balanced samples"),
-                                 size = "s", easyClose = TRUE, fade = TRUE),
+                                 size = "s", easyClose = TRUE, fade = TRUE))),
                         
                         #Stratum Input
                         selectInput(inputId = "stratum",
@@ -433,7 +403,7 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                                       label=strong("Optional Design Attributes"), 
                                       value = FALSE),
                         uiOutput('addoptions'),
-                        
+                        conditionalPanel(condition = "input.addoptions == 1",
                         hr(),
                         h4(strong(HTML("<center>Legacy Site Attributes (Optional)<center/>"))),
                         ####Legacy####
@@ -447,7 +417,7 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                         
                         uiOutput('legacycat'),
                         
-                        uiOutput('legacyaux'),
+                        uiOutput('legacyaux')),
                         
                         hr(),
                         
@@ -482,6 +452,8 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                                                             The condition classes are randomly assigned by user specified probability weights and can be refreshed with new probability weights to simulate the change in conditions. 
                                                             Adjust the sample size of the design to increase or decrease the Margin of Error estimate."),
                                                     size = "s", easyClose = TRUE, fade = TRUE),
+                                           fluidRow(
+                                             column(6, offset=3,
                                            radioButtons(inputId="connumber", 
                                                         label=strong("Choose Condition Class Size"), 
                                                         choices=c("2","3","4","5"), 
@@ -493,7 +465,7 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                                                     content = c("Choose the condition class size of your indicator. Assign random selection probabilities for each condition class to simulate potential population estimate results.
                                                             Indicators with larger condition class sizes often have lower margin of error estimates.",
                                                             "<b>If condition probabilities do not sum to 100%, weights will be normalized to sum to 100%.</b>"),
-                                                    size = "s", easyClose = TRUE, fade = TRUE),
+                                                    size = "s", easyClose = TRUE, fade = TRUE))),
                                            uiOutput('conditionprb'),
                                            radioButtons(inputId="conflim", 
                                                         label=strong("Choose Confidence Limit"), 
@@ -502,6 +474,7 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                                                         inline=TRUE)),
                           conditionalPanel(condition = "input.CON2",
                                            plotOutput("ssplot") %>% withSpinner(color="#0275d8"),
+                                           br(),
                                            actionButton("ssbtn", strong("Refresh Simulation"), icon=icon("redo"), 
                                                         style="color: #fff; background-color: #337ab7; border-color: #2e6da4")),
                           hr(),
@@ -518,6 +491,7 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                                            verbatimTextOutput("balance", placeholder = TRUE) %>% withSpinner(color="#0275d8"),
                                            actionButton("balancebtn", strong("Calculate Spatial Balance"), icon=icon("play-circle"), 
                                                         style="color: #fff; background-color: #337ab7; border-color: #2e6da4"),
+                                           br(), br(),
                                            radioButtons("balance", strong("Spatial Balance Metric:"),
                                                         selected = "pielou",
                                                         c("Pielou's Evenness Index" = "pielou",
@@ -587,7 +561,7 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                                                                                             multiple = FALSE, 
                                                                                             width = "200px")))),
                                                       conditionalPanel(condition = "input.maptype == 'Interactive'",
-                                                                       leafletOutput("map") %>% withSpinner(color="#0275d8")),
+                                                                       leafletOutput("map", width="100%", height="70vh") %>% withSpinner(color="#0275d8")),
                                                       conditionalPanel(condition = "input.maptype == 'Static'",
                                                                        plotOutput("plot") %>% withSpinner(color="#0275d8"))) 
                             )#tabPanel(Survey Map)
@@ -1070,7 +1044,7 @@ server <- function(input, output, session) {
     do.call(tabsetPanel, c(lapply(1:S(), function(s) {
       tabPanel(strong(paste0("Stratum: ", strat_choices()[s,1])),
                fluidRow(
-                 column(2,
+                 column(3,
                         #Stratum Inputs
                         selectInput(inputId = paste0("strat",s),
                                     label = paste0("Stratum ",s),
@@ -1088,6 +1062,7 @@ server <- function(input, output, session) {
                         #Stratum Base sample sizes
                         numericInput(inputId = paste0("strat",s,"_base"), 
                                      label = "Base Sites", 
+                                     width = "100px",
                                      value = 0, min = 0, max = 10000) %>%
                           #Base helper
                           helper(type = "inline",
@@ -1096,6 +1071,7 @@ server <- function(input, output, session) {
                                  size = "s", easyClose = TRUE, fade = TRUE),
                         numericInput(inputId = paste0("Over",s), 
                                      label = "Replacement Sites", 
+                                     width = "100px",
                                      value = 0, min = 0, max = 10000) %>%
                           #Replacement helper
                           helper(type = "inline",
@@ -1107,7 +1083,7 @@ server <- function(input, output, session) {
                  
                  # Stratum category sites
                  conditionalPanel(condition="input.caty != 'None'",
-                                  column(2, offset = 1,
+                                  column(3, offset = 1,
                                          #Panel 1 Category Inputs
                                          lapply(1:C(), function(i) {
                                            selectInput(inputId = paste0("S",s,"_C",i),
@@ -1122,10 +1098,11 @@ server <- function(input, output, session) {
                                                   content = c("Name and set the sample size of each Category.",
                                                               "<b>Note:</b> The total sample size defined in category inputs must equal the total sample size defined in the Base input."),
                                                   size = "s", easyClose = TRUE, fade = TRUE)),
-                                  column(2,
+                                  column(3,
                                          lapply(1:C(), function(i) {
                                            numericInput(inputId = paste0("S",s,"_C",i,"_Site"), 
-                                                        label = paste0("Category ",i," Sites"), 
+                                                        label = paste0("Category ",i," Sites"),
+                                                        width = "80px",
                                                         value = "0", min = 0, max = 100000)
                                          })
                                   ))
