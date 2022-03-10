@@ -25,6 +25,7 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                            title = span("Survey Design Tool (v. 1.0.1)", 
                                         style = "font-weight: bold; font-size: 28px"),
                            selected='instructions', position='static-top',
+                           inverse = TRUE,
                            # Panel with instructions for using this tool
                            
                            tabPanel(title=span(strong("Step 1: Instructions for Use"), 
@@ -54,9 +55,10 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                                         tags$li("All design attribute variables, such as the Strata and Categories, must be contained in the user's sample frame file. You may run the design without these inputs as an unstratified equal probability design."),
                                         tags$li("When constructing your design, the user must identify how they want their survey to be designed and which random selection to use:"),
                                             tags$ul(
-                                              tags$li(strong("Equal")," - equal inclusion probability. Selection where all units of the population have the same probability of being selected."), 
-                                              tags$li(strong("Unequal")," - unequal inclusion probability. Selection where the chance of being included is set according to categorical variables. For example, this can give smaller populations a greater chance of being selected."), 
-                                              tags$li(strong("Proportional")," - proportional inclusion probability. Selection where the chance of being included is proportional to the values of a positive auxiliary variable. For example, if you have a large number of strata in your design, this will ensure each stratum has a sample."))),
+                                              tags$li(strong("Equal Probability Sampling")," - equal inclusion probability. Selection where all units of the population have the same probability of being selected."),
+                                              tags$li(strong("Stratified Sampling")," - Selection where the sample frame is divided into non-overlapping strata which independent random samples are calculated."),
+                                              tags$li(strong("Unequal Probability Sampling")," - unequal inclusion probability. Selection where the chance of being included is calculated relative to the distribution of a categorical variable across the population. This type of sampling can give smaller populations a greater chance of being selected."), 
+                                              tags$li(strong("Proportional Probability Sampling")," - proportional inclusion probability. Selection where the chance of being included is proportional to the values of a positive auxiliary variable. For example, if you have a large number of strata in your design, this will ensure each stratum has a sample."))),
                                     bsCollapsePanel(title = h4(strong("Designing the Survey")), value="design",
                                       tags$li("Select the Sample Frame. Sample frames must be an ESRI shapefile. The user must select all parts of the shapefiles which include .shp, .dbf, .shx. and .prj files (Tip: Hold down ctrl and select each file). The coordinate system for the sample frame must be one where distance for the coordinates is meaningful. The attributes in the file will populate as possible inputs for the design. Maximum size is currently 10GB."),
                                       tags$li("Choose your desired Design Type:",
@@ -295,6 +297,8 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                                       
                                       hr(),
                                       h4(strong(HTML("<center>Design Attributes<center/>"))),
+                                fluidRow(
+                                  column(5,
                                       #Design Type Input
                                       radioButtons(inputId="designtype", 
                                                    label=strong("Choose Design Type"), 
@@ -305,8 +309,9 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                                                title = "Design Type",
                                                content = c("<b>GRTS:</b> Generalized Random Tessellation Stratified-for spatially balanced samples",
                                                            "<b>IRS:</b> Independent Random Sample- for non-spatially balanced samples"),
-                                               size = "s", easyClose = TRUE, fade = TRUE),
-                                      
+                                               size = "s", easyClose = TRUE, fade = TRUE))),
+                                fluidRow(
+                                  column(10,
                                       #Stratum Input
                                       selectInput(inputId = "stratum",
                                                   label = strong("Select Attribute Which Contains Strata"),
@@ -333,14 +338,14 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                                                title = "Multi-density Category",
                                                content = c("Variables found within a stratum used to define design weights for unequal probability selections. Use the default <b>None</b> if your design is an equal probability design.",
                                                            "<b>Examples:</b> Stream Order, Lake Area, Basin, Ecoregion"),
-                                               size = "s", easyClose = TRUE, fade = TRUE),
+                                               size = "s", easyClose = TRUE, fade = TRUE))),
                                       checkboxInput(inputId = "addoptions", 
                                               label=strong("Optional Design Attributes"), 
                                               value = FALSE),
                                       uiOutput('addoptions'),
-                                      
+                                conditionalPanel(condition = "input.addoptions == 1",
                                       hr(),
-                                      h4(strong(HTML("<center>Legacy Site Attributes (Optional)<center/>"))),
+                                      h4(strong(HTML("<center>Legacy Site Attributes<center/>"))),
                                       ####Legacy####
                                       uiOutput("legacyfile"),
                                 
@@ -350,7 +355,7 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                                 
                                       uiOutput('legacycat'),
                                 
-                                      uiOutput('legacyaux'),
+                                      uiOutput('legacyaux')),
                                 
                                       hr(),
                                 
@@ -384,18 +389,20 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                                                             The condition classes are randomly assigned by user specified probability weights and can be refreshed with new probability weights to simulate the change in conditions. 
                                                             Adjust the sample size of the design to increase or decrease the Margin of Error estimate."),
                                                             size = "s", easyClose = TRUE, fade = TRUE),
-                                                       radioButtons(inputId="connumber", 
-                                                                    label=strong("Choose Condition Class Size"), 
-                                                                    choices=c("2","3","4","5"), 
-                                                                    selected = "3",
-                                                                    inline=TRUE) %>%
+                                     fluidRow(
+                                       column(7, offset=3,
+                                          radioButtons(inputId="connumber", 
+                                                       label=strong("Choose Condition Class Size"), 
+                                                       choices=c("2","3","4","5"), 
+                                                       selected = "3",
+                                                       inline=TRUE) %>%
                                         #Condition Class helper
                                         helper(type = "inline",
                                                title = "Conditional Class Size",
                                                content = c("Choose the condition class size of your indicator. Assign random selection probabilities for each condition class to simulate potential population estimate results.
                                                             Indicators with larger condition class sizes often have lower margin of error estimates.",
                                                            "<b>If condition probabilities do not sum to 100%, weights will be normalized to sum to 100%.</b>"),
-                                               size = "s", easyClose = TRUE, fade = TRUE),
+                                               size = "s", easyClose = TRUE, fade = TRUE))),
                                       uiOutput('conditionprb'),
                                      radioButtons(inputId="conflim", 
                                                   label=strong("Choose Confidence Limit"), 
@@ -404,6 +411,7 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                                                   inline=TRUE)),
                                       conditionalPanel(condition = "input.CON2",
                                                        plotOutput("ssplot") %>% withSpinner(color="#0275d8"),
+                                                       br(),
                                                        actionButton("ssbtn", strong("Refresh Simulation"), icon=icon("redo"), 
                                                                     style="color: #fff; background-color: #337ab7; border-color: #2e6da4")),
                                                        hr(),
@@ -417,6 +425,7 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                                                        verbatimTextOutput("balance", placeholder = TRUE) %>% withSpinner(color="#0275d8"),
                                                        actionButton("balancebtn", strong("Calculate Spatial Balance"), icon=icon("play-circle"), 
                                                                     style="color: #fff; background-color: #337ab7; border-color: #2e6da4"),
+                                                       br(), br(),
                                       radioButtons("balance", strong("Spatial Balance Metric:"),
                                                    selected = "pielou",
                                                    c("Pielou's Evenness Index" = "pielou",
@@ -487,7 +496,7 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                                                                               multiple = FALSE, 
                                                                               width = "200px")))),
                                                 conditionalPanel(condition = "input.maptype == 'Interactive'",
-                                                 leafletOutput("map") %>% withSpinner(color="#0275d8")),
+                                                 leafletOutput("map", width="100%", height="70vh") %>% withSpinner(color="#0275d8")),
                                                 conditionalPanel(condition = "input.maptype == 'Static'",
                                                  plotOutput("plot") %>% withSpinner(color="#0275d8"))) 
                                         )#tabPanel(Survey Map)
@@ -511,6 +520,8 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                                                size = "s", easyClose = TRUE, fade = TRUE),
                                       hr(),
                                       h4(strong(HTML("<center>Set Adjustment Inputs<center/>"))),
+                                      fluidRow(
+                                        column(10,
                                       selectInput(inputId = "adjwgt",
                                                   label = strong("Select Attribute Containing Initial Site Weights"),
                                                   choices = "",
@@ -555,7 +566,7 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                                                            "<b>Additional Replacements:</b> Choose the attribute which defines if the site is a replacement site and was added to the design without replacing a base site.",
                                                            "<b>Non-Target Sites:</b> Choose the attribute which defines if the site was not sampled and found to NOT be a member of the target population.",
                                                            "<b>You are not required to input target sites which have not been sampled for reasons such as landowner denials, site was inaccessible, or not evaluated.</b>"),
-                                               size = "s", easyClose = TRUE, fade = TRUE),
+                                               size = "s", easyClose = TRUE, fade = TRUE))),
                                       #Select Site Attribute(s) That Apply to Your Dataset
                                       column(12, offset = 1,
                                              selectInput(inputId = "sampled_site",
@@ -757,6 +768,7 @@ server <- function(input, output, session) {
   
   ####Legacy UI####
   output$legacyfile <- renderUI({
+    req(input$addoptions==TRUE)
     fileInput(
       inputId = "legacy",
       placeholder = "Optional",
