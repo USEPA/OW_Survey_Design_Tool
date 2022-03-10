@@ -1,5 +1,5 @@
 packages:
-- cran_mirror: https://raw.githubusercontent.com/testorg-2020/cflinuxfs3-CRAN/master/cflinuxfs3/
+- cran_mirror: https://raw.githubusercontent.com/USEPA/cflinuxfs3-CRAN/master/cflinuxfs3/
   num_threads: 2
   packages:
     - name: spsurvey
