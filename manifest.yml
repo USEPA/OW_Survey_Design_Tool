@@ -1,9 +1,9 @@
 applications:
-- name: Survey Design Tool
-  memory: 4G
+- name: SurveyDesignTool
+  memory: 800M
   routes:
     - route: Survey_Design_Tool.app.cloud.gov
-  disk_quota: 5G
+  disk_quota: 2G
   buildpacks:
-     - r_buildpack
+    - r_buildpack
   command: R -f shiny.R
