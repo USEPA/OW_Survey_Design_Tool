@@ -31,7 +31,7 @@ options(shiny.maxRequestSize = 10000*1024^2)
 
 ####Instructions####
 # Define UI
-ui <- fluidPage(theme = shinytheme("yeti"), 
+ui <- fluidPage(theme = shinytheme("yeti"),
                 tags$head(tags$link(rel = "stylesheet",
                                     type = "text/css", href = "style.css")),
                 # Header
@@ -45,7 +45,7 @@ ui <- fluidPage(theme = shinytheme("yeti"),
        </div>
        <div class='region-header'>
        <div class='block-epa-core-gsa-epa-search' id='block-epa-core-gsa-epa-search'>"),
-  
+
   # Search Form
   #$form(action='https://search.epa.gov/epasearch/epasearch', class='epa-search', method='get',
   #      tags$label(class='element-hidden'),
@@ -58,7 +58,7 @@ ui <- fluidPage(theme = shinytheme("yeti"),
   #  tags$input(name='typeofsearch', type='hidden', value='epa'),
   #  tags$input(name='result_template', type='hidden', value='2col.ftl')
   #),
-  
+
   HTML("</div>
        </div>
        </header>
@@ -108,25 +108,25 @@ ui <- fluidPage(theme = shinytheme("yeti"),
        <div class='panel-pane pane-node-content'>
        <div class='pane-content'>
        <div class='node node-page clearfix view-mode-full'>"),
-  # Application title 
-  navbarPage(id = "inTabset", 
+  # Application title
+  navbarPage(id = "inTabset",
              title = "",
              selected='instructions', position='static-top',
              inverse = TRUE,
              # Panel with instructions for using this tool
-             
-             tabPanel(title=span(strong("Step 1: Instructions for Use"), 
+
+             tabPanel(title=span(strong("Step 1: Instructions for Use"),
                                  style = "font-weight: bold; font-size: 16px"), value='instructions',
-                      bsCollapse(id = "instructions",   
+                      bsCollapse(id = "instructions",
                                  bsCollapsePanel(title = h1(strong("Overview")), value="Overview",
-                                      p("This R Shiny app allows for the calculation of spatially balanced survey designs of point, linear, or areal resources using the Generalized Random-Tessellation Stratified (GRTS) algorithm,", tags$a(href= "https://cfpub.epa.gov/ncer_abstracts/index.cfm/fuseaction/display.files/fileID/13339", "Stevens and Olsen (2004).", target="blank"), 
+                                      p("This R Shiny app allows for the calculation of spatially balanced survey designs of point, linear, or areal resources using the Generalized Random-Tessellation Stratified (GRTS) algorithm,", tags$a(href= "https://cfpub.epa.gov/ncer_abstracts/index.cfm/fuseaction/display.files/fileID/13339", "Stevens and Olsen (2004).", target="blank"),
                                         "The Survey Design Tool utilizes functions found within the R package", tags$a(href="https://cran.r-project.org/package=spsurvey",
-                                                                                                                                  "spsurvey: Spatial Sampling Design and Analysis", target="blank"), "and presents an easy-to-use user interface for many sampling design features including stratification, unequal and proportional inclusion probabilities, replacement (oversample) sites, and legacy (historical) sites. 
-                                      The output of the Survey Design Tool contains sites designed and balanced by user specified inputs and allows the user to export sampling locations as a point shapefile or a flat file. The output also provides design weights which can be used in categorical and continuous variable analyses (i.e., population estimates). 
-                                      The tool also gives the user the ability to adjust initial survey design weights when implementation results in the use of replacement sites or when it is desired to have final weights sum to a known frame size."), 
-                                      
-                                      p("This app does not include all possible design options and tools found in the spsurvey package. Please review the package", tags$a(href= "https://www.rdocumentation.org/packages/spsurvey", "Documentation", target="blank"), "and", tags$a(href= "https://github.com/USEPA/spsurvey", "Vignettes", target="blank"), "for more options and details.  
-                                      For further survey discussion and use cases, visit the website for", tags$a(href="https://www.epa.gov/national-aquatic-resource-surveys", "EPAs National Aquatic Resource Surveys (NARS)", target="blank"), 
+                                                                                                                                  "spsurvey: Spatial Sampling Design and Analysis", target="blank"), "and presents an easy-to-use user interface for many sampling design features including stratification, unequal and proportional inclusion probabilities, replacement (oversample) sites, and legacy (historical) sites.
+                                      The output of the Survey Design Tool contains sites designed and balanced by user specified inputs and allows the user to export sampling locations as a point shapefile or a flat file. The output also provides design weights which can be used in categorical and continuous variable analyses (i.e., population estimates).
+                                      The tool also gives the user the ability to adjust initial survey design weights when implementation results in the use of replacement sites or when it is desired to have final weights sum to a known frame size."),
+
+                                      p("This app does not include all possible design options and tools found in the spsurvey package. Please review the package", tags$a(href= "https://www.rdocumentation.org/packages/spsurvey", "Documentation", target="blank"), "and", tags$a(href= "https://github.com/USEPA/spsurvey", "Vignettes", target="blank"), "for more options and details.
+                                      For further survey discussion and use cases, visit the website for", tags$a(href="https://www.epa.gov/national-aquatic-resource-surveys", "EPAs National Aquatic Resource Surveys (NARS)", target="blank"),
                                       "which are designed to assess the quality of the nation's coastal waters, lakes and reservoirs, rivers and streams, and wetlands using GRTS survey designs. We encourage users to consult with a statistician about your design to prevent design issues and errors."),
                                       p("For Survey Design Tool questions, bugs, feedback, or tool modification suggestions, please contact Garrett Stillings at", tags$a(href="mailto:stillings.garrett@epa.gov", "stillings.garrett@epa.gov", target="blank")),
                                       h4(strong("Vignette")),
@@ -143,7 +143,7 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                                                      tags$ul(
                                                        tags$li(strong("Equal Probability Sampling")," - equal inclusion probability. Selection where all units of the population have the same probability of being selected."),
                                                        tags$li(strong("Stratified Sampling")," - Selection where the sample frame is divided into non-overlapping strata which independent random samples are calculated."),
-                                                       tags$li(strong("Unequal Probability Sampling")," - unequal inclusion probability. Selection where the chance of being included is calculated relative to the distribution of a categorical variable across the population. This type of sampling can give smaller populations a greater chance of being selected."), 
+                                                       tags$li(strong("Unequal Probability Sampling")," - unequal inclusion probability. Selection where the chance of being included is calculated relative to the distribution of a categorical variable across the population. This type of sampling can give smaller populations a greater chance of being selected."),
                                                        tags$li(strong("Proportional Probability Sampling")," - proportional inclusion probability. Selection where the chance of being included is proportional to the values of a positive auxiliary variable. For example, if you have many strata in your design, this will ensure each stratum has a sample."))),
                                                    br(),
                                                    bsCollapsePanel(title = h4(strong("Designing the Survey")), value="design",
@@ -173,13 +173,13 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                                         tags$li("Consider what will be measured in the survey. If you anticipate the parameter of interest to result in low variation across the survey, a smaller sample size can yield a low margin of error estimate. Conversely, if you anticipate the parameter of interest to result in high variation, you should consider increasing the sample size to account for a higher margin of error."),
                                         tags$li("Allocate additional sampling time to survey extra sites if needed. When designing the survey, be sure to generate replacement sites to use for oversampling.")),
                                       br(),
-                                      p("To aid the user, in the 'Survey Design tab' simulated population estimates using the local neighborhood variance estimator (uses a site's nearest neighbors to estimate variance, tending to result in smaller 
+                                      p("To aid the user, in the 'Survey Design tab' simulated population estimates using the local neighborhood variance estimator (uses a site's nearest neighbors to estimate variance, tending to result in smaller
                                          variance values) and will be calculated using the users defined sample sizes. This can give the user insight on the survey estimates potential margin of error if the sample size(s) chosen is used."),
                                       tags$li("For unstratified equal probability designs, set the desired Base site sample size."),
                                       tags$li("If you supplied a Stratum attribute, a tab is populated for each Stratum of the design."),
                                       tags$li("Set the sample size of Base sites you desire for each stratum."),
                                       tags$li("If you supplied a Category attribute, these categories will automatically populate. Choose the sample sizes for each. NOTICE: the sum of the sample sizes must equal the base site sample size."),
-                                      tags$li("Choose the sample size of the Replacement Sites you desire, if any. Replacement sites are an additional set of sites that can be used to replace the main sample list sites when they are found to be non-target or inaccessible. When replacing a site with a replacement, the user must FOLLOW THE ORDER of the design output and select a replacement site of the same Stratum and Category, if used. If replacement sites are used improperly it may result in spatial imbalance. 
+                                      tags$li("Choose the sample size of the Replacement Sites you desire, if any. Replacement sites are an additional set of sites that can be used to replace the main sample list sites when they are found to be non-target or inaccessible. When replacing a site with a replacement, the user must FOLLOW THE ORDER of the design output and select a replacement site of the same Stratum and Category, if used. If replacement sites are used improperly it may result in spatial imbalance.
                                               The tool attempts to distribute the replacement sites proportionately among sample sizes for the Categories. If the replacement proportion for one or more Categories is not a whole number, the proportion is rounded to the next higher integer."),
                                       tags$li("Once your design has been prepared, click the 'Calculate Survey Design' button to be transported to the Survey Design Results tab.")
                                                    ))),
@@ -198,7 +198,7 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                                                tags$li("The Survey Map tab provides an interactive and static map of the sample frame and the survey sample sites.")
                                                  )),
                                  bsCollapsePanel(title = h3(strong("Adjust Survey Weights Tab")), value="adjust",
-                                                 p("Adjusting initial survey design weights is necessary when implementation results in the use of replacement sites or when it is desired to have final weights sum to known frame size of the desired population. Adjusted weights are equal to initial weight * framesize/sum(initial weights). The adjustment is done separately for each 
+                                                 p("Adjusting initial survey design weights is necessary when implementation results in the use of replacement sites or when it is desired to have final weights sum to known frame size of the desired population. Adjusted weights are equal to initial weight * framesize/sum(initial weights). The adjustment is done separately for each
                                       Category specified in Weighting Category input. The tool allows the user to manually enter a desired population Frame Size or an automated calculation of the frame size by totaling the initial weights and adjusting it by the users site Evaluation Status inputs. By using the automated method, the output will render two adjusted weights:"),
                                       tags$ul(
                                         tags$li(strong("WGT_TP_EXTENT")," - Weights based on the evaluation of all target and non-target probability sites. These weights are only used to estimate extent for target and non-target populations."),
@@ -208,13 +208,13 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                                       tags$ol(
                                         h4(strong("Weight Adjustment File Setup Examples")),
                                         fluidRow(column(4,
-                                                        tags$table(border = 5, 
+                                                        tags$table(border = 5,
                                                                    tags$thead(
                                                                      tags$tr(
                                                                        tags$th(colspan = 3, height = 10, width = 500,
                                                                                style="text-align: center", "Equal Probability Design")
                                                                      )
-                                                                   ), 
+                                                                   ),
                                                                    tags$tbody(
                                                                      tags$tr(
                                                                        tags$td(align = "center", strong("SiteID")),
@@ -230,35 +230,35 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                                                                        tags$td(align = "center", "Site_02"),
                                                                        tags$td(align = "center", "2"),
                                                                        tags$td(align = "center", "Non-Target"),
-                                                                     ), 
+                                                                     ),
                                                                      tags$tr(
                                                                        tags$td(align = "center", "Site_02_Replace"),
                                                                        tags$td(align = "center", "2"),
                                                                        tags$td(align = "center", "Target-Replacement-Sampled"),
-                                                                     ), 
+                                                                     ),
                                                                      tags$tr(
                                                                        tags$td(align = "center", "Site_03"),
                                                                        tags$td(align = "center", "2"),
                                                                        tags$td(align = "center", "Target-Access_Denied"),
-                                                                     ), 
+                                                                     ),
                                                                      tags$tr(
                                                                        tags$td(align = "center", "Site_03_Replace"),
                                                                        tags$td(align = "center", "2"),
                                                                        tags$td(align = "center", "Target-Replacement-Sampled"),
-                                                                     ), 
+                                                                     ),
                                                                      tags$tr(
                                                                        tags$td(align = "center", "Site_04"),
                                                                        tags$td(align = "center", "2"),
                                                                        tags$td(align = "center", "Target-Sampled-Additional"),
                                                                      )))),
                                                  column(5, offset = 1,
-                                                        tags$table(border = 5, 
+                                                        tags$table(border = 5,
                                                                    tags$thead(
                                                                      tags$tr(
                                                                        tags$th(colspan = 4, height = 10, width = 500,
                                                                                style="text-align: center", "Unequal Probability Design")
                                                                      )
-                                                                   ), 
+                                                                   ),
                                                                    tags$tbody(
                                                                      tags$tr(
                                                                        tags$td(align = "center", strong("SiteID")),
@@ -277,25 +277,25 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                                                                        tags$td(align = "center", "2nd Order"),
                                                                        tags$td(align = "center", "3"),
                                                                        tags$td(align = "center", "Non-Target"),
-                                                                     ), 
+                                                                     ),
                                                                      tags$tr(
                                                                        tags$td(align = "center", "Site_02_Replace"),
                                                                        tags$td(align = "center", "2nd Order"),
                                                                        tags$td(align = "center", "3"),
                                                                        tags$td(align = "center", "Target-Replacement-Sampled"),
-                                                                     ), 
+                                                                     ),
                                                                      tags$tr(
                                                                        tags$td(align = "center", "Site_03"),
                                                                        tags$td(align = "center", "3rd Order"),
                                                                        tags$td(align = "center", "4"),
                                                                        tags$td(align = "center", "Target-Access_Denied"),
-                                                                     ), 
+                                                                     ),
                                                                      tags$tr(
                                                                        tags$td(align = "center", "Site_03_Replace"),
                                                                        tags$td(align = "center", "3rd Order"),
                                                                        tags$td(align = "center", "4"),
                                                                        tags$td(align = "center", "Target-Replacement-Sampled"),
-                                                                     ), 
+                                                                     ),
                                                                      tags$tr(
                                                                        tags$td(align = "center", "Site_04"),
                                                                        tags$td(align = "center", "1st Order"),
@@ -307,7 +307,7 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                                         tags$li("Upload the file which contains the required weight adjustment inputs. See below for the descriptions of each input."),
                                         tags$li("Select the column which has the initial unadjusted weights for each site. The sum of these weights is how the tool calculates the frame size. You also have the option to input the frame size manually."),
                                         tags$li("Select the Weighting Category column used in an unequal survey design. Use 'None' if the design is an equal probability design and all sites are in the same category."),
-                                        tags$li("Select the column which contains the Site Evaluation Attributes which categorically evaluate which sites are target and non-target sites and which have been sampled, including Replacement sites both as replacement and additional (e.g., Target-Sampled, Non-Target, Target-Landowner Denial, Target-Sampled-Additional). 
+                                        tags$li("Select the column which contains the Site Evaluation Attributes which categorically evaluate which sites are target and non-target sites and which have been sampled, including Replacement sites both as replacement and additional (e.g., Target-Sampled, Non-Target, Target-Landowner Denial, Target-Sampled-Additional).
                                               These inputs aid in the automated calculation of the Frame Size used for both the TP_EXTENT and TP_CORE Weights. To manually enter the Frame Size by Category, ignore the 3 inputs below and click the 'Adjust the Frame Size Manually' radio button."),
                                         tags$ul(
                                           tags$li("Select the attribute(s) which indicate if the site was a Target site (Base and Replacement sites) and has been sampled. If available, this input should include additional Replacement sites which were added to the design and not used as replacement (e.g., Target-Sampled, Target-Sampled-Additional)."),
@@ -326,27 +326,27 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                       verbatimTextOutput("citation"),
                       br(),hr(),
                       h3(strong('Disclaimer')),
-                      p('The United States Environmental Protection Agency (EPA) Survey Design tool and code is provided on an "as is" basis and the user assumes responsibility for its use.  
-                                      EPA has relinquished control of the information and no longer has responsibility to protect the integrity, confidentiality, or availability of the information.  
-                                      Any reference to specific commercial products, processes, or services by service mark, trademark, manufacturer, or otherwise, does not constitute or imply their 
-                                      endorsement, recommendation or favoring by EPA.  The EPA seal and logo shall not be used in any manner to imply endorsement of any commercial product or activity 
+                      p('The United States Environmental Protection Agency (EPA) Survey Design tool and code is provided on an "as is" basis and the user assumes responsibility for its use.
+                                      EPA has relinquished control of the information and no longer has responsibility to protect the integrity, confidentiality, or availability of the information.
+                                      Any reference to specific commercial products, processes, or services by service mark, trademark, manufacturer, or otherwise, does not constitute or imply their
+                                      endorsement, recommendation or favoring by EPA.  The EPA seal and logo shall not be used in any manner to imply endorsement of any commercial product or activity
                                       by EPA or the United States Government.'),
                       br(), hr()),
              ####Prepare Design####
              # Panel to import and prepare survey design
-             tabPanel(title=span(strong('Step 2: Prepare Survey Design'), 
+             tabPanel(title=span(strong('Step 2: Prepare Survey Design'),
                                  style = "font-weight: bold; font-size: 16px"), value='Step 2: Prepare Survey Design',
                       sidebarPanel(
-                        
+
                         h4(strong(HTML("<center>Select the Survey Sample Frame<center/>"))),
                         #h5(strong(HTML("<center>Use Your Own Sample Frame<center>"))),
-                        
-                        # Input: Select sample frame files 
+
+                        # Input: Select sample frame files
                         fileInput(
                           inputId = "filemap",
                           label = strong("Choose all files of the Sample Frame"),
                           multiple = TRUE,
-                          accept = c(".gdb", ".shp", ".prj", ".shx", ".dbf", ".sbn", ".sbx", ".cpg", ".gpkg"), 
+                          accept = c(".gdb", ".shp", ".prj", ".shx", ".dbf", ".sbn", ".sbx", ".cpg", ".gpkg"),
                           width = "600px") %>%
                           #User Sample Frame helper
                           helper(type = "inline",
@@ -355,19 +355,19 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                                              "The coordinate reference system (CRS) for the sample frame should use projected coordinates. The user may choose to transform the CRS to NAD83 / Conus Albers (a projected CRS) by checking the box below.",
                                              "<b>Required Files:</b>",
                                              "<b>Shapefiles (.shp, .dbf, .prj, .shx)</b>"),
-                                 
+
                                  size = "s", easyClose = TRUE, fade = TRUE),
-                        checkboxInput(inputId = "NAD83", 
-                                      label= strong("Transform CRS to NAD83 / Conus Albers"), 
-                                      value = FALSE, 
+                        checkboxInput(inputId = "NAD83",
+                                      label= strong("Transform CRS to NAD83 / Conus Albers"),
+                                      value = FALSE,
                                       width = NULL),
                         hr(),
                         h4(strong(HTML("<center>Design Attributes<center/>"))),
                         fluidRow(
                           column(7,
                         #Design Type Input
-                        radioButtons(inputId="designtype", 
-                                     label=strong("Choose Design Type"), 
+                        radioButtons(inputId="designtype",
+                                     label=strong("Choose Design Type"),
                                      choices=c("GRTS","IRS"),
                                      inline=TRUE) %>%
                           #Design Type helper
@@ -376,13 +376,13 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                                  content = c("<b>GRTS:</b> Generalized Random Tessellation Stratified-for spatially balanced samples",
                                              "<b>IRS:</b> Independent Random Sample- for non-spatially balanced samples"),
                                  size = "s", easyClose = TRUE, fade = TRUE))),
-                        
+
                         #Stratum Input
                         selectInput(inputId = "stratum",
                                     label = strong("Select Attribute Which Contains Strata"),
                                     choices = "",
                                     selected = NULL,
-                                    multiple = FALSE, 
+                                    multiple = FALSE,
                                     width = "300px")  %>%
                           #Strata helper
                           helper(type = "inline",
@@ -390,13 +390,13 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                                  content = c("A subpopulation within your sample frame to independently sample. Use the default <b>None</b> if your design is unstratified.",
                                              "<b>Examples:</b> Stream Type (Perennial and Intermittent), Size (Large and Small"),
                                  size = "s", easyClose = TRUE, fade = TRUE),
-                        
+
                         #Category Input
                         selectInput(inputId = "caty",
                                     label = strong("Select Attribute Which Contains Categories"),
                                     choices = "",
                                     selected = NULL,
-                                    multiple = FALSE, 
+                                    multiple = FALSE,
                                     width = "300px") %>%
                           #Category helper
                           helper(type = "inline",
@@ -404,8 +404,8 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                                  content = c("Variables found within a stratum used to define design weights for unequal probability selections. Use the default <b>None</b> if your design is an equal probability design.",
                                              "<b>Examples:</b> Stream Order, Lake Area, Basin, Ecoregion"),
                                  size = "s", easyClose = TRUE, fade = TRUE),
-                        checkboxInput(inputId = "addoptions", 
-                                      label=strong("Optional Design Attributes"), 
+                        checkboxInput(inputId = "addoptions",
+                                      label=strong("Optional Design Attributes"),
                                       value = FALSE),
                         uiOutput('addoptions'),
                         conditionalPanel(condition = "input.addoptions == 1",
@@ -413,29 +413,29 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                         h4(strong(HTML("<center>Legacy Site Attributes (Optional)<center/>"))),
                         ####Legacy####
                         uiOutput("legacyfile"),
-                        
-                        
+
+
                         uiOutput("legacyvar"),
-                        
-                        
+
+
                         uiOutput('legacystrat'),
-                        
+
                         uiOutput('legacycat'),
-                        
+
                         uiOutput('legacyaux')),
-                        
+
                         hr(),
-                        
-                        # Press button for analysis 
-                        actionButton("goButton", strong("Calculate Survey Design"), icon=icon("play-circle"), 
+
+                        # Press button for analysis
+                        actionButton("goButton", strong("Calculate Survey Design"), icon=icon("play-circle"),
                                      style="color: #fff; background-color: #337ab7; border-color: #2e6da4")),#sidebarPanel
                       mainPanel(
                         uiOutput('mytabs')
-                        
+
                       ) #mainPanel
              ), #tabPanel (Prepare and Run Survey Design)
              ####Design Results####
-             tabPanel(title=span(strong("Step 3: Survey Design Results"), 
+             tabPanel(title=span(strong("Step 3: Survey Design Results"),
                                  style = "font-weight: bold; font-size: 16px"),
                       value="Step 3: Survey Design Results",
                       sidebarLayout(
@@ -444,7 +444,7 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                                            h4(HTML("<center><b>Design Errors</b></center>"))),
                           tableOutput("error"),
                           conditionalPanel(condition = "output.table",
-                                           hr(),                 
+                                           hr(),
                                            h4(HTML("<center><b>Survey Site Summary</b></center>")),
                                            DT::dataTableOutput("summary")),
                           conditionalPanel(condition = "output.summary",
@@ -454,14 +454,14 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                                              helper(type = "inline",
                                                     title = "Population Estimate Simulation",
                                                     content = c("This module assists the user in simulating proportion estimates of a population based on the sample size used in the survey design. Error bars displayed show the Margin of Error for a condition using a 95% confidence limit.
-                                                            The condition classes are randomly assigned by user specified probability weights and can be refreshed with new probability weights to simulate the change in conditions. 
+                                                            The condition classes are randomly assigned by user specified probability weights and can be refreshed with new probability weights to simulate the change in conditions.
                                                             Adjust the sample size of the design to increase or decrease the Margin of Error estimate."),
                                                     size = "s", easyClose = TRUE, fade = TRUE),
                                            fluidRow(
                                              column(6, offset=3,
-                                           radioButtons(inputId="connumber", 
-                                                        label=strong("Choose Condition Class Size"), 
-                                                        choices=c("2","3","4","5"), 
+                                           radioButtons(inputId="connumber",
+                                                        label=strong("Choose Condition Class Size"),
+                                                        choices=c("2","3","4","5"),
                                                         selected = "3",
                                                         inline=TRUE) %>%
                                              #Condition Class helper
@@ -472,15 +472,15 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                                                             "<b>If condition probabilities do not sum to 100%, weights will be normalized to sum to 100%.</b>"),
                                                     size = "s", easyClose = TRUE, fade = TRUE))),
                                            uiOutput('conditionprb'),
-                                           radioButtons(inputId="conflim", 
-                                                        label=strong("Choose Confidence Limit"), 
-                                                        choices=c("90%","95%"), 
+                                           radioButtons(inputId="conflim",
+                                                        label=strong("Choose Confidence Limit"),
+                                                        choices=c("90%","95%"),
                                                         selected = "95%",
                                                         inline=TRUE)),
                           conditionalPanel(condition = "input.CON2",
                                            plotOutput("ssplot") %>% withSpinner(color="#0275d8"),
                                            br(),
-                                           actionButton("ssbtn", strong("Refresh Simulation"), icon=icon("redo"), 
+                                           actionButton("ssbtn", strong("Refresh Simulation"), icon=icon("redo"),
                                                         style="color: #fff; background-color: #337ab7; border-color: #2e6da4")),
                           hr(),
                           conditionalPanel(condition = "output.ssplot",
@@ -494,7 +494,7 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                                              tags$style(
                                                HTML("#balance {font-size: 14px;}"))),
                                            verbatimTextOutput("balance", placeholder = TRUE) %>% withSpinner(color="#0275d8"),
-                                           actionButton("balancebtn", strong("Calculate Spatial Balance"), icon=icon("play-circle"), 
+                                           actionButton("balancebtn", strong("Calculate Spatial Balance"), icon=icon("play-circle"),
                                                         style="color: #fff; background-color: #337ab7; border-color: #2e6da4"),
                                            br(), br(),
                                            radioButtons("balance", strong("Spatial Balance Metric:"),
@@ -529,11 +529,11 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                                                                  h3(HTML("<center><b>Probability Survey Site Results</b></center>"))))),
                                        br(),
                                        fluidRow(
-                                         column(12, offset = 2, 
+                                         column(12, offset = 2,
                                                 uiOutput("shp_btn"))),
                                        br(),
                                        DT::dataTableOutput("table"))),
-                            
+
                             tabPanel(title=strong("Survey Map"),
                                      br(),
                                      conditionalPanel(condition = "output.ssplot",
@@ -544,38 +544,38 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                                                                     label = strong("Select Type of Map"),
                                                                     choices = c("Interactive", "Static"),
                                                                     selected = NULL,
-                                                                    multiple = FALSE, 
-                                                                    width = "200px"), 
+                                                                    multiple = FALSE,
+                                                                    width = "200px"),
                                                         column(3, offset = 3,
                                                                selectInput(inputId = "color",
                                                                            label = HTML("<b>Select Color <br/> Attribute</b>"),
-                                                                           choices = c("Site Use" = "siteuse", 
-                                                                                       "Stratum" = "stratum", 
+                                                                           choices = c("Site Use" = "siteuse",
+                                                                                       "Stratum" = "stratum",
                                                                                        "Category" = "caty"),
                                                                            selected = "siteuse",
-                                                                           multiple = FALSE, 
+                                                                           multiple = FALSE,
                                                                            width = "200px")),
                                                         column(3, offset = 1,
                                                                conditionalPanel(condition = "input.maptype == 'Static'",
                                                                                 selectInput(inputId = "shape",
                                                                                             label = HTML("<b>Select Shape <br/> Attribute</b>"),
-                                                                                            choices = c("Site Use" = "siteuse", 
-                                                                                                        "Stratum" = "stratum", 
+                                                                                            choices = c("Site Use" = "siteuse",
+                                                                                                        "Stratum" = "stratum",
                                                                                                         "Category" = "caty"),
                                                                                             selected = "stratum",
-                                                                                            multiple = FALSE, 
+                                                                                            multiple = FALSE,
                                                                                             width = "200px")))),
                                                       conditionalPanel(condition = "input.maptype == 'Interactive'",
                                                                        leafletOutput("map", width="100%", height="70vh") %>% withSpinner(color="#0275d8")),
                                                       conditionalPanel(condition = "input.maptype == 'Static'",
-                                                                       plotOutput("plot") %>% withSpinner(color="#0275d8"))) 
+                                                                       plotOutput("plot") %>% withSpinner(color="#0275d8")))
                             )#tabPanel(Survey Map)
                           )#tabsetPanel
                           , width = 7)#mainPanel
                         , position = c("left", "right"), fluid = TRUE)#sidebarLayout
              ),#tabPanel(Survey Design)
              ####Adjust Weights####
-             tabPanel(title=span(strong("Step 4: Adjust Survey Weights"), 
+             tabPanel(title=span(strong("Step 4: Adjust Survey Weights"),
                                  style = "font-weight: bold; font-size: 16px"), value="Step 4: Adjust Survey Weights",
                       sidebarPanel(
                         h4(strong(HTML("<center>Select the Weight Adjustment File<center/>"))),
@@ -595,31 +595,31 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                                     label = strong("Select Attribute Containing Initial Site Weights"),
                                     choices = "",
                                     selected = NULL,
-                                    multiple = FALSE, 
+                                    multiple = FALSE,
                                     width = "300px") %>%
                           #Weight helper
                           helper(type = "inline",
                                  title = "Site Weights",
                                  content = c("Choose the column in the Weight Adjustment file which contains the initial site weights. Replace Replacement sites with Base sites. Set additional Replacement site weights to 0."),
                                  size = "s", easyClose = TRUE, fade = TRUE),
-                        
+
                         selectInput(inputId = "adjwgtcat",
                                     label = strong("Select Attribute Containing Weight Categories"),
                                     choices = "",
                                     selected = NULL,
-                                    multiple = FALSE, 
+                                    multiple = FALSE,
                                     width = "300px") %>%
                           #Weight Category helper
                           helper(type = "inline",
                                  title = "Weight Category",
                                  content = c("For unequal probability designs, choose the column in the Weight Adjustment file which contains the weight category. The default is None, which assumes every site is in the same category and an equal probability design is being adjusted."),
                                  size = "s", easyClose = TRUE, fade = TRUE),
-                        
+
                         selectInput(inputId = "adjsitesampled",
                                     label = strong("Select Attribute Containing Site Evaluations"),
                                     choices = "",
                                     selected = NULL,
-                                    multiple = FALSE, 
+                                    multiple = FALSE,
                                     width = "300px") %>%
                           #Site Info helper
                           helper(type = "inline",
@@ -643,33 +643,33 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                                            choices = "",
                                            selected = NULL,
                                            multiple = TRUE,
-                                           width = "200px"), 
+                                           width = "200px"),
                                selectInput(inputId = "addoversample_site",
                                            label = strong("Additional Replacements"),
                                            choices = "",
                                            selected = NULL,
                                            multiple = TRUE,
-                                           width = "200px"), 
+                                           width = "200px"),
                                selectInput(inputId = "nontarget_site",
                                            label = strong("Non-Target Sites"),
                                            choices = "",
                                            selected = NULL,
                                            multiple = TRUE,
                                            width = "200px")),
-                        checkboxInput(inputId = "frameadj", 
-                                      label= strong("Adjust the Weighting Category Frame Size Manually"), 
-                                      value = FALSE, 
+                        checkboxInput(inputId = "frameadj",
+                                      label= strong("Adjust the Weighting Category Frame Size Manually"),
+                                      value = FALSE,
                                       width = NULL),
                         hr(),
                         uiOutput("frame"),
-                        
-                        # Press button for analysis 
-                        actionButton("adjButton", HTML("<b>Calculate Adjusted <br/> Survey Weights</b>"), icon=icon("play-circle"), 
+
+                        # Press button for analysis
+                        actionButton("adjButton", HTML("<b>Calculate Adjusted <br/> Survey Weights</b>"), icon=icon("play-circle"),
                                      style="color: #fff; background-color: #337ab7; border-color: #2e6da4")
                       ), #sidebarPanel
                       mainPanel(
                         DT::dataTableOutput("adjtable"),
-                        
+
                         uiOutput("table_download")
                       )#mainPanel
              )#tabPanel(Adjust Weights)
@@ -748,24 +748,24 @@ ui <- fluidPage(theme = shinytheme("yeti"),
 
 
 server <- function(input, output, session) {
-  
+
   observe({
     updateCollapse(session, "instructions", open = "Overview")
     updateCollapse(session, "instructions", open = "design")
     updateCollapse(session, "instructions", open = "samplesize")
   })
-  
+
   output$citation <-  renderPrint({
     citation(package = "spsurvey")
   })
-  
+
   observe_helpers()
-  
+
   dbfdata <- reactive({
-    
+
     req(input$filemap)
     shpdf <- input$filemap
-    
+
     previouswd <- getwd()
     uploaddirectory <- dirname(shpdf$datapath[1])
     setwd(uploaddirectory)
@@ -773,42 +773,42 @@ server <- function(input, output, session) {
       file.rename(shpdf$datapath[i], shpdf$name[i])
     }
     setwd(previouswd)
-    
+
     att <- read.dbf(paste(uploaddirectory, shpdf$name[grep(pattern="*.dbf$", shpdf$name)], sep="/"))#,  delete_null_obj=TRUE)
     #We add a column called "None" with "None" values to handle designs without strata or categories.
     att <- att %>% mutate(None="None") %>% relocate(None)
   })
-  
+
   sfobject <- reactive({
     req(input$filemap)
     shpdf <- input$filemap
-    
+
     previouswd <- getwd()
     uploaddirectory <- dirname(shpdf$datapath[1])
     #   setwd(uploaddirectory)
     #   for(i in 1:nrow(shpdf)){
     #   file.rename(shpdf$datapath[i], shpdf$name[i])}
     setwd(previouswd)
-    
-    map <- st_read(paste(uploaddirectory, shpdf$name[grep(pattern="*.shp$", shpdf$name)], sep="/")) %>% 
+
+    map <- st_read(paste(uploaddirectory, shpdf$name[grep(pattern="*.shp$", shpdf$name)], sep="/")) %>%
       mutate(None="None") %>% relocate(None)
-    
+
     map <- st_zm(map)
   })
-  
+
   #Identifies geometry type of sample frame for legacy inputs
   # legacytype <- eventReactive(input$filemap, {
   #   sfobject <- sfobject()
   #  geometry<-class(sfobject$geometry[[1]])
   #  strsplit(geometry," ")[[2]]
   #})
-  
-  
+
+
   #Load legacy shapefile
   legacyobject <- reactive({
     req(input$legacy)
     shpdf <- input$legacy
-    
+
     previouswd <- getwd()
     uploaddirectory <- dirname(shpdf$datapath[1])
     setwd(uploaddirectory)
@@ -816,12 +816,12 @@ server <- function(input, output, session) {
       file.rename(shpdf$datapath[i], shpdf$name[i])
     }
     setwd(previouswd)
-    
-    map <- st_read(paste(uploaddirectory, shpdf$name[grep(pattern="*.shp$", shpdf$name)], sep="/")) %>% 
+
+    map <- st_read(paste(uploaddirectory, shpdf$name[grep(pattern="*.shp$", shpdf$name)], sep="/")) %>%
       mutate(None="None") %>% relocate(None)
     map <- st_zm(map)
   })
-  
+
   #Stratum Event
   observe({
     req(dbfdata())
@@ -832,9 +832,9 @@ server <- function(input, output, session) {
       strat_cols <- dbfdata() %>% select_if(~!is.numeric(.x))
       updateSelectInput(session, "stratum", selected = "None", choices = c("None", colnames(strat_cols)))
     }
-    
+
   })
-  
+
   #Category Event
   observe({
     req(dbfdata())
@@ -845,35 +845,35 @@ server <- function(input, output, session) {
       caty_cols <- dbfdata() %>% select_if(~!is.numeric(.x))
       updateSelectInput(session, "caty", selected = "None", choices = c("None", colnames(caty_cols)))
     }
-    
+
   })
-  
+
   #Auxiliary Variable Event
   observe({
     req(input$addoptions==TRUE)
-    aux_cols <- dbfdata() %>% select_if(~is.numeric(.x)) 
+    aux_cols <- dbfdata() %>% select_if(~is.numeric(.x))
     updateSelectInput(session, "aux_var", selected = NULL, choices = c("None", colnames(aux_cols)))
   })
-  
-  
+
+
   observe({
     req(!is.null(input$legacy_strat))
     legacy_cols <- legacyobject() %>% select_if(~!is.numeric(.x))
     updateSelectInput(session, "legacy_strat", selected = "", choices = colnames(legacy_cols))
   })
-  
+
   observe({
     req(!is.null(input$legacy_cat))
     legacy_cols <- legacyobject() %>% select_if(~!is.numeric(.x))
     updateSelectInput(session, "legacy_cat", selected = "", choices = colnames(legacy_cols))
   })
-  
+
   observe({
     req(!is.null(input$legacy_aux))
     legacy_cols <- legacyobject() %>% select_if(~!is.character(.x))
     updateSelectInput(session, "legacy_aux", selected = "", choices = colnames(legacy_cols))
   })
-  
+
   #Stratum Length
   S <- reactive({
     req(input$stratum)
@@ -882,7 +882,7 @@ server <- function(input, output, session) {
     } else {1
     }
   })
-  
+
   #Category Length
   C <- reactive({
     req(input$caty)
@@ -891,19 +891,19 @@ server <- function(input, output, session) {
     } else {1
     }
   })
-  
+
   strat_choices <- reactive({
     req(dbfdata())
     dbfdata() %>% select(input$stratum) %>% arrange(.data[[input$stratum]]) %>% unique()
-    
+
   })
-  
+
   caty_choices <- reactive({
     req(dbfdata())
     dbfdata() %>% select(input$caty) %>% arrange(.data[[input$caty]]) %>% unique()
   })
-  
-  
+
+
   ####Legacy UI####
   output$legacyfile <- renderUI({
     fileInput(
@@ -911,7 +911,7 @@ server <- function(input, output, session) {
       placeholder = "Optional",
       label = HTML("<b>Choose all files of the Legacy Sites POINT Shapefile <br/> Required: (.shp, .dbf, .prj, .shx)</b>"),
       multiple = TRUE,
-      accept = c(".shp", ".prj", ".shx", ".dbf", ".sbn", ".sbx", ".cpg"), 
+      accept = c(".shp", ".prj", ".shx", ".dbf", ".sbn", ".sbx", ".cpg"),
       width = "600px") %>%
       #User legacy helper
       helper(type = "inline",
@@ -919,9 +919,9 @@ server <- function(input, output, session) {
              content = c("Legacy Sample Frame is a POINT or MULTIPOINT shapefile which contains sites that have been selected in a previous probability sample and are to be automatically included in a current probability sample. If the users transforms the samples frames CRS to NAD83/Albers Conus, the legacy object will also be transformed."),
              size = "s", easyClose = TRUE, fade = TRUE)
   })
-  
-  
-  
+
+
+
   #Render selectInput if stratum name is NOT in design shapefiles column names.
   output$legacystrat <- renderUI({
     req(input$stratum != "None" && input$stratum %!in% colnames(legacyobject()))
@@ -936,7 +936,7 @@ server <- function(input, output, session) {
              content = c("A Legacy Stratum is the same stratum used for a stratified design. This input is useful if the stratification variable in the legacy shapefile differs from the survey sample frame shapefile."),
              size = "s", easyClose = TRUE, fade = TRUE)
   })
-  
+
   #Render selectInput if category name is NOT in design shapefiles column names.
   output$legacycat <- renderUI({
     req(input$caty != "None" && input$caty %!in% colnames(legacyobject()))
@@ -951,7 +951,7 @@ server <- function(input, output, session) {
              content = c("A Legacy Category is the same category used for the unequal design. This input is useful if the category variable in the legacy shapefile differs from the survey sample frame shapefile."),
              size = "s", easyClose = TRUE, fade = TRUE)
   })
-  
+
   #Render selectInput if auxiliary variable name is NOT in design shapefiles column names.
   output$legacyaux <- renderUI({
     req(input$addoptions==TRUE && input$aux_var != "None" && input$aux_var %!in% colnames(legacyobject()))
@@ -966,32 +966,32 @@ server <- function(input, output, session) {
              content = c("A Legacy Auxiliary variable is the same auxiliary variable used for the design. This input is useful if the auxiliary variable in the legacy shapefile differs from the survey sample frame shapefile."),
              size = "s", easyClose = TRUE, fade = TRUE)
   })
-  
-  
-  
+
+
+
   ####Additional UI####
   output$addoptions <- renderUI({
     req(input$addoptions==TRUE)
-    
+
     #DesignID Input
     fluidRow(
       column(6, offset=1,
-             
+
              #Auxiliary variable input
              selectInput(inputId = "aux_var",
                          label = strong("Auxiliary Variable"),
                          choices = "",
                          selected = NULL,
-                         multiple = FALSE, 
+                         multiple = FALSE,
                          width = "200px") %>%
                #Auxiliary variable helper
                helper(type = "inline",
                       title = "Auxiliary Variable",
-                      content = c("Numeric attribute which represents the proportional (to size) inclusion probability variable (auxiliary variable). 
-                         This selection type will result in an unstratified GRTS sample where each site in the sample frame has inclusion probability proportional to a positive, continuous variable. 
+                      content = c("Numeric attribute which represents the proportional (to size) inclusion probability variable (auxiliary variable).
+                         This selection type will result in an unstratified GRTS sample where each site in the sample frame has inclusion probability proportional to a positive, continuous variable.
                          Larger values of the auxiliary variable result in higher inclusion probabilities."),
                       size = "s", easyClose = TRUE, fade = TRUE),
-             
+
              #Reproducible seed input
              numericInput("seed", strong("Set Reproducible Seed:"), rseed, width = "200px") %>%
                #Random Seed helper
@@ -1001,20 +1001,20 @@ server <- function(input, output, session) {
                                   "A reproducible seed allows the user to obtain an identical draw when the same seed is used. If you wish to reproduce a previously constructed survey design, use the seed value from that design.",
                                   "Each time the tool is closed and reopened, a new random seed is used."),
                       size = "s", easyClose = TRUE, fade = TRUE),
-             
+
              #DesignID input
-             textInput(inputId = "DesignID", 
-                       label = strong("DesignID"), 
-                       value = "Site", 
+             textInput(inputId = "DesignID",
+                       label = strong("DesignID"),
+                       value = "Site",
                        width = "200px") %>%
                #DesignID helper
                helper(type = "inline",
                       title = "DesignID",
                       content = c("A character string indicating the naming structure for each site's identifier selected in the sample, which is included as a variable in the shapefile in the tools output."),
                       size = "s", easyClose = TRUE, fade = TRUE),
-             
+
              #Minimum Distance input
-             numericInput(inputId = "mindist", 
+             numericInput(inputId = "mindist",
                           label = strong("Minimum Distance"),
                           value = NA, min = NA, max = NA, width="200px") %>%
                #Minimum Distance helper
@@ -1022,20 +1022,20 @@ server <- function(input, output, session) {
                       title = "Minimum Distance",
                       content = c("A numeric value indicating the desired minimum distance between sampled sites. If design is stratified, then minimum distance is applied separately for each stratum. The units must match the units in the sample frame."),
                       size = "s", easyClose = TRUE, fade = TRUE),
-             
+
              #Maximum Attempts input
-             numericInput(inputId = "maxtry", 
-                          label = strong("Maximum Attempts"), 
+             numericInput(inputId = "maxtry",
+                          label = strong("Maximum Attempts"),
                           value = 10, min = 0, max = NA, width="200px") %>%
                #Maximum Attempts helper
                helper(type = "inline",
                       title = "Maximum Attempts",
                       content = c("The number of maximum attempts to apply the minimum distance algorithm to obtain the desired minimum distance between sites. Each iteration takes roughly as long as the standard GRTS algorithm. Successive iterations will always contain at least as many sites satisfying the minimum distance requirement as the previous iteration. The algorithm stops when the minimum distance requirement is met or there are maximum attempt iterations. The default number of maximum iterations is 10."),
                       size = "s", easyClose = TRUE, fade = TRUE),
-             
+
              #Nearest neighbor input
-             numericInput(inputId = "n_near", 
-                          label = strong("Nearest Neighbor Replacement Sites"), 
+             numericInput(inputId = "n_near",
+                          label = strong("Nearest Neighbor Replacement Sites"),
                           value = NA, min = 1, max = 10, width="200px") %>%
                #n_near helper
                helper(type = "inline",
@@ -1043,8 +1043,8 @@ server <- function(input, output, session) {
                       content = c("An integer from 1 to 10 specifying the number of nearest neighbor replacement sites to be selected for each base site. For infinite sample frames, the distance between a site and its nearest neighbor depends on point density. This tool does not offer stratum-specific nearest neighbor requirements."),
                       size = "s", easyClose = TRUE, fade = TRUE)))
   })
-  
-  
+
+
   ####MainPanel UI####
   output$mytabs = renderUI({
     do.call(tabsetPanel, c(lapply(1:S(), function(s) {
@@ -1063,11 +1063,11 @@ server <- function(input, output, session) {
                                  content = c("Choose a stratum which defines how your sample sites will be stratified.",
                                              "If your design is not stratified, use the default <b>None</b>."),
                                  size = "s", easyClose = TRUE, fade = TRUE)),
-                 
-                 column(2, 
+
+                 column(2,
                         #Stratum Base sample sizes
-                        numericInput(inputId = paste0("strat",s,"_base"), 
-                                     label = "Base Sites", 
+                        numericInput(inputId = paste0("strat",s,"_base"),
+                                     label = "Base Sites",
                                      width = "100px",
                                      value = 0, min = 0, max = 10000) %>%
                           #Base helper
@@ -1075,8 +1075,8 @@ server <- function(input, output, session) {
                                  title = "Base Sites",
                                  content = c("If the design is unstratified, <b>Base Sites</b> is the overall sample size of the survey. If your design is stratified, set the sample size for each strata."),
                                  size = "s", easyClose = TRUE, fade = TRUE),
-                        numericInput(inputId = paste0("Over",s), 
-                                     label = "Replacement Sites", 
+                        numericInput(inputId = paste0("Over",s),
+                                     label = "Replacement Sites",
                                      width = "100px",
                                      value = 0, min = 0, max = 10000) %>%
                           #Replacement helper
@@ -1086,7 +1086,7 @@ server <- function(input, output, session) {
                                              "Replacement sites are a set of spatially balanced sites that can be used for the replacement of a non-target or inaccessible sites.
                                                 Misuse can cause spatial imbalance in your survey."),
                                  size = "s", easyClose = TRUE, fade = TRUE)),
-                 
+
                  # Stratum category sites
                  conditionalPanel(condition="input.caty != 'None'",
                                   column(3, offset = 1,
@@ -1106,7 +1106,7 @@ server <- function(input, output, session) {
                                                   size = "s", easyClose = TRUE, fade = TRUE)),
                                   column(3,
                                          lapply(1:C(), function(i) {
-                                           numericInput(inputId = paste0("S",s,"_C",i,"_Site"), 
+                                           numericInput(inputId = paste0("S",s,"_C",i,"_Site"),
                                                         label = paste0("Category ",i," Sites"),
                                                         width = "80px",
                                                         value = "0", min = 0, max = 100000)
@@ -1114,56 +1114,56 @@ server <- function(input, output, session) {
                                   ))
                )#fluidrow
       )#tabPanel
-    }))#stratum apply  
+    }))#stratum apply
     ) #tabsetPanel
   })#renderUI
-  
-  
+
+
   #Updates Aux var type based on category input
   observe({
-    req(input$aux_var != "None") 
-    updateSelectInput(session, "caty", 
+    req(input$aux_var != "None")
+    updateSelectInput(session, "caty",
                       selected = "None")
   })
-  
-  
+
+
   observe({
-    req(input$caty != "None" | input$stratum != "None") 
-    updateSelectInput(session, "aux_var", 
+    req(input$caty != "None" | input$stratum != "None")
+    updateSelectInput(session, "aux_var",
                       selected = "None")
   })
-  
+
   #Transfers user to Survey Design Results tab after pressing button
   observeEvent(input$goButton, {
     updateNavbarPage(session, "inTabset",
                      selected = "Step 3: Survey Design Results")
   })
-  
+
   ####Design####
   DESIGN <- eventReactive(input$goButton,{
-    
-    
+
+
     #Validates there is a complete sample frame added
     CRS <- st_crs(sfobject())
-    
+
     validate(
-      need(input$filemap != FALSE, 
+      need(input$filemap != FALSE,
            "Please input a Sample Frame."),
-      need(!is.na(CRS),  
+      need(!is.na(CRS),
            "Please input the required file .prj of the sample frame.")
     )
-    
+
     show_modal_spinner(spin = 'flower', text = 'Grab a snack...this could take a while.')
-    
+
     #Sets reproducible seed
     if (input$addoptions == TRUE) {
       set.seed(input$seed)
     } else {
       set.seed(rseed)
     }
-    
+
     ####Strata Conditionals####
-    #Unstratified 
+    #Unstratified
     if (input$stratum == "None") {
       stratum_var <- NULL
       strata_n <- input$strat1_base
@@ -1180,17 +1180,17 @@ server <- function(input, output, session) {
       }
       strata_n <- unlist(strata_n)
     }
-    
+
     ####Category Conditionals####
     #equal probablity
     if (input$caty == "None") {
       caty_var <- NULL
       caty_n <- NULL
-      
+
       #Stratified, unequal probability
     } else if (input$caty != "None" && input$stratum != "None") {
       caty_var <- input$caty
-      
+
       #Creates Category List
       caty_n <- list() #empty list
       for(i in 1:S()) {
@@ -1206,7 +1206,7 @@ server <- function(input, output, session) {
         stratname <- input[[paste0("strat", i)]]
         names(caty_n)[i] <- stratname
       }
-      
+
       #Unstratified, Unequal Probability
     } else {
       caty_var <- input$caty
@@ -1220,8 +1220,8 @@ server <- function(input, output, session) {
       }
       caty_n <- unlist(caty_n)
     }
-    
-    
+
+
     ####Replacement Conditionals####
     #input for conditional below
     replace_con <- c()
@@ -1231,7 +1231,7 @@ server <- function(input, output, session) {
       names(replace_con)[i] <- stratname
     }
     replace_con <- unlist(replace_con)
-    
+
     #Equal Probability
     if(input$stratum == "None" && input$caty == "None") {
       replace_n <- input$Over1
@@ -1255,7 +1255,7 @@ server <- function(input, output, session) {
         names(replace_n)[x] <- catname
       }
       replace_n <- unlist(replace_n)
-      #Stratified Unequal Probability (Where n_over changes among strata) 
+      #Stratified Unequal Probability (Where n_over changes among strata)
     } else if (input$stratum != "None" && input$caty != "None" && length(unique(replace_con)) != 1) {
       #Creates replacement List
       replace_n <- list() #empty list
@@ -1272,7 +1272,7 @@ server <- function(input, output, session) {
         stratname <- input[[paste0("strat", i)]]
         names(replace_n)[i] <- stratname
       }
-      #Stratified Unequal Probability (Where n_over DOES NOT change among strata) 
+      #Stratified Unequal Probability (Where n_over DOES NOT change among strata)
     } else  {
       replace_n <- c() #empty vector
       for(x in 1:C()) {
@@ -1282,8 +1282,8 @@ server <- function(input, output, session) {
         names(replace_n)[x] <- catname
       }
       replace_n <- unlist(replace_n)
-    } 
-    
+    }
+
     #Replacement input cannot be 0, this handles this instance by adding all oversamples and checks if its over 0
     for(i in 1:S()) {
       total <- 0
@@ -1292,9 +1292,9 @@ server <- function(input, output, session) {
     if (over == 0) {
       replace_n <- NULL
     }
-    
-    ####Legacy Conditionals####    
-    
+
+    ####Legacy Conditionals####
+
     if(!is.null(input$legacy) && input$NAD83 == TRUE) {
       legacyobject <- legacyobject()
       legacyobject <- st_transform(legacyobject, crs = 5070)
@@ -1303,32 +1303,32 @@ server <- function(input, output, session) {
     } else {
       legacyobject <- NULL
     }
-    
+
     if(!is.null(input$legacy_strat)) {
       legacy_strat <- input$legacy_strat
     } else {
       legacy_strat <- NULL
     }
-    
+
     if(!is.null(input$legacy_cat)) {
       legacy_cat <- input$legacy_cat
     } else {
       legacy_cat <- NULL
     }
-    
+
     if(!is.null(input$legacy_aux)) {
       legacy_aux <- input$legacy_aux
     } else {
       legacy_aux <- NULL
     }
-    
+
     ####Additional Attribute Conditionals####
     aux_var <- NULL
     mindist <- NULL
     maxtry <- 10
     n_near <- NULL
     DesignID <- "Site"
-    
+
     if (input$addoptions == TRUE && input$aux_var != "None") {
       aux_var <- input$aux_var
     }
@@ -1340,22 +1340,22 @@ server <- function(input, output, session) {
     }
     if (input$addoptions == TRUE && !is.na(input$n_near)) {
       n_near <- input$n_near
-    } 
+    }
     if (input$addoptions == TRUE && input$DesignID != "Site") {
       DesignID <- input$DesignID
-    } 
-    
+    }
+
     sfobject <- sfobject()
-    
+
     if(input$NAD83 == TRUE) {
       sfobject <- st_transform(sfobject, crs = 5070)
     }
-    
+
     #Removes stop_df if calculate button has been previously pressed
     if(exists('stop_df')) {
       rm('stop_df', envir=.GlobalEnv)
     }
-    
+
     if(input$designtype=="GRTS") {
       design <- try(grts(sfobject,
                          n_base = strata_n,
@@ -1374,7 +1374,7 @@ server <- function(input, output, session) {
                          n_near = n_near,
                          DesignID = DesignID))
     }
-    
+
     else {
       design <- try(irs(sfobject,
                         n_base = strata_n,
@@ -1393,9 +1393,9 @@ server <- function(input, output, session) {
                         n_near = n_near,
                         DesignID = DesignID))
     }
-    
+
     remove_modal_spinner()
-    
+
     #If grts or irs is unsuccessful, reactive returns error message data frame (stop_df)
     if(exists('stop_df')){
       stop_df
@@ -1403,10 +1403,10 @@ server <- function(input, output, session) {
     } else {
       design
     }
-    
+
   })
-  
-  
+
+
   ####Design Error####
   output$error <- renderTable({
     if(is.data.frame(DESIGN())) {
@@ -1414,103 +1414,103 @@ server <- function(input, output, session) {
     } else {
       print("No Design Errors Found. Way To Go!")
     }
-    
-    
+
+
   })
-  
-  
+
+
   ####SS Summary####
   output$summary <- renderDataTable({
-    
+
     Summary <- sp_rbind(DESIGN())
     st_geometry(Summary) <- NULL
     Summary <- Summary %>% filter(!(is.na(wgt))) %>%
       group_by(siteuse, stratum, caty) %>%
       summarise(SITES = n(), .groups = 'drop') %>%
-      group_split(siteuse) %>% 
-      map_dfr(~ .x %>% 
-                janitor::adorn_totals(.) %>% 
-                mutate(siteuse = replace(siteuse, n(), str_c(siteuse[n()], "_", 
-                                                             first(siteuse))))) %>% 
+      group_split(siteuse) %>%
+      map_dfr(~ .x %>%
+                janitor::adorn_totals(.) %>%
+                mutate(siteuse = replace(siteuse, n(), str_c(siteuse[n()], "_",
+                                                             first(siteuse))))) %>%
       rename_with(toupper)%>% rename(CATEGORY = CATY)
     rows <- nrow(Summary)
-    DT::datatable(Summary, rownames=F, options = list(pageLength = rows, dom = 't')) %>% 
+    DT::datatable(Summary, rownames=F, options = list(pageLength = rows, dom = 't')) %>%
       formatStyle('STRATUM',
                   target = 'row',
                   fontWeight = styleEqual(c("-"), c('bold')))
   })
-  
+
   ####PopEst Sim UI####
   output$conditionprb <- renderUI({
-    
+
     if(input$connumber == "2") {
       fluidRow(
         splitLayout(
-          numericInput(inputId = "CON2", 
-                       label = "Good Probability (%)", 
+          numericInput(inputId = "CON2",
+                       label = "Good Probability (%)",
                        value = 50, min = 0, max = 100., width = "80px"),
-          numericInput(inputId = "CON4", 
-                       label = "Poor Probability (%)", 
+          numericInput(inputId = "CON4",
+                       label = "Poor Probability (%)",
                        value = 50, min = 0, max = 100, width = "80px")))
     } else if(input$connumber == "3") {
       fluidRow(
         splitLayout(
-          numericInput(inputId = "CON2", 
-                       label = HTML("Good</br> Probability (%)"), 
+          numericInput(inputId = "CON2",
+                       label = HTML("Good</br> Probability (%)"),
                        value = 33, min = 0, max = 100, width = "80px"),
-          numericInput(inputId = "CON3", 
-                       label = HTML("Fair</br> Probability (%)"), 
+          numericInput(inputId = "CON3",
+                       label = HTML("Fair</br> Probability (%)"),
                        value = 33, min = 0, max = 100, width = "80px"),
-          numericInput(inputId = "CON4", 
-                       label = HTML("Poor</br> Probability (%)"), 
+          numericInput(inputId = "CON4",
+                       label = HTML("Poor</br> Probability (%)"),
                        value = 33, min = 0, max = 100, width = "80px")))
     } else if(input$connumber == "4") {
       fluidRow(
         splitLayout(
-          numericInput(inputId = "CON2", 
-                       label = HTML("Good</br> Probability (%)"), 
+          numericInput(inputId = "CON2",
+                       label = HTML("Good</br> Probability (%)"),
                        value = 25, min = 0, max = 100, width = "80px"),
-          numericInput(inputId = "CON3", 
-                       label = HTML("Fair</br> Probability (%)"), 
+          numericInput(inputId = "CON3",
+                       label = HTML("Fair</br> Probability (%)"),
                        value = 25, min = 0, max = 100, width = "80px"),
-          numericInput(inputId = "CON4", 
-                       label = HTML("Poor</br> Probability (%)"), 
+          numericInput(inputId = "CON4",
+                       label = HTML("Poor</br> Probability (%)"),
                        value = 25, min = 0, max = 100, width = "80px")),
-        numericInput(inputId = "CON5", 
-                     label = HTML("Very Poor</br> Probability (%)"), 
+        numericInput(inputId = "CON5",
+                     label = HTML("Very Poor</br> Probability (%)"),
                      value = 25, min = 0, max = 100, width = "80px"))
     } else{
       fluidRow(
         splitLayout(
-          numericInput(inputId = "CON1", 
-                       label = HTML("Very Good</br> Probability (%)"), 
+          numericInput(inputId = "CON1",
+                       label = HTML("Very Good</br> Probability (%)"),
                        value = 20, min = 0, max = 100, width = "80px"),
-          numericInput(inputId = "CON2", 
-                       label = HTML("Good</br> Probability (%)"), 
+          numericInput(inputId = "CON2",
+                       label = HTML("Good</br> Probability (%)"),
                        value = 20, min = 0, max = 100, width = "80px"),
-          numericInput(inputId = "CON3", 
-                       label = HTML("Fair</br> Probability (%)"), 
+          numericInput(inputId = "CON3",
+                       label = HTML("Fair</br> Probability (%)"),
                        value = 20, min = 0, max = 100, width = "80px")),
         column(9,
                splitLayout(
-                 numericInput(inputId = "CON4", 
-                              label = HTML("Poor</br> Probability (%)"), 
+                 numericInput(inputId = "CON4",
+                              label = HTML("Poor</br> Probability (%)"),
                               value = 20, min = 0, max = 100, width = "80px"),
-                 numericInput(inputId = "CON5", 
-                              label = HTML("Very Poor</br> Probability (%)"), 
+                 numericInput(inputId = "CON5",
+                              label = HTML("Very Poor</br> Probability (%)"),
                               value = 20, min = 0, max = 100, width = "80px"))))
     }
   })
-  
+
   ####PopEst Simulation####
   samplesize <- eventReactive(c(input$ssbtn, input$goButton), {
     #req(input$CON2, input$CON4)
-    
+
     forcat <- DESIGN()$sites_base
     units(forcat$wgt) <- NULL
-    
-    
-    
+
+
+
     if (input$connumber == "2"){
       forcat$Condition <- sample(c("Good", "Poor"), size = nrow(forcat), replace = TRUE, prob = c(input$CON2, input$CON4))
       colors <- c("#f55b5b", "#5796d1")
@@ -1527,7 +1527,7 @@ server <- function(input, output, session) {
       forcat$Condition <- sample(c("Very Good", "Good", "Fair", "Poor", "Very Poor"), size = nrow(forcat), replace = TRUE, prob = c(input$CON1, input$CON2, input$CON3, input$CON4, input$CON5))
       colors <- c("#d15fee", "#f55b5b", "#EE9A00", "#5796d1", "blue")
     }
-    
+
     if (input$stratum == "None") {
       if(input$conflim == "95%") {
         cat_ests <- cat_analysis(
@@ -1544,7 +1544,7 @@ server <- function(input, output, session) {
           conf = 90)
       }
     }
-    
+
     if (input$stratum != "None") {
       stratum_var <- input$stratum
       if(input$conflim == "95%") {
@@ -1564,7 +1564,7 @@ server <- function(input, output, session) {
           conf = 90)
       }
     }
-    
+
     cat_ests <- cat_ests %>%
       filter(!(Category == "Total")) %>%
       mutate(Category = factor(Category, levels=c("Very Poor", "Poor", "Fair", "Good", "Very Good"))) %>%
@@ -1574,7 +1574,7 @@ server <- function(input, output, session) {
              UCB = round(UCB, 0),
              LCB = round(LCB, 0),
              MarginofError.P = round(MarginofError.P, 0))
-    
+
     avgMOE <- mean(cat_ests$MarginofError.P)
     avgMOE <- round(cat_ests$MarginofError.P, 0)
     nResp <- sum(cat_ests$nResp)
@@ -1606,52 +1606,52 @@ server <- function(input, output, session) {
       scale_y_continuous(labels = scales::percent_format(scale = 1), breaks=c(0,25,50,75,100)) +
       coord_flip(ylim=c(-2, 110)) +
       geom_text(aes(label=paste(format(LCB),"%",
-                                sep=""), y=LCB), hjust = 1.1, size = 3.5, fontface = "bold", 
+                                sep=""), y=LCB), hjust = 1.1, size = 3.5, fontface = "bold",
                 color = "#4D4D4D", family="sans", position = position_nudge(x = 0.15)) +
       geom_text(aes(label=paste(format(UCB),"%",
-                                sep=""), y=UCB), hjust = -.15,size = 3.5, fontface = "bold", 
+                                sep=""), y=UCB), hjust = -.15,size = 3.5, fontface = "bold",
                 color = "#4D4D4D", family="sans", position = position_nudge(x = 0.15))
     plot
   })
-  
-  
+
+
   output$ssplot <- renderPlot({
     samplesize()
   })
-  
+
   ####Spatial Balance####
   sbresult <- eventReactive(input$balancebtn, {
     req(input$caty == "None")
-    
+
     if(input$stratum != "None") {
       sp_balance(DESIGN()$sites_base, sfobject(), stratum_var = input$stratum, metrics = input$balance)
     } else {
-      sp_balance(DESIGN()$sites_base, sfobject(), metrics = input$balance)  
-    } 
+      sp_balance(DESIGN()$sites_base, sfobject(), metrics = input$balance)
+    }
   })
-  
+
   output$balance <-  renderPrint({
     sbresult()
   })
-  
-  
+
+
   ####Design Table####
   output$table <- renderDataTable(server = FALSE, {
     req(!is.data.frame(DESIGN()))
     if (input$addoptions == TRUE) {
       rseed <- input$seed
     }
-    
-    DES_SD <- sp_rbind(DESIGN())  
+
+    DES_SD <- sp_rbind(DESIGN())
     #Add xcoord/ycoord
-    DES_SD <- DES_SD %>% 
+    DES_SD <- DES_SD %>%
       mutate(xcoord = unlist(map(DES_SD$geometry, 1)),
              ycoord = unlist(map(DES_SD$geometry, 2)), .after = lat_WGS84)
     st_geometry(DES_SD) <- NULL
-    DESIGN<- DES_SD %>% filter(!(is.na(wgt))) %>% 
-      select(-None) %>% 
+    DESIGN<- DES_SD %>% filter(!(is.na(wgt))) %>%
+      select(-None) %>%
       mutate(rep_seed = rseed, .after= "caty")
-    
+
     DT::datatable(
       DESIGN,
       callback=JS('$("button.buttons-copy").css("background","#337ab7").css("color", "#fff");
@@ -1669,57 +1669,57 @@ server <- function(input, output, session) {
                        list(extend = 'pdf', filename = paste("Survey_Design_", Sys.Date(), sep="")))
       ))
   })
-  
+
   ####Download Shapefile####
   output$shp_btn <- renderUI({
     req(!is.data.frame(DESIGN()))
     #req(DESIGN())
     downloadButton("download_shp", HTML("Download Survey <br/> Site Shapefile"), icon=icon("compass"), style="color: #fff; background-color: #337ab7; border-color: #2e6da4")
   })
-  
-  
+
+
   output$download_shp <- downloadHandler(
     filename <- function() {
       paste(format(Sys.Date(), "%Y-%m-%d"), "_Survey_Design.zip", sep="")
-      
+
     },
     content = function(file) {
       tmp.path <- dirname(file)
-      
+
       name.base <- file.path(tmp.path, "Survey_Sites")
       name.glob <- paste0(name.base, ".*")
       name.shp  <- paste0(name.base, ".shp")
       name.zip  <- paste0(name.base, ".zip")
-      
+
       if (length(Sys.glob(name.glob)) > 0) file.remove(Sys.glob(name.glob))
       DES_SD <- sp_rbind(DESIGN())
-      DES_SD <- DES_SD %>% filter(!(is.na(wgt))) %>% select(-None) %>% 
+      DES_SD <- DES_SD %>% filter(!(is.na(wgt))) %>% select(-None) %>%
         mutate(xcoord = unlist(map(DES_SD$geometry, 1)),
-               ycoord = unlist(map(DES_SD$geometry, 2)), .after = lat_WGS84) 
-      
+               ycoord = unlist(map(DES_SD$geometry, 2)), .after = lat_WGS84)
+
       st_write(DES_SD, dsn = name.shp, ## layer = "shpExport",
                driver = "ESRI Shapefile", quiet = TRUE)
-      
+
       zip::zipr(zipfile = name.zip, files = Sys.glob(name.glob))
       req(file.copy(name.zip, file))
-      
+
       if (length(Sys.glob(name.glob)) > 0) file.remove(Sys.glob(name.glob))
-    }  
+    }
   )
-  
+
   ####Mapping####
-  
+
   output$map <- renderLeaflet({
     req(input$goButton, DESIGN())
-    
+
     surveypts <- sp_rbind(DESIGN())
     surveypts <- surveypts %>% filter(!(is.na(stratum))) %>% filter(!(is.na(caty))) %>%
       st_transform(CRS("+proj=longlat  +datum=WGS84"))
-    
+
     sfobject <- sfobject()
     geometry<-class(sfobject$geometry[[1]])
     frame_type<-strsplit(geometry," ")[[2]]
-    
+
     if (frame_type=="MULTIPOLYGON" || frame_type=="POLYGON") {
       frame_type<-"area"
     } else if (frame_type=="POINT" || frame_type=="MULTIPOINT") {
@@ -1727,13 +1727,13 @@ server <- function(input, output, session) {
     } else {
       frame_type<-"linear"
     }
-    
+
     frame <- sfobject %>%
-      st_transform(CRS("+proj=longlat  +datum=WGS84")) 
-    
+      st_transform(CRS("+proj=longlat  +datum=WGS84"))
+
     m<-mapview(surveypts, zcol = input$color)
-    
-    
+
+
     if(frame_type=="linear") {
       m@map <- m@map %>%
         addPolylines(data=frame, color="blue") %>%
@@ -1744,95 +1744,95 @@ server <- function(input, output, session) {
         addProviderTiles("OpenTopoMap")}
     else {
       m@map <- m@map %>%
-        addProviderTiles("OpenTopoMap")}  
-    
+        addProviderTiles("OpenTopoMap")}
+
     m@map
   })
-  
-  
+
+
   output$plot <- renderPlot({
     req(input$goButton, DESIGN())
-    
+
     surveypts <- sp_rbind(DESIGN())
     surveypts <- surveypts %>% filter(!(is.na(stratum))) %>% filter(!(is.na(caty)))
-    
+
     sfobject <- sfobject()
-    
+
     plot<-ggplot()+
       geom_sf(data = sfobject, color = "blue", fill = "blue") +
       geom_sf(data = surveypts, aes_string(color=input$color, shape=input$shape), size=5) +
       scale_color_viridis_d() +
       xlab("Latitude") + ylab("Longitude") +
       labs(color = input$color, shape = input$shape) +
-      annotation_scale(location = "bl", width_hint = 0.5) + 
+      annotation_scale(location = "bl", width_hint = 0.5) +
       annotation_north_arrow(location = "tr", height = unit(3, "cm"),
-                             width = unit(3, "cm"), which_north = "true", 
-                             style = north_arrow_fancy_orienteering) + 
+                             width = unit(3, "cm"), which_north = "true",
+                             style = north_arrow_fancy_orienteering) +
       theme(text=element_text(family="serif"),
             axis.text=element_text(color="#000000", size = 18, face="bold"),
             axis.title=element_text(face="bold", size = 20),
             legend.text = element_text(size=16),
             legend.title = element_text(size=18, face="bold"),
             legend.margin=margin(),
-            panel.grid.major = element_line(color = gray(0.5), 
-                                            linetype = "dashed", size = 0.5), 
+            panel.grid.major = element_line(color = gray(0.5),
+                                            linetype = "dashed", size = 0.5),
             panel.background = element_rect(fill = "aliceblue"))
     print(plot)
-  }, height = 500, width = 700)  
-  
-  
+  }, height = 500, width = 700)
+
+
   ####Weight Adjustment####
   adjdata <- reactive({
     adj<-read.csv(req(input$adjdata$datapath))
   })
-  
-  
+
+
   #Adjustment Weight Input
   observeEvent(adjdata(), {
-    adj_cols <- adjdata() %>% select_if(~is.numeric(.x)) 
+    adj_cols <- adjdata() %>% select_if(~is.numeric(.x))
     updateSelectInput(session, "adjwgt", selected = NULL, choices = c("Required" = "", colnames(adj_cols)))
   })
-  
+
   #Adjustment Weight Category Input
   observeEvent(adjdata(), {
-    adj_cols <- adjdata() %>% select_if(~!is.numeric(.x)) 
+    adj_cols <- adjdata() %>% select_if(~!is.numeric(.x))
     updateSelectInput(session, "adjwgtcat", selected = NULL, choices = c("None", colnames(adj_cols)))
   })
-  
+
   #Adjustment Site Input
   observeEvent(adjdata(), {
-    adj_cols <- adjdata() %>% select_if(~!is.numeric(.x)) 
+    adj_cols <- adjdata() %>% select_if(~!is.numeric(.x))
     updateSelectInput(session, "adjsitesampled", selected = NULL, choices = c("Required" = "", colnames(adj_cols)))
   })
-  
+
   #Sites Sampled Reactive
-  sampled_choices <- reactive({ 
+  sampled_choices <- reactive({
     adjdata() %>% select(input$adjsitesampled) %>% unique()
   })
-  
-  
+
+
   #Sites sampled Events
   observeEvent(input$adjsitesampled, {
     updateSelectInput(session,'sampled_site', selected = NULL, choices = c("Required" = "", sampled_choices()))
   })
-  
+
   #Additional Oversample sampled Events
   observeEvent(input$adjsitesampled, {
     updateSelectInput(session,'addoversample_site', selected = NULL, choices = c(sampled_choices()))
   })
-  
+
   #Sites sampled Events
   observeEvent(input$adjsitesampled, {
     updateSelectInput(session,'nontarget_site', selected = NULL, choices = c(sampled_choices()))
   })
-  
-  catname <- reactive({ 
+
+  catname <- reactive({
     adjdata() %>% pluck(input$adjwgtcat) %>% unique()
   })
-  
+
   output$frame <- renderUI({
     req(input$frameadj==TRUE)
-    
+
     if (input$adjwgtcat != "None") {
       lapply(catname(), function(i) {
         numericInput(
@@ -1849,56 +1849,56 @@ server <- function(input, output, session) {
         width = "200px")
     }
   })
-  
+
   output$table_download <- renderUI({
     req(adjbutton())
     downloadButton("adjdownload", HTML("<b>Download Adjusted <br/> Weights Table</b>"), style="color: #fff; background-color: #337ab7; border-color: #2e6da4")
   })
-  
+
   #Weight Adjustment
   adjbutton <- eventReactive(input$adjButton,{
     validate(
-      need(input$adjwgt != "", 
+      need(input$adjwgt != "",
            "Please input initial site weights."),
-      need(input$adjsitesampled != "", 
+      need(input$adjsitesampled != "",
            "Please input site evaluations."),
-      need(input$sampled_site != "", 
+      need(input$sampled_site != "",
            "Please input attribute(s) which indicate site has been sampled."),
     )
-    
+
     adjdata <- adjdata() %>% mutate(None = "None")
-    
+
     wgt <- adjdata %>% pluck(input$adjwgt)
-    
+
     if (input$adjwgtcat == "None") {
       wtcat <- NULL
     } else {
       wtcat <- adjdata %>% pluck(input$adjwgtcat)
     }
-    
-    
-    sites <- adjdata %>% 
+
+
+    sites <- adjdata %>%
       mutate(SITES_SAMPLED = case_when(.data[[input$adjsitesampled]] %in% .env$input$sampled_site ~ TRUE,
-                                       TRUE ~ FALSE)) %>% pluck("SITES_SAMPLED") 
-    
+                                       TRUE ~ FALSE)) %>% pluck("SITES_SAMPLED")
+
     #Calculate Sample Frame Size
     if (input$frameadj == FALSE) {
-      tpextentframesize <- adjdata %>% 
+      tpextentframesize <- adjdata %>%
         filter(!(.data[[input$adjsitesampled]] %in% .env$input$addoversample_site)) %>%
-        group_by(.data[[input$adjwgtcat]]) %>% 
+        group_by(.data[[input$adjwgtcat]]) %>%
         summarize(SUM = sum(.data[[input$adjwgt]])) %>%
         pivot_wider(names_from = .data[[input$adjwgtcat]], values_from = "SUM") %>% unlist()
-      
-      tpcoreframesize <- adjdata %>% 
+
+      tpcoreframesize <- adjdata %>%
         filter(!(.data[[input$adjsitesampled]] %in% c(.env$input$nontarget_site, .env$input$addoversample_site))) %>%
-        group_by(.data[[input$adjwgtcat]]) %>% 
+        group_by(.data[[input$adjwgtcat]]) %>%
         summarize(SUM = sum(.data[[input$adjwgt]])) %>%
         pivot_wider(names_from = .data[[input$adjwgtcat]], values_from = "SUM") %>% unlist()
-      
-      
+
+
       WGT_TP_EXTENT <- adjwgt(wgt, wtcat, tpextentframesize, sites)
       WGT_TP_CORE <- adjwgt(wgt, wtcat, tpcoreframesize, sites)
-      
+
       df <- cbind(adjdata, WGT_TP_EXTENT, WGT_TP_CORE)
     }
     else {
@@ -1907,12 +1907,12 @@ server <- function(input, output, session) {
         for (n in catname()) {
           framesize <- input[[paste0("CAT_",n)]]
           datalist[[n]] <- framesize
-        } 
+        }
         framesize <- do.call(cbind.data.frame, datalist)
         framesize <- unlist(framesize)
-        
+
         ADJWGT <- adjwgt(wgt, wtcat, framesize, sites)
-        
+
         #adjdata <- adjdata()
         df <- cbind(adjdata, ADJWGT)
       } else {
@@ -1921,17 +1921,17 @@ server <- function(input, output, session) {
         df <- cbind(adjdata, ADJWGT)
       }
     }
-    
+
     df <- df %>% select(!(None))
     df
-    
+
   })
-  
-  
+
+
   output$adjtable <- renderDataTable({
-    adjbutton() 
+    adjbutton()
   })
-  
+
   output$adjdownload <- downloadHandler(
     filename = function() {
       paste("Survey_adjwgts_", Sys.Date(), ".csv", sep="")
@@ -1939,8 +1939,8 @@ server <- function(input, output, session) {
     content = function(file) {
       write.csv(adjbutton(), file, row.names = FALSE)
     })
-  
-  session$onSessionEnded(stopApp) 
+
+  # session$onSessionEnded(stopApp)
 }
 # shinyApp()
 shinyApp(ui = ui, server = server)
