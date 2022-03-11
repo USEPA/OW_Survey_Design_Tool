@@ -1,6 +1,6 @@
 applications:
 - name: SurveyDesignTool
-  memory: 800M
+  memory: 1000M
   routes:
     - route: Survey_Design_Tool.app.cloud.gov
   disk_quota: 2G
