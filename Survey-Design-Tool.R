@@ -59,6 +59,7 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                                               tags$li(strong("Stratified Sampling")," - Selection where the sample frame is divided into non-overlapping strata which independent random samples are calculated."),
                                               tags$li(strong("Unequal Probability Sampling")," - unequal inclusion probability. Selection where the chance of being included is calculated relative to the distribution of a categorical variable across the population. This type of sampling can give smaller populations a greater chance of being selected."), 
                                               tags$li(strong("Proportional Probability Sampling")," - proportional inclusion probability. Selection where the chance of being included is proportional to the values of a positive auxiliary variable. For example, if you have a large number of strata in your design, this will ensure each stratum has a sample."))),
+                                    br(),
                                     bsCollapsePanel(title = h4(strong("Designing the Survey")), value="design",
                                       tags$li("Select the Sample Frame. Sample frames must be an ESRI shapefile. The user must select all parts of the shapefiles which include .shp, .dbf, .shx. and .prj files (Tip: Hold down ctrl and select each file). The coordinate system for the sample frame must be one where distance for the coordinates is meaningful. The attributes in the file will populate as possible inputs for the design. Maximum size is currently 10GB."),
                                       tags$li("Choose your desired Design Type:",
@@ -67,14 +68,14 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                                               tags$li(strong("IRS")," - Independent Random Sample. For survey designs desiring non-spatially balanced samples."))),
                                       tags$li("Select Strata attribute. If your design is stratified, select the attribute which indicates the desired Strata. If Stratum equals 'None', the design is unstratified. The default is 'None'. Example Strata could be Stream Type (Perennial and Intermittent) or Size (Large and Small)."),
                                       tags$li("Select Category attribute. For an unequal inclusion probability design, select the attribute which indicates the categorical variable which the selection will be based on. Often, the output Category sample sizes will be close, but not exact to the user's sample sizes allocated for each Category. This is because the Category-level sample sizes are random variables. The default is 'None'. An example Category could be stream order or elevation (high/low)."),
-                                    
+                                      tags$ul(
                                     h4(strong(em("Optional: Additional Design Attributes"))),
                                       tags$li("Additional design attributes such as Auxiliary Variables, Reproducible Seed, DesignID, Minimum Distance, Maximum Attempts, and Nearest Neighbor Replacement Sites are also available. Descriptions of these inputs can be found in the grts section on the spsurvey manual as well as the helper buttons next to the inputs."),
-                                    h4(strong(em("Optional: Legacy Sampling"))),
+                                    h4(strong(em("Legacy Sampling"))),
                                       tags$li("Legacy sites are sites that have been selected in a previous probability sample and are to be automatically included in the current probability sample."),
                                       tags$li("Upload a POINT sample frame which contains the Legacy sites you would like included in the design. All sites in the sample frame file will be considered legacy sites."),
                                       tags$li("If your Legacy sample frame has different Strata, Category or Auxiliary variable names than your design sample frame, select the corresponding attribute(s) from the legacy sample frame. These inputs will not appear if the names match your design sample frame.")
-                                    )),
+                                    ))),
                                     tags$ol(
                                       bsCollapsePanel(title = h4(strong("Determine Survey Sample Sizes")), value="samplesize",
                                       p("Setting an appropriate sample size and considering how they should be allocated across a sample frame is a fundamental step in designing a successful survey. Many surveys, especially those used for environmental monitoring, are limited by budgetary and logistical constraints. The designer must determine a sample size which can overcome these constraints while ensuring the survey estimates the parameter(s) of interest with a low margin of error.
@@ -211,6 +212,7 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                                                    tags$td(align = "center", "2"),
                                                    tags$td(align = "center", "Target-Sampled-Additional"),
                                                  ))))),
+                                    br(),
                                       h4(strong("Weight Adjustment Inputs")),
                                       tags$li("Upload the file which contains the required weight adjustment inputs. See below for the descriptions of each input."),
                                       tags$li("Select the column which has the initial unadjusted weights for each site. The sum of these weights is how the tool calculates the frame size. You also have the option to input the frame size manually."),
@@ -230,7 +232,7 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                               tags$head(
                                 tags$style(
                                   HTML("#citation {font-size: 14px;}"))),
-                                    p("If you have used the Survey Design Tool to generate a survey used in publication or reporting, please reference the tool URL and cite the spsurvey package."),
+                                    p("If you have used the Survey Design Tool to generate a survey used in publication or reporting, please reference the tool URL (https://survey_design_tool.app.cloud.gov) and cite the spsurvey package."),
                                     verbatimTextOutput("citation"),
                                     br(),hr(),
                                     h3(strong('Disclaimer')),
@@ -756,11 +758,11 @@ server <- function(input, output, session) {
   })
   
   strat_choices <- reactive({req(dbfdata())
-    dbfdata() %>% select(input$stratum) %>% unique()
+    dbfdata() %>% select(input$stratum) %>% arrange(.data[[input$stratum]]) %>% unique()
   })
   
   caty_choices <- reactive({req(dbfdata())
-    dbfdata() %>% select(input$caty) %>% unique()
+    dbfdata() %>% select(input$caty) %>% arrange(.data[[input$caty]]) %>% unique()
   })
   
   
@@ -1595,7 +1597,7 @@ server <- function(input, output, session) {
     frame <- sfobject %>%
       st_transform(CRS("+proj=longlat  +datum=WGS84")) 
     
-    m<-mapview(surveypts, zcol = input$color, burst = TRUE)
+    m<-mapview(surveypts, zcol = input$color)
     
     
     if(frame_type=="linear") {
