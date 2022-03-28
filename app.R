@@ -434,16 +434,22 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                         uiOutput('mytabs'),
                         conditionalPanel(condition = "output.mytabs",
                                          hr(),
+                                         fluidRow(
+                                           column(5,
                                          checkboxInput(inputId = "addSF_SUM", 
                                                        label=span(strong("Sample Frame Summary"),
                                                                   style="font-weight: bold; font-size: 18px"), 
-                                                       value = FALSE)),
-                        fluidRow(
+                                                       value = FALSE) %>%
+                          #SF Summary helper
+                          helper(type = "inline",
+                                 title = "Sample Frame Summary",
+                                 content = c("Aids user in summarizing the sample frame based on the selected Strata and Categories. These proportions can assist in setting sample size(s)."),
+                                 size = "s", easyClose = TRUE, fade = TRUE)))),
                           conditionalPanel(condition = "input.addSF_SUM",
                                            br(),
                                            fluidRow(
                                              column(4,
-                                                    DT::dataTableOutput("SF_SUM") %>% withSpinner(color="#0275d8")))))
+                                                    DT::dataTableOutput("SF_SUM") %>% withSpinner(color="#0275d8"))))
                       ) #mainPanel
              ), #tabPanel (Prepare and Run Survey Design)
              ####Design Results####
