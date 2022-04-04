@@ -199,7 +199,7 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                                                tags$li("The Survey Map tab provides an interactive and static map of the sample frame and the survey sample sites.")
                                                  )),
                                  bsCollapsePanel(title = h3(strong("Adjust Survey Weights Tab")), value="adjust",
-                                                 p("Adjusting initial survey design weights is necessary when implementation results in the use of replacement sites or when it is desired to have final weights sum to known frame size of the desired population. Adjusted weights are equal to initial weight * framesize/sum(initial weights). The adjustment is done separately for each 
+                                                 p("Adjusting initial survey design weights is necessary when implementation results in the use of replacement sites or when it is desired to have final weights sum to known frame size of the desired population. This includes samples that are smaller or larger than planned, instances where an oversample is used, or samples impacted by frame error or nonresponse error. Adjusted weights are equal to initial weight * framesize/sum(initial weights). The adjustment is done separately for each 
                                       Category specified in Weighting Category input. The tool allows the user to manually enter a desired population Frame Size or an automated calculation of the frame size by totaling the initial weights and adjusting it by the users site Evaluation Status inputs. By using the automated method, the output will render two adjusted weights:"),
                                       tags$ul(
                                         tags$li(strong("WGT_TP_EXTENT")," - Weights based on the evaluation of all target and non-target probability sites. These weights are only used to estimate extent for target and non-target populations."),
@@ -345,7 +345,7 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                         # Input: Select sample frame files 
                         fileInput(
                           inputId = "filemap",
-                          label = strong("Choose all files of the Sample Frame"),
+                          label = HTML("<b>Choose all files of the Sample Frame </br>Required: (.shp, .dbf, .prj, .shx)</b>"),
                           multiple = TRUE,
                           accept = c(".gdb", ".shp", ".prj", ".shx", ".dbf", ".sbn", ".sbx", ".cpg", ".gpkg"), 
                           width = "600px") %>%
@@ -411,7 +411,7 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                         uiOutput('addoptions'),
                         conditionalPanel(condition = "input.addoptions == 1",
                         hr(),
-                        h4(strong(HTML("<center>Legacy Site Attributes (Optional)<center/>"))),
+                        h4(strong(HTML("<center>Legacy Site Attributes<center/>"))),
                         ####Legacy####
                         uiOutput("legacyfile"),
                         
@@ -1209,13 +1209,14 @@ server <- function(input, output, session) {
         rename(STRATUM = input$stratum,
                CATEGORY = input$caty) %>%
         group_by(STRATUM, CATEGORY) %>%
-        summarise(RESOURCE_units = sum(Dist), .groups = 'drop') %>%
-        mutate(RESOURCE_units = round(RESOURCE_units)) %>%
+        summarise(RESOURCE_units = round(sum(Dist)), .groups = 'drop') %>%
+        mutate(Proportion = round((RESOURCE_units/sum(RESOURCE_units))*100, 1)) %>%
         group_split(STRATUM) %>% 
         map_dfr(~ .x %>% 
                   janitor::adorn_totals(.) %>%
                   mutate(STRATUM = replace(STRATUM, n(), str_c(STRATUM[n()], "_", 
-                                                               first(STRATUM))))) 
+                                                               first(STRATUM)))))
+        
       rows <- nrow(Summary)
       DT::datatable(Summary, rownames=F, options = list(pageLength = rows, dom = 't')) %>% 
         formatStyle('CATEGORY',
