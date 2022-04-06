@@ -138,7 +138,7 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                                                  tags$ol(
                                                    h4(strong("Requirements")),
                                                    tags$ul(
-                                                     tags$li("The coordinate reference system (crs) for the sample frame should use projected coordinates NOT geographic coordinates."),
+                                                     tags$li("The coordinate reference system (crs) for the sample frame should use an area-preserving projection such as Albers or UTM so that spatial distances are equivalent for all directions. Geographic CRS are not accepted."),
                                                      tags$li("All design attribute variables, such as the Strata and Categories, must be contained in the user's sample frame file. You may run the design without these inputs as an unstratified equal probability design."),
                                                      tags$li("When constructing your design, the user must identify how they want their survey to be designed and which random selection to use:"),
                                                      tags$ul(
@@ -353,7 +353,7 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                           helper(type = "inline",
                                  title = "Survey Sample Frame",
                                  content = c("A Survey Sample Frame is an ESRI shapefile which contains geographic features represented by points, lines or polygons which is used in the selection of the sample. Maximum size is currently 10GB.",
-                                             "The coordinate reference system (CRS) for the sample frame should use projected coordinates. The user may choose to transform the CRS to NAD83 / Conus Albers (a projected CRS) by checking the box below.",
+                                             "The coordinate reference system (CRS) for the sample frame should be an area-preserving projection. If a geographic CRS is used, the user may choose to transform the CRS to NAD83 / Conus Albers (a projected CRS) by checking the box below.",
                                              "<b>Required Files:</b>",
                                              "<b>Shapefiles (.shp, .dbf, .prj, .shx)</b>"),
                                  
@@ -411,8 +411,8 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                         uiOutput('addoptions'),
                         conditionalPanel(condition = "input.addoptions == 1",
                         hr(),
-                        h4(strong(HTML("<center>Legacy Site Attributes<center/>"))),
-                        ####Legacy####
+                        h4(strong(HTML("<center>Legacy Site Sampling<center/>"))),
+                        ####Legacy Sampling####
                         uiOutput("legacyfile"),
                         
                         
@@ -969,7 +969,7 @@ server <- function(input, output, session) {
       #User legacy helper
       helper(type = "inline",
              title = "Legacy Sample Frame",
-             content = c("Legacy Sample Frame is a POINT or MULTIPOINT shapefile which contains sites that have been selected in a previous probability sample and are to be automatically included in a current probability sample. If the users transforms the samples frames CRS to NAD83/Albers Conus, the legacy object will also be transformed."),
+             content = c("Legacy Sample Frame is a POINT or MULTIPOINT shapefile which contains sites that have been selected in a previous probability sample and are to be automatically included in a current probability sample. If the user transforms the samples frames CRS to NAD83/Albers Conus, the legacy object will also be transformed."),
              size = "s", easyClose = TRUE, fade = TRUE)
   })
   
@@ -1046,7 +1046,7 @@ server <- function(input, output, session) {
                       size = "s", easyClose = TRUE, fade = TRUE),
              
              #Reproducible seed input
-             numericInput("seed", strong("Set Reproducible Seed:"), rseed, width = "200px") %>%
+             numericInput("seed", strong("Set Reproducible Seed"), rseed, width = "200px") %>%
                #Random Seed helper
                helper(type = "inline",
                       title = "Reproducible Seed",
@@ -1182,8 +1182,7 @@ server <- function(input, output, session) {
   })#renderUI
   
   ####SF Summary####
-  
-  output$SF_SUM <- renderDataTable({
+  sumdata <- reactive({
     req(dbfdata(), sfobject(), input$stratum, input$caty)
     
     sfobject <- sfobject()
@@ -1203,14 +1202,21 @@ server <- function(input, output, session) {
       st_geometry(sfobject) <- NULL
       sumdata <- cbind(sfobject, Dist)
     }
+  })
+  
+  
+  output$SF_SUM <- renderDataTable({
+    req(dbfdata(), sfobject(), input$stratum, input$caty)
+    
+    
     
     if(input$stratum != "None" || input$caty != "None"){
-      Summary <- sumdata %>%
+      Summary <- sumdata() %>%
         rename(STRATUM = input$stratum,
                CATEGORY = input$caty) %>%
         group_by(STRATUM, CATEGORY) %>%
         summarise(RESOURCE_units = round(sum(Dist)), .groups = 'drop') %>%
-        mutate(Proportion = round((RESOURCE_units/sum(RESOURCE_units))*100, 1)) %>%
+        mutate(`Proportion_%` = round((RESOURCE_units/sum(RESOURCE_units))*100, 1)) %>%
         group_split(STRATUM) %>% 
         map_dfr(~ .x %>% 
                   janitor::adorn_totals(.) %>%
@@ -1224,7 +1230,7 @@ server <- function(input, output, session) {
                     fontWeight = styleEqual(c("-"), c('bold')))
       
     } else {
-      Summary <- sumdata %>%
+      Summary <- sumdata() %>%
         rename(GROUP = None) %>%
         group_by(GROUP) %>%
         summarise(RESOURCE_units = sum(Dist), .groups = 'drop') %>%
