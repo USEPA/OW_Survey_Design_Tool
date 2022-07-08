@@ -1,9 +1,10 @@
 # Survey Design Tool
 *Current version: 1.0.2 Last updated: 3/28/2022
 ## How to Launch the Tool
-* To launch, download the file <b>app.R</b> and open the file in RStudio for local app deployment. RStudio will recognize the Shiny script and provide a Run App button at the top of the editor pane (look for the green play triangle).
+* Visit https://survey_design_tool.app.cloud.gov/ to launch the tool from EPA's cloud service. If using a large sample frame, consider running the tool locally from your own workstation for a quicker experience. 
+* To launch the tool locally, download the file <b>app.R</b> and open the file in RStudio for local app deployment. RStudio will recognize the Shiny script and provide a Run App button at the top of the editor pane (look for the green play triangle).
      * <b>Note:</b> Requires the R package <b>spsurvey Version <span>&#8805;</span>5.1.0</b>.
-* We are currently working on deploying the app on a cloud infrastructure which will allow users to access and run the the tool via a web browser. Please check back for updates.
+
 
 ## Overview
 This R Shiny app presents an easy-to-use user interface for the calculation of spatially balanced survey designs of point, linear, or areal resources (i.e. lakes, streams, wetlands and coastal resources) using the Generalized Random-Tessellation Stratified (GRTS) algorithm ([Stevens and Olsen 2004](https://cfpub.epa.gov/ncer_abstracts/index.cfm/fuseaction/display.files/fileID/13339)). The tool utilizes functions found within the R package, [spsurvey: Spatial Sampling Design and Analysis](https://cran.r-project.org/package=spsurvey) and contains many sampling design features including stratification, unequal and proportional inclusion probabilities, replacement (oversample) sites, and legacy (historical) sites.
