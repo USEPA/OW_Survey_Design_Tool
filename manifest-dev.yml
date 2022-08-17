@@ -1,8 +1,8 @@
 applications:
-- name: SurveyDesignTool
+- name: survey-design-tool-dev
   memory: 1000M
   routes:
-    - route: Survey_Design_Tool.app.cloud.gov
+    - route: survey-design-tool-dev.app.cloud.gov
   disk_quota: 2G
   buildpacks:
     - r_buildpack
