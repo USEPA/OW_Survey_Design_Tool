@@ -12,7 +12,7 @@ packages:
     - name: leaflet
     - name: mapview
     - name: ggspatial
-    - name: shinythemes
+    - name: bslib
     - name: shinybusy
     - name: spsurvey
     - name: shinycssloaders
