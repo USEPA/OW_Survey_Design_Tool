@@ -9,7 +9,7 @@ library(sp)
 library(leaflet)
 library(mapview)
 library(ggspatial)
-library(shinythemes)
+library(bslib)
 library(shinybusy)
 library(shinycssloaders)
 library(shinyhelper)
@@ -31,7 +31,7 @@ options(shiny.maxRequestSize = 10000*1024^2)
 
 ####Instructions####
 # Define UI
-ui <- fluidPage(theme = shinytheme("yeti"), 
+ui <- fixedPage(theme=bs_theme(version=3, bootswatch="yeti"), 
                 tags$head(tags$link(rel = "stylesheet",
                                     type = "text/css", href = "style.css")),
                 # Header
@@ -342,7 +342,7 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                                       p(tags$a(href="https://rdrr.io/cran/spsurvey/man/adjwgt.html", "Weights Adjustment Example", target= "_blank")),
                                       tags$ol(
                                         h4(strong("Weight Adjustment File Setup Examples")),
-                                        fluidRow(column(4,
+                                        fixedRow(column(4,
                                                         tags$table(border = 5, 
                                                                    tags$thead(
                                                                      tags$tr(
@@ -498,7 +498,7 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                                       width = NULL),
                         hr(),
                         h4(strong(HTML("<center>Design Attributes<center/>"))),
-                        fluidRow(
+                        fixedRow(
                           column(7,
                         #Design Type Input
                         radioButtons(inputId="designtype", 
@@ -568,7 +568,7 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                         uiOutput('mytabs'),
                         conditionalPanel(condition = "output.mytabs",
                                          hr(),
-                                         fluidRow(
+                                         fixedRow(
                                            column(5,
                                          checkboxInput(inputId = "addSF_SUM", 
                                                        label=span(strong("Sample Frame Summary"),
@@ -581,7 +581,7 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                                  size = "s", easyClose = TRUE, fade = TRUE)))),
                           conditionalPanel(condition = "input.addSF_SUM",
                                            br(),
-                                           fluidRow(
+                                           fixedRow(
                                              column(4,
                                                     DT::dataTableOutput("SF_SUM") %>% withSpinner(color="#0275d8"))))
                       ) #mainPanel
@@ -590,6 +590,7 @@ ui <- fluidPage(theme = shinytheme("yeti"),
              tabPanel(title=span(strong("Step 3: Survey Design Results"), 
                                  style = "font-weight: bold; font-size: 16px"),
                       value="Step 3: Survey Design Results",
+                conditionalPanel(condition = "input.goButton",
                       sidebarLayout(
                         sidebarPanel(
                           conditionalPanel(condition = "output.error",
@@ -598,7 +599,8 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                           conditionalPanel(condition = "output.table",
                                            hr(),                 
                                            h4(HTML("<center><b>Survey Site Summary</b></center>")),
-                                           DT::dataTableOutput("summary")),
+                                           dataTableOutput("summary"), 
+                                                  style = "overflow-x: scroll;"),
                           conditionalPanel(condition = "output.summary",
                                            br(), hr(),
                                            h4(HTML("<center><b>Population Estimate Simulation</b></center>")) %>%
@@ -609,7 +611,7 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                                                             The condition classes are randomly assigned by user specified probability weights and can be refreshed with new probability weights to simulate the change in conditions. 
                                                             Adjust the sample size of the design to increase or decrease the Margin of Error estimate."),
                                                     size = "s", easyClose = TRUE, fade = TRUE),
-                                           fluidRow(
+                                           fixedRow(
                                              column(6, offset=3,
                                            radioButtons(inputId="connumber", 
                                                         label=strong("Choose Condition Class Size"), 
@@ -674,13 +676,13 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                           tabsetPanel(
                             tabPanel(strong("Design"),
                                      mainPanel(width=8,
-                                       fluidRow(
+                                       fixedRow(
                                          column(12, offset= 3,
                                               br(),
                                                 conditionalPanel(condition = "output.table",
                                                                  h3(HTML("<center><b>Probability Survey Site Results</b></center>"))))),
                                        br(),
-                                       fluidRow(
+                                       fixedRow(
                                          column(12, offset = 2, 
                                                 uiOutput("shp_btn"))),
                                        br(),
@@ -692,7 +694,7 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                                      br(),
                                      conditionalPanel(condition = "output.ssplot",
                                                       h3(HTML("<center><b>Interactive and Static Maps</b></center>")),
-                                                      fluidRow(
+                                                      fixedRow(
                                                         tags$head(tags$style(HTML("#maptype ~ .selectize-control.single .selectize-input {background-color: #FFD133;}"))),
                                                         selectInput(inputId = "maptype",
                                                                     label = strong("Select Type of Map"),
@@ -727,6 +729,7 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                           )#tabsetPanel
                           , width = 7)#mainPanel
                         , position = c("left", "right"), fluid = TRUE)#sidebarLayout
+                )#Condition panel
              ),#tabPanel(Survey Design)
              ####Adjust Weights####
              tabPanel(title=span(strong("Step 4: Adjust Survey Weights"), 
@@ -822,9 +825,10 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                                      style="color: #fff; background-color: #337ab7; border-color: #2e6da4")
                       ), #sidebarPanel
                       mainPanel(
+                        conditionalPanel(condition = "input.adjButton",
+                        uiOutput("table_download"),
                         DT::dataTableOutput("adjtable"),
-                        style = "width:600px; overflow-x: scroll;",
-                        uiOutput("table_download")
+                        style = "width:600px; overflow-x: scroll;")
                       )#mainPanel
              )#tabPanel(Adjust Weights)
   ), #navbarPage
@@ -1215,7 +1219,7 @@ server <- function(input, output, session) {
     fileInput(
       inputId = "legacy",
       placeholder = "Optional",
-      label = HTML("<b>Choose all files of the Legacy Sites POINT Shapefile <br/> Required: (.shp, .dbf, .prj, .shx)</b>"),
+      label = HTML("<b>Choose all files of the Legacy Sites<br/> POINT Shapefile<br/>  Required: (.shp, .dbf, .prj, .shx)</b>"),
       multiple = TRUE,
       accept = c(".shp", ".prj", ".shx", ".dbf", ".sbn", ".sbx", ".cpg"), 
       width = "600px") %>%
@@ -1280,7 +1284,7 @@ server <- function(input, output, session) {
     req(input$addoptions==TRUE)
     
     #DesignID Input
-    fluidRow(
+    fixedRow(
       column(6, offset=1,
              
              #Auxiliary variable input
@@ -1299,7 +1303,7 @@ server <- function(input, output, session) {
                       size = "s", easyClose = TRUE, fade = TRUE),
              
              #Reproducible seed input
-             numericInput("seed", strong("Set Reproducible Seed"), rseed, width = "200px") %>%
+             numericInput("seed", strong(HTML("Set Reproducible</br> Seed")), rseed, width = "200px") %>%
                #Random Seed helper
                helper(type = "inline",
                       title = "Reproducible Seed",
@@ -1365,7 +1369,7 @@ server <- function(input, output, session) {
   output$mytabs = renderUI({
     do.call(tabsetPanel, c(lapply(1:S(), function(s) {
       tabPanel(strong(paste0("Stratum: ", strat_choices()[s,1])),
-               fluidRow(
+               fixedRow(
                  column(3,
                         #Stratum Inputs
                         selectInput(inputId = paste0("strat",s),
@@ -1428,7 +1432,7 @@ server <- function(input, output, session) {
                                          })
                                   )
                  )#Conditionalpanel
-               )#fluidrow
+               )#fixedRow
       )#tabPanel
     }))#stratum apply  
     ) #tabsetPanel
@@ -1829,7 +1833,7 @@ server <- function(input, output, session) {
   output$conditionprb <- renderUI({
     
     if(input$connumber == "2") {
-      fluidRow(
+      fixedRow(
         splitLayout(
           numericInput(inputId = "CON2", 
                        label = "Good Probability (%)", 
@@ -1838,7 +1842,7 @@ server <- function(input, output, session) {
                        label = "Poor Probability (%)", 
                        value = 50, min = 0, max = 100, width = "80px")))
     } else if(input$connumber == "3") {
-      fluidRow(
+      fixedRow(
         splitLayout(
           numericInput(inputId = "CON2", 
                        label = HTML("Good</br> Probability (%)"), 
@@ -1850,7 +1854,7 @@ server <- function(input, output, session) {
                        label = HTML("Poor</br> Probability (%)"), 
                        value = 33, min = 0, max = 100, width = "80px")))
     } else if(input$connumber == "4") {
-      fluidRow(
+      fixedRow(
         splitLayout(
           numericInput(inputId = "CON2", 
                        label = HTML("Good</br> Probability (%)"), 
@@ -1865,7 +1869,7 @@ server <- function(input, output, session) {
                      label = HTML("Very Poor</br> Probability (%)"), 
                      value = 25, min = 0, max = 100, width = "80px"))
     } else{
-      fluidRow(
+      fixedRow(
         splitLayout(
           numericInput(inputId = "CON1", 
                        label = HTML("Very Good</br> Probability (%)"), 
