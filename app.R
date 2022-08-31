@@ -237,18 +237,19 @@ ui <- fixedPage(theme=bs_theme(version=3, bootswatch="yeti"),
             <div class="web-area-title"></div>
           </div>
           <div class="l-page__header-last">
-            <a href="#" class="header-link">Contact Us</a>
+            <a href="https://www.epa.gov/national-aquatic-resource-surveys/forms/contact-us-about-national-aquatic-resource-surveys" class="header-link">Contact Us</a>
           </div>
         </div>
         <article class="article">'
     ),
   # Application title 
+  titlePanel(span("Survey Design Tool (v. 1.0.2)", 
+                  style = "font-weight: bold; font-size: 28px")),
   navbarPage(id = "inTabset", 
              title = "",
              selected='instructions', position='static-top',
              inverse = TRUE,
              # Panel with instructions for using this tool
-             
              tabPanel(title=span(strong("Step 1: Instructions for Use"), 
                                  style = "font-weight: bold; font-size: 16px"), value='instructions',
                       bsCollapse(id = "instructions",   
@@ -839,7 +840,7 @@ ui <- fixedPage(theme=bs_theme(version=3, bootswatch="yeti"),
     </div>
     <div class="l-page__footer">
       <div class="l-constrain">
-        <p><a href="#">Contact Us</a> to ask a question, provide feedback, or report a problem.</p>
+        <p><a href="https://www.epa.gov/national-aquatic-resource-surveys/forms/contact-us-about-national-aquatic-resource-surveys">Contact Us</a> to ask a question, provide feedback, or report a problem.</p>
       </div>
     </div>
   </div>'
