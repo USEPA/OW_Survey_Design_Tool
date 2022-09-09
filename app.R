@@ -458,7 +458,7 @@ ui <- fixedPage(theme=bs_theme(version=3, bootswatch="yeti"),
                       tags$head(
                         tags$style(
                           HTML("#citation {font-size: 14px;}"))),
-                      p("If you have used the Survey Design Tool to generate a survey used in publication or reporting, please reference the tool URL (https://survey_design_tool.app.cloud.gov) and cite the spsurvey package."),
+                      p("If you have used the Survey Design Tool to generate a survey used in publication or reporting, please reference the tool URL (https://owshiny.epa.gov/survey-design-tool) and cite the spsurvey package."),
                       verbatimTextOutput("citation"),
                       br(),hr(),
                       h3(strong('Disclaimer')),
