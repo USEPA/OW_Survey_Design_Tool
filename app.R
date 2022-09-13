@@ -31,10 +31,7 @@ options(shiny.maxRequestSize = 10000*1024^2)
 
 ####Instructions####
 # Define UI
-ui <- fixedPage(theme=bs_theme(version=3, bootswatch="yeti"), 
-                tags$head(tags$link(rel = "stylesheet",
-                                    type = "text/css", href = "style.css")),
-                # Header
+ui <- div(fixedPage(theme=bs_theme(version=3, bootswatch="yeti"), 
                 tags$html(class = "no-js", lang="en"),
                 tags$head(
                   tags$meta(charset="utf-8"),
@@ -241,6 +238,34 @@ ui <- fixedPage(theme=bs_theme(version=3, bootswatch="yeti"),
           </div>
         </div>
         <article class="article">'
+    ),
+    
+    tags$head(
+      # Script for calculated the browser width
+      tags$script('
+        var dimension = [0, 0];
+        
+        var delay = 250;
+        var timeout = false;
+        
+        $(document).on("shiny:connected", function(e) {
+            dimension[0] = window.innerWidth;
+            dimension[1] = window.innerHeight;
+            Shiny.onInputChange("dimension", dimension);
+        });
+        
+        $(window).resize(function(e) {
+        
+          // clear the timeout
+          clearTimeout(timeout);
+          // start timing for event "completion"
+          timeout = setTimeout(function() {
+            dimension[0] = window.innerWidth;
+            dimension[1] = window.innerHeight;
+            Shiny.onInputChange("dimension", dimension);
+          }, delay);
+        });
+    ')
     ),
   # Application title 
   titlePanel(span("Survey Design Tool (v. 1.0.2)", 
@@ -458,7 +483,7 @@ ui <- fixedPage(theme=bs_theme(version=3, bootswatch="yeti"),
                       tags$head(
                         tags$style(
                           HTML("#citation {font-size: 14px;}"))),
-                      p("If you have used the Survey Design Tool to generate a survey used in publication or reporting, please reference the tool URL (https://owshiny.epa.gov/survey-design-tool) and cite the spsurvey package."),
+                      p("If you have used the Survey Design Tool to generate a survey used in publication or reporting, please reference the tool URL (https://owshiny.epa.gov/survey-design-tool/) and cite the spsurvey package."),
                       verbatimTextOutput("citation"),
                       br(),hr(),
                       h3(strong('Disclaimer')),
@@ -500,7 +525,7 @@ ui <- fixedPage(theme=bs_theme(version=3, bootswatch="yeti"),
                         hr(),
                         h4(strong(HTML("<center>Design Attributes<center/>"))),
                         fixedRow(
-                          column(7,
+                          column(6,
                         #Design Type Input
                         radioButtons(inputId="designtype", 
                                      label=strong("Choose Design Type"), 
@@ -570,7 +595,7 @@ ui <- fixedPage(theme=bs_theme(version=3, bootswatch="yeti"),
                         conditionalPanel(condition = "output.mytabs",
                                          hr(),
                                          fixedRow(
-                                           column(5,
+                                           column(4,
                                          checkboxInput(inputId = "addSF_SUM", 
                                                        label=span(strong("Sample Frame Summary"),
                                                                   style="font-weight: bold; font-size: 18px"), 
@@ -1006,7 +1031,7 @@ ui <- fixedPage(theme=bs_theme(version=3, bootswatch="yeti"),
               </li>
             </ul>
             <p class="footer__last-updated">
-              Last updated on March 30, 2022
+              Last updated on September 13, 2022
             </p>
           </div>
         </div>
@@ -1020,7 +1045,7 @@ ui <- fixedPage(theme=bs_theme(version=3, bootswatch="yeti"),
       </svg>
     </a>'
   )
-) #fluidPage
+, style = "width:1300px;")) #fluidPage
 
 
 server <- function(input, output, session) {
