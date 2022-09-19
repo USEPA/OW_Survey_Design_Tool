@@ -510,7 +510,7 @@ ui <- div(fixedPage(theme=bs_theme(version=3, bootswatch="yeti"),
                           accept = c(".gdb", ".shp", ".prj", ".shx", ".dbf", ".sbn", ".sbx", ".cpg", ".gpkg"), 
                           width = "600px") %>%
                           #User Sample Frame helper
-                          helper(type = "inline",
+                          helper(icon = "circle-question",type = "inline",
                                  title = "Survey Sample Frame",
                                  content = c("A Survey Sample Frame is an ESRI shapefile which contains geographic features represented by points, lines or polygons which is used in the selection of the sample. Maximum size is currently 10GB.",
                                              "The coordinate reference system (CRS) for the sample frame should be an area-preserving projection. If a geographic CRS is used, the user may choose to transform the CRS to NAD83 / Conus Albers (a projected CRS) by checking the box below.",
@@ -532,7 +532,7 @@ ui <- div(fixedPage(theme=bs_theme(version=3, bootswatch="yeti"),
                                      choices=c("GRTS","IRS"),
                                      inline=TRUE) %>%
                           #Design Type helper
-                          helper(type = "inline",
+                          helper(icon = "circle-question",type = "inline",
                                  title = "Design Type",
                                  content = c("<b>GRTS:</b> Generalized Random Tessellation Stratified-for spatially balanced samples",
                                              "<b>IRS:</b> Independent Random Sample- for non-spatially balanced samples"),
@@ -546,7 +546,7 @@ ui <- div(fixedPage(theme=bs_theme(version=3, bootswatch="yeti"),
                                     multiple = FALSE, 
                                     width = "300px")  %>%
                           #Strata helper
-                          helper(type = "inline",
+                          helper(icon = "circle-question",type = "inline",
                                  title = "Stratum",
                                  content = c("A subpopulation within your sample frame to independently sample. Use the default <b>None</b> if your design is unstratified.",
                                              "<b>Examples:</b> Stream Type (Perennial and Intermittent), Size (Large and Small"),
@@ -560,7 +560,7 @@ ui <- div(fixedPage(theme=bs_theme(version=3, bootswatch="yeti"),
                                     multiple = FALSE, 
                                     width = "300px") %>%
                           #Category helper
-                          helper(type = "inline",
+                          helper(icon = "circle-question",type = "inline",
                                  title = "Multi-density Category",
                                  content = c("Variables found within a stratum used to define design weights for unequal probability selections. Use the default <b>None</b> if your design is an equal probability design.",
                                              "<b>Examples:</b> Stream Order, Lake Area, Basin, Ecoregion"),
@@ -588,7 +588,7 @@ ui <- div(fixedPage(theme=bs_theme(version=3, bootswatch="yeti"),
                         hr(),
                         
                         # Press button for analysis 
-                        actionButton("goButton", strong("Calculate Survey Design"), icon=icon("play-circle"), 
+                        actionButton("goButton", strong("Calculate Survey Design"), icon=icon("circle-play"), 
                                      style="color: #fff; background-color: #337ab7; border-color: #2e6da4")),#sidebarPanel
                       mainPanel(
                         uiOutput('mytabs'),
@@ -601,7 +601,7 @@ ui <- div(fixedPage(theme=bs_theme(version=3, bootswatch="yeti"),
                                                                   style="font-weight: bold; font-size: 18px"), 
                                                        value = FALSE) %>%
                           #SF Summary helper
-                          helper(type = "inline",
+                          helper(icon = "circle-question",type = "inline",
                                  title = "Sample Frame Summary",
                                  content = c("Aids user in summarizing the sample frame based on the selected Strata and Categories. These proportions can assist in setting sample size(s)."),
                                  size = "s", easyClose = TRUE, fade = TRUE)))),
@@ -631,7 +631,7 @@ ui <- div(fixedPage(theme=bs_theme(version=3, bootswatch="yeti"),
                                            br(), hr(),
                                            h4(HTML("<center><b>Population Estimate Simulation</b></center>")) %>%
                                              #Simulation helper
-                                             helper(type = "inline",
+                                             helper(icon = "circle-question",type = "inline",
                                                     title = "Population Estimate Simulation",
                                                     content = c("This module assists the user in simulating total population proportion estimates of a population based on the sample size used in the survey design. Error bars displayed show the Margin of Error for a condition.
                                                             The condition classes are randomly assigned by user specified probability weights and can be refreshed with new probability weights to simulate the change in conditions. 
@@ -645,7 +645,7 @@ ui <- div(fixedPage(theme=bs_theme(version=3, bootswatch="yeti"),
                                                         selected = "3",
                                                         inline=TRUE) %>%
                                              #Condition Class helper
-                                             helper(type = "inline",
+                                             helper(icon = "circle-question",type = "inline",
                                                     title = "Conditional Class Size",
                                                     content = c("Choose the condition class size of your indicator. Assign random selection probabilities for each condition class to simulate potential population estimate results.
                                                             Indicators with larger condition class sizes often have lower margin of error estimates.",
@@ -660,13 +660,13 @@ ui <- div(fixedPage(theme=bs_theme(version=3, bootswatch="yeti"),
                           conditionalPanel(condition = "input.CON2",
                                            plotOutput("ssplot") %>% withSpinner(color="#0275d8"),
                                            br(),
-                                           actionButton("ssbtn", strong("Refresh Simulation"), icon=icon("redo"), 
+                                           actionButton("ssbtn", strong("Refresh Simulation"), icon=icon("arrow-rotate-right"), 
                                                         style="color: #fff; background-color: #337ab7; border-color: #2e6da4")),
                           hr(),
                           conditionalPanel(condition = "output.ssplot",
                                            h4(HTML("<center><b>Design Spatial Balance</b></center>")) %>%
                                              #Spatial Balance helper
-                                             helper(type = "inline",
+                                             helper(icon = "circle-question",type = "inline",
                                                     title = "Spatial Balance",
                                                     content = c("All spatial balance metrics have a lower bound of zero, which indicates perfect spatial balance. As the metric value increases, the spatial balance decreases."),
                                                     size = "s", easyClose = TRUE, fade = TRUE),
@@ -674,7 +674,7 @@ ui <- div(fixedPage(theme=bs_theme(version=3, bootswatch="yeti"),
                                              tags$style(
                                                HTML("#balance {font-size: 14px;}"))),
                                            verbatimTextOutput("balance", placeholder = TRUE) %>% withSpinner(color="#0275d8"),
-                                           actionButton("balancebtn", strong("Calculate Spatial Balance"), icon=icon("play-circle"), 
+                                           actionButton("balancebtn", strong("Calculate Spatial Balance"), icon=icon("circle-play"), 
                                                         style="color: #fff; background-color: #337ab7; border-color: #2e6da4"),
                                            br(), br(),
                                            radioButtons("balance", strong("Spatial Balance Metric:"),
@@ -687,7 +687,7 @@ ui <- div(fixedPage(theme=bs_theme(version=3, bootswatch="yeti"),
                                                           "Mean-Absolute Error" = "medae",
                                                           "Chi-Squared Loss" = "chisq")) %>%
                                              #Spatial Balance metric helper
-                                             helper(type = "inline",
+                                             helper(icon = "circle-question",type = "inline",
                                                     title = "Spatial Balance Metrics",
                                                     content = c("<b>Pielou's Evenness Index</b> This statistic can take on a value between zero and one.",
                                                                 "<b>Simpsons Evenness Index</b> This statistic can take on a value between zero and logarithm of the sample size.",
@@ -767,7 +767,7 @@ ui <- div(fixedPage(theme=bs_theme(version=3, bootswatch="yeti"),
                           label = strong("(Must be a .csv file)"),
                           accept = c(".csv")) %>%
                           #Weight file helper
-                          helper(type = "inline",
+                          helper(icon = "circle-question",type = "inline",
                                  title = "Weight Adjustment File",
                                  content = c("Choose the .csv file which contains all base sites which were given initial weights and replacement sites which were sampled. This should include all target sites sampled, replacement sites sampled (including additional sites used as oversamples), not evaluated and non-target sites which were sampled, but were given an initial weight.",
                                              "<b>See Instructions For Use tab for examples on how to setup the Weight Adjustment File.</b>"),
@@ -781,7 +781,7 @@ ui <- div(fixedPage(theme=bs_theme(version=3, bootswatch="yeti"),
                                     multiple = FALSE, 
                                     width = "300px") %>%
                           #Weight helper
-                          helper(type = "inline",
+                          helper(icon = "circle-question",type = "inline",
                                  title = "Site Weights",
                                  content = c("Choose the column in the Weight Adjustment file which contains the initial site weights. Replace Replacement sites with Base sites. Set additional Replacement site weights to 0."),
                                  size = "s", easyClose = TRUE, fade = TRUE),
@@ -793,7 +793,7 @@ ui <- div(fixedPage(theme=bs_theme(version=3, bootswatch="yeti"),
                                     multiple = FALSE, 
                                     width = "300px") %>%
                           #Weight Category helper
-                          helper(type = "inline",
+                          helper(icon = "circle-question",type = "inline",
                                  title = "Weight Category",
                                  content = c("For unequal probability designs, choose the column in the Weight Adjustment file which contains the weight category. The default is None, which assumes every site is in the same category and an equal probability design is being adjusted."),
                                  size = "s", easyClose = TRUE, fade = TRUE),
@@ -805,14 +805,14 @@ ui <- div(fixedPage(theme=bs_theme(version=3, bootswatch="yeti"),
                                     multiple = FALSE, 
                                     width = "300px") %>%
                           #Site Info helper
-                          helper(type = "inline",
+                          helper(icon = "circle-question",type = "inline",
                                  title = "Site Evaluation Attributes",
                                  content = c("Choose the column in the Weight Adjustment file which contains attributes defining if the site was sampled, not sampled, and/or non-target."),
                                  size = "s", easyClose = TRUE, fade = TRUE),
                         hr(),
                         strong(HTML("Select Site Evaluation Attributes")) %>%
                           #Site eval helper
-                          helper(type = "inline",
+                          helper(icon = "circle-question",type = "inline",
                                  title = "Site Evaluation Attributes",
                                  content = c("<b>Sampled Target Sites:</b> Choose the attribute which defines if the site was sampled and found to be member of the target population. This should also include additional sampled replacement sites.",
                                              "<b>Additional Replacements:</b> Choose the attribute which defines if the site is a replacement site and was added to the design without replacing a base site.",
@@ -847,7 +847,7 @@ ui <- div(fixedPage(theme=bs_theme(version=3, bootswatch="yeti"),
                         uiOutput("frame"),
                         
                         # Press button for analysis 
-                        actionButton("adjButton", HTML("<b>Calculate Adjusted <br/> Survey Weights</b>"), icon=icon("play-circle"), 
+                        actionButton("adjButton", HTML("<b>Calculate Adjusted <br/> Survey Weights</b>"), icon=icon("circle-play"), 
                                      style="color: #fff; background-color: #337ab7; border-color: #2e6da4")
                       ), #sidebarPanel
                       mainPanel(
@@ -1250,7 +1250,7 @@ server <- function(input, output, session) {
       accept = c(".shp", ".prj", ".shx", ".dbf", ".sbn", ".sbx", ".cpg"), 
       width = "600px") %>%
       #User legacy helper
-      helper(type = "inline",
+      helper(icon = "circle-question",type = "inline",
              title = "Legacy Sample Frame",
              content = c("Legacy Sample Frame is a POINT or MULTIPOINT shapefile which contains sites that have been selected in a previous probability sample and are to be automatically included in a current probability sample. If the user transforms the samples frames CRS to NAD83/Albers Conus, the legacy object will also be transformed."),
              size = "s", easyClose = TRUE, fade = TRUE)
@@ -1267,7 +1267,7 @@ server <- function(input, output, session) {
                 multiple = FALSE,
                 choices = colnames(legacyobject()),
                 width = "200px") %>%
-      helper(type = "inline",
+      helper(icon = "circle-question",type = "inline",
              title = "Legacy Stratum",
              content = c("A Legacy Stratum is the same stratum used for a stratified design. This input is useful if the stratification variable in the legacy shapefile differs from the survey sample frame shapefile."),
              size = "s", easyClose = TRUE, fade = TRUE)
@@ -1282,7 +1282,7 @@ server <- function(input, output, session) {
                 multiple = FALSE,
                 choices = colnames(legacyobject()),
                 width = "200px") %>%
-      helper(type = "inline",
+      helper(icon = "circle-question",type = "inline",
              title = "Legacy Category",
              content = c("A Legacy Category is the same category used for the unequal design. This input is useful if the category variable in the legacy shapefile differs from the survey sample frame shapefile."),
              size = "s", easyClose = TRUE, fade = TRUE)
@@ -1297,7 +1297,7 @@ server <- function(input, output, session) {
                 multiple = FALSE,
                 choices = colnames(legacyobject()),
                 width = "200px") %>%
-      helper(type = "inline",
+      helper(icon = "circle-question",type = "inline",
              title = "Legacy Auxiliary",
              content = c("A Legacy Auxiliary variable is the same auxiliary variable used for the design. This input is useful if the auxiliary variable in the legacy shapefile differs from the survey sample frame shapefile."),
              size = "s", easyClose = TRUE, fade = TRUE)
@@ -1321,7 +1321,7 @@ server <- function(input, output, session) {
                          multiple = FALSE, 
                          width = "200px") %>%
                #Auxiliary variable helper
-               helper(type = "inline",
+               helper(icon = "circle-question",type = "inline",
                       title = "Auxiliary Variable",
                       content = c("Numeric attribute which represents the proportional (to size) inclusion probability variable (auxiliary variable). 
                          This selection type will result in an unstratified GRTS sample where each site in the sample frame has inclusion probability proportional to a positive, continuous variable. 
@@ -1331,7 +1331,7 @@ server <- function(input, output, session) {
              #Reproducible seed input
              numericInput("seed", strong(HTML("Set Reproducible</br> Seed")), rseed, width = "200px") %>%
                #Random Seed helper
-               helper(type = "inline",
+               helper(icon = "circle-question",type = "inline",
                       title = "Reproducible Seed",
                       content = c("The randomization of the design is indexed by a 'seed'.",
                                   "A reproducible seed allows the user to obtain an identical draw when the same seed is used. If you wish to reproduce a previously constructed survey design, use the seed value from that design.",
@@ -1344,7 +1344,7 @@ server <- function(input, output, session) {
                        value = "Site", 
                        width = "200px") %>%
                #DesignID helper
-               helper(type = "inline",
+               helper(icon = "circle-question",type = "inline",
                       title = "DesignID",
                       content = c("A character string indicating the naming structure for each site's identifier selected in the sample, which is included as a variable in the shapefile in the tools output."),
                       size = "s", easyClose = TRUE, fade = TRUE),
@@ -1354,7 +1354,7 @@ server <- function(input, output, session) {
                           label = strong("Minimum Distance"),
                           value = NA, min = NA, max = NA, width="200px") %>%
                #Minimum Distance helper
-               helper(type = "inline",
+               helper(icon = "circle-question",type = "inline",
                       title = "Minimum Distance",
                       content = c("A numeric value indicating the desired minimum distance between sampled sites. If design is stratified, then minimum distance is applied separately for each stratum. The units must match the units in the sample frame."),
                       size = "s", easyClose = TRUE, fade = TRUE),
@@ -1364,7 +1364,7 @@ server <- function(input, output, session) {
                           label = strong("Maximum Attempts"), 
                           value = 10, min = 0, max = NA, width="200px") %>%
                #Maximum Attempts helper
-               helper(type = "inline",
+               helper(icon = "circle-question",type = "inline",
                       title = "Maximum Attempts",
                       content = c("The number of maximum attempts to apply the minimum distance algorithm to obtain the desired minimum distance between sites. Each iteration takes roughly as long as the standard GRTS algorithm. Successive iterations will always contain at least as many sites satisfying the minimum distance requirement as the previous iteration. The algorithm stops when the minimum distance requirement is met or there are maximum attempt iterations. The default number of maximum iterations is 10."),
                       size = "s", easyClose = TRUE, fade = TRUE),
@@ -1374,7 +1374,7 @@ server <- function(input, output, session) {
                           label = strong("Nearest Neighbor Replacement Sites"), 
                           value = NA, min = 1, max = 10, width="200px") %>%
                #n_near helper
-               helper(type = "inline",
+               helper(icon = "circle-question",type = "inline",
                       title = "Nearest Neighbor Replacements",
                       content = c("An integer from 1 to 10 specifying the number of nearest neighbor replacement sites to be selected for each base site. For infinite sample frames, the distance between a site and its nearest neighbor depends on point density. This tool does not offer stratum-specific nearest neighbor requirements."),
                       size = "s", easyClose = TRUE, fade = TRUE),
@@ -1383,7 +1383,7 @@ server <- function(input, output, session) {
                           label = strong("Point Density"), 
                           value = 10, min = 1, max = NA, width="200px") %>%
                #n_near helper
-               helper(type = "inline",
+               helper(icon = "circle-question",type = "inline",
                       title = "Point Density",
                       content = c("A positive integer controlling the density of the GRTS approximation for infinite sampling frames. 
                          The default value of pt_density is 10. Note that when used with categories, the unequal inclusion probabilities generated from this approach are also approximations."),
@@ -1404,7 +1404,7 @@ server <- function(input, output, session) {
                                     selected = "",
                                     multiple = FALSE) %>%
                           #Strata helper
-                          helper(type = "inline",
+                          helper(icon = "circle-question",type = "inline",
                                  title = "Stratum",
                                  content = c("Choose a stratum which defines how your sample sites will be stratified.",
                                              "If your design is not stratified, use the default <b>None</b>."),
@@ -1417,7 +1417,7 @@ server <- function(input, output, session) {
                                      width = "100px",
                                      value = 0, min = 0, max = 10000) %>%
                           #Base helper
-                          helper(type = "inline",
+                          helper(icon = "circle-question",type = "inline",
                                  title = "Base Sites",
                                  content = c("If the design is unstratified, <b>Base Sites</b> is the overall sample size of the survey. If your design is stratified, set the sample size for each strata."),
                                  size = "s", easyClose = TRUE, fade = TRUE),
@@ -1426,7 +1426,7 @@ server <- function(input, output, session) {
                                      width = "100px",
                                      value = 0, min = 0, max = 10000) %>%
                           #Replacement helper
-                          helper(type = "inline",
+                          helper(icon = "circle-question",type = "inline",
                                  title = "Replacement Sites",
                                  content = c("Define number of Replacement sites needed for a stratum.",
                                              "Replacement sites are a set of spatially balanced sites that can be used for the replacement of a non-target or inaccessible sites.
@@ -1444,7 +1444,7 @@ server <- function(input, output, session) {
                                                        multiple = FALSE)
                                          }) %>%
                                            #Category helper
-                                           helper(type = "inline",
+                                           helper(icon = "circle-question",type = "inline",
                                                   title = "Multi-density Categories",
                                                   content = c("Name and set the sample size of each Category.",
                                                               "<b>Note:</b> The total sample size defined in category inputs must equal the total sample size defined in the Base input."),
