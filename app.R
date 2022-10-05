@@ -2224,7 +2224,7 @@ server <- function(input, output, session) {
   
   #Sites Sampled Reactive
   sampled_choices <- reactive({ 
-    adjdata() %>% select(input$adjsitesampled) %>% unique()
+    adjdata() %>% select(input$adjsitesampled) %>% unique() %>% pull()
   })
   
   
