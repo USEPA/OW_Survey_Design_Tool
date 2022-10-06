@@ -344,7 +344,7 @@ ui <- div(fixedPage(theme=bs_theme(version=3, bootswatch="yeti"),
                                               The tool attempts to distribute the replacement sites proportionately among sample sizes for the Categories. If the replacement proportion for one or more Categories is not a whole number, the proportion is rounded to the next higher integer."),
                                       tags$li("Once your design has been prepared, click the 'Calculate Survey Design' button to be transported to the Survey Design Results tab.")
                                                    ))),
-                                 bsCollapsePanel(title = h3(strong("Survey Design Tab")), value="survey",
+                                 bsCollapsePanel(title = h3(strong("Survey Design Results Tab")), value="survey",
                                                  tags$ol(
                                                    h4(strong("Survey Design")),
                                                    tags$li("The process of calculating your Survey Design can take a while. The spinner will stop when your Survey Design is complete. If you have errors in your Design inputs, a message with the error will be displayed under 'Design Errors'. "),
