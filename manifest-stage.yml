@@ -1,6 +1,6 @@
 applications:
 - name: survey-design-tool-stage
-  memory: 1000M
+  memory: 800M
   routes:
     - route: survey-design-tool-stage.app.cloud.gov
   disk_quota: 2G
