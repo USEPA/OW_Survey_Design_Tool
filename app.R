@@ -298,6 +298,7 @@ ui <- div(fixedPage(theme=bs_theme(version=3, bootswatch="yeti"),
                                                  tags$ol(
                                                    h4(strong("Requirements")),
                                                    tags$ul(
+                                                     tags$li("The Survey Design Tool located on the EPA shiny server is only capable of running designs which use less than 2GB of memory. Please visit the Survey Design Tool GitHub site for the source code to run the app locally for much improved processing."),
                                                      tags$li("The coordinate reference system (crs) for the sample frame should use an area-preserving projection such as Albers or UTM so that spatial distances are equivalent for all directions. Geographic CRS are not accepted."),
                                                      tags$li("All design attribute variables, such as the Strata and Categories, must be contained in the user's sample frame file. You may run the design without these inputs as an unstratified equal probability design."),
                                                      tags$li("When constructing your design, the user must identify how they want their survey to be designed and which random selection to use:"),
@@ -512,7 +513,7 @@ ui <- div(fixedPage(theme=bs_theme(version=3, bootswatch="yeti"),
                           #User Sample Frame helper
                           helper(icon = "circle-question",type = "inline",
                                  title = "Survey Sample Frame",
-                                 content = c("A Survey Sample Frame is an ESRI shapefile which contains geographic features represented by points, lines or polygons which is used in the selection of the sample. Maximum size is currently 10GB.",
+                                 content = c("A Survey Sample Frame is an ESRI shapefile which contains geographic features represented by points, lines or polygons which is used in the selection of the sample. Maximum sample frame size is currently 10GB.",
                                              "The coordinate reference system (CRS) for the sample frame should be an area-preserving projection. If a geographic CRS is used, the user may choose to transform the CRS to NAD83 / Conus Albers (a projected CRS) by checking the box below.",
                                              "<b>Required Files:</b>",
                                              "<b>Shapefiles (.shp, .dbf, .prj, .shx)</b>"),
@@ -1545,6 +1546,26 @@ server <- function(input, output, session) {
                      selected = "Step 3: Survey Design Results")
   })
   
+  #Observer to sum categorical sites to update stratum base sites 
+  observe({
+    req(input$caty != "None" && input$S1_C1 != "None")
+    
+    sumCAT <- list() #empty list
+    for(i in 1:S()) {
+      for (x in 1:C()[i]) {
+        sumCAT[[paste0("strat", i)]][paste0("S",i, "_C",x)] = input[[paste0("S",i,"_C",x,"_Site")]]
+      }
+    }
+    sumCAT <- sapply(sumCAT, sum)
+    
+       lapply(1:S(), function(s) {
+      updateNumericInput(session, 
+                         paste0("strat",s,"_base"),  
+                         value = unname(sumCAT[s]))
+  })
+ })
+  
+
   ####Design####
   DESIGN <- eventReactive(input$goButton,{
     
@@ -1559,7 +1580,8 @@ server <- function(input, output, session) {
            "Please input the required file .prj of the sample frame.")
     )
     
-    show_modal_spinner(spin = 'flower', text = 'Grab a snack...this could take a while.')
+    show_modal_spinner(spin = 'flower', text = 'Processing...If the Design is taking too long or has timed out, consider visiting the apps GitHub site
+                       and launching it locally for much improved processing.')
     
     #Sets reproducible seed
     if (input$addoptions == TRUE) {
