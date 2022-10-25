@@ -34,6 +34,16 @@ options(shiny.maxRequestSize = 10000*1024^2)
 ui <- div(fixedPage(theme=bs_theme(version=3, bootswatch="yeti"), 
                 tags$html(class = "no-js", lang="en"),
                 tags$head(
+                  HTML(
+                    "<!-- Google Tag Manager -->
+		                 <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+		                 new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+		                 j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+		                 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+		                 })(window,document,'script','dataLayer','GTM-L8ZB');</script>
+		                 <!-- End Google Tag Manager -->
+		                  "
+                  ),
                   tags$meta(charset="utf-8"),
                   tags$meta(property="og:site_name", content="US EPA"),
                   #tags$link(rel = "stylesheet", type = "text/css", href = "css/uswds.css"),
@@ -858,15 +868,14 @@ ui <- div(fixedPage(theme=bs_theme(version=3, bootswatch="yeti"),
                         style = "width:600px; overflow-x: scroll;")
                       )#mainPanel
              )#tabPanel(Adjust Weights)
-  ), #navbarPage
-  # Footer
+  ) #navbarPage
   # Individual Page Footer
-  HTML(
+  ,HTML(
     '</article>
     </div>
     <div class="l-page__footer">
       <div class="l-constrain">
-        <p><a href="https://www.epa.gov/national-aquatic-resource-surveys/forms/contact-us-about-national-aquatic-resource-surveys">Contact Us</a> to ask a question, provide feedback, or report a problem.</p>
+        <p><a href="#">Contact Us</a> to ask a question, provide feedback, or report a problem.</p>
       </div>
     </div>
   </div>'
@@ -883,32 +892,32 @@ ui <- div(fixedPage(theme=bs_theme(version=3, bootswatch="yeti"),
             <h2>Discover.</h2>
             <ul class="menu menu--footer">
               <li class="menu__item">
-                <a href="/accessibility" class="menu__link">Accessibility</a>
+                <a href="https://www.epa.gov/accessibility" class="menu__link">Accessibility</a>
               </li>
               <!--li class="menu__item"><a href="#" class="menu__link">EPA Administrator</a></li-->
               <li class="menu__item">
-                <a href="/planandbudget" class="menu__link">Budget &amp; Performance</a>
+                <a href="https://www.epa.gov/planandbudget" class="menu__link">Budget &amp; Performance</a>
               </li>
               <li class="menu__item">
-                <a href="/contracts" class="menu__link">Contracting</a>
+                <a href="https://www.epa.gov/contracts" class="menu__link">Contracting</a>
               </li>
               <li class="menu__item">
-                <a href="/home/wwwepagov-snapshots" class="menu__link">EPA www Web Snapshot</a>
+                <a href="https://www.epa.gov/home/wwwepagov-snapshots" class="menu__link">EPA www Web Snapshot</a>
               </li>
               <li class="menu__item">
-                <a href="/grants" class="menu__link">Grants</a>
+                <a href="https://www.epa.gov/grants" class="menu__link">Grants</a>
               </li>
               <li class="menu__item">
-                <a href="/ocr/whistleblower-protections-epa-and-how-they-relate-non-disclosure-agreements-signed-epa-employees" class="menu__link">No FEAR Act Data</a>
+                <a href="https://www.epa.gov/ocr/whistleblower-protections-epa-and-how-they-relate-non-disclosure-agreements-signed-epa-employees" class="menu__link">No FEAR Act Data</a>
               </li>
               <li class="menu__item">
-                <a href="/web-policies-and-procedures/plain-writing" class="menu__link">Plain Writing</a>
+                <a href="https://www.epa.gov/web-policies-and-procedures/plain-writing" class="menu__link">Plain Writing</a>
               </li>
               <li class="menu__item">
-                <a href="/privacy" class="menu__link">Privacy</a>
+                <a href="https://www.epa.gov/privacy" class="menu__link">Privacy</a>
               </li>
               <li class="menu__item">
-                <a href="/privacy/privacy-and-security-notice" class="menu__link">Privacy and Security Notice</a>
+                <a href="https://www.epa.gov/privacy/privacy-and-security-notice" class="menu__link">Privacy and Security Notice</a>
               </li>
             </ul>
           </div>
@@ -919,22 +928,22 @@ ui <- div(fixedPage(theme=bs_theme(version=3, bootswatch="yeti"),
                 <a href="https://www.data.gov/" class="menu__link">Data.gov</a>
               </li>
               <li class="menu__item">
-                <a href="/office-inspector-general/about-epas-office-inspector-general" class="menu__link">Inspector General</a>
+                <a href="https://www.epa.gov/office-inspector-general/about-epas-office-inspector-general" class="menu__link">Inspector General</a>
               </li>
               <li class="menu__item">
-                <a href="/careers" class="menu__link">Jobs</a>
+                <a href="https://www.epa.gov/careers" class="menu__link">Jobs</a>
               </li>
               <li class="menu__item">
-                <a href="/newsroom" class="menu__link">Newsroom</a>
+                <a href="https://www.epa.gov/newsroom" class="menu__link">Newsroom</a>
               </li>
               <li class="menu__item">
-                <a href="/data" class="menu__link">Open Government</a>
+                <a href="https://www.epa.gov/data" class="menu__link">Open Government</a>
               </li>
               <li class="menu__item">
                 <a href="https://www.regulations.gov/" class="menu__link">Regulations.gov</a>
               </li>
               <li class="menu__item">
-                <a href="/newsroom/email-subscriptions-epa-news-releases" class="menu__link">Subscribe</a>
+                <a href="https://www.epa.gov/newsroom/email-subscriptions-epa-news-releases" class="menu__link">Subscribe</a>
               </li>
               <li class="menu__item">
                 <a href="https://www.usa.gov/" class="menu__link">USA.gov</a>
@@ -948,19 +957,19 @@ ui <- div(fixedPage(theme=bs_theme(version=3, bootswatch="yeti"),
             <h2>Ask.</h2>
             <ul class="menu menu--footer">
               <li class="menu__item">
-                <a href="/home/forms/contact-epa" class="menu__link">Contact EPA</a>
+                <a href="https://www.epa.gov/home/forms/contact-epa" class="menu__link">Contact EPA</a>
               </li>
               <li class="menu__item">
-                <a href="/web-policies-and-procedures/epa-disclaimers" class="menu__link">EPA Disclaimers</a>
+                <a href="https://www.epa.gov/web-policies-and-procedures/epa-disclaimers" class="menu__link">EPA Disclaimers</a>
               </li>
               <li class="menu__item">
-                <a href="/aboutepa/epa-hotlines" class="menu__link">Hotlines</a>
+                <a href="https://www.epa.gov/aboutepa/epa-hotlines" class="menu__link">Hotlines</a>
               </li>
               <li class="menu__item">
-                <a href="/foia" class="menu__link">FOIA Requests</a>
+                <a href="https://www.epa.gov/foia" class="menu__link">FOIA Requests</a>
               </li>
               <li class="menu__item">
-                <a href="/home/frequent-questions-specific-epa-programstopics" class="menu__link">Frequent Questions</a>
+                <a href="https://www.epa.gov/home/frequent-questions-specific-epa-programstopics" class="menu__link">Frequent Questions</a>
               </li>
             </ul>
             <h2>Follow.</h2>
@@ -1032,7 +1041,7 @@ ui <- div(fixedPage(theme=bs_theme(version=3, bootswatch="yeti"),
               </li>
             </ul>
             <p class="footer__last-updated">
-              Last updated on September 13, 2022
+              Last updated on March 30, 2022
             </p>
           </div>
         </div>
