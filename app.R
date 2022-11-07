@@ -2127,9 +2127,9 @@ server <- function(input, output, session) {
       
       if (length(Sys.glob(name.glob)) > 0) file.remove(Sys.glob(name.glob))
       DES_SD <- sp_rbind(DESIGN())
-      DES_SD <- DES_SD %>% filter(!(is.na(wgt))) %>% select(-None) %>% 
-        mutate(xcoord = unlist(map(DES_SD$geometry, 1)),
-               ycoord = unlist(map(DES_SD$geometry, 2)), .after = lat_WGS84) 
+      DES_SD <- DES_SD %>% filter(!(is.na(wgt))) %>% select(-None) #%>% 
+        #mutate(xcoord = unlist(map(DES_SD$geometry, 1)),
+          #     ycoord = unlist(map(DES_SD$geometry, 2)), .after = lat_WGS84) 
       
       st_write(DES_SD, dsn = name.shp, ## layer = "shpExport",
                driver = "ESRI Shapefile", quiet = TRUE)
