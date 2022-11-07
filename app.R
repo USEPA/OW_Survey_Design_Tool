@@ -288,9 +288,9 @@ ui <- div(fixedPage(theme=bs_theme(version=3, bootswatch="yeti"),
                                                    h4(strong("Requirements")),
                                                    tags$ul(
                                                      tags$li("The Survey Design Tool located on the EPA shiny server is only capable of running designs which use less than 2GB of memory. Please visit the Survey Design Tool GitHub site for the source code to run the app locally for much improved processing."),
-                                                     tags$li("The coordinate reference system (crs) for the sample frame should use an area-preserving projection such as Albers or UTM so that spatial distances are equivalent for all directions. Geographic CRS are not accepted."),
+                                                     tags$li("The coordinate reference system (CRS) for the sample frame should use an area-preserving projection such as Albers or UTM so that spatial distances are equivalent for all directions. Geographic CRS are not accepted."),
                                                      tags$li("All design attribute variables, such as the Strata and Categories, must be contained in the user's sample frame file. You may run the design without these inputs as an unstratified equal probability design."),
-                                                     tags$li("When constructing your design, the user must identify how they want their survey to be designed and which random selection to use:"),
+                                                     tags$li("When constructing your design, the user must decide how they want their survey to be designed and which random selection to use:"),
                                                      tags$ul(
                                                        tags$li(strong("Equal Probability Sampling")," - equal inclusion probability. Selection where all units of the population have the same probability of being selected."),
                                                        tags$li(strong("Stratified Sampling")," - Selection where the sample frame is divided into non-overlapping strata which independent random samples are calculated."),
@@ -312,8 +312,9 @@ ui <- div(fixedPage(theme=bs_theme(version=3, bootswatch="yeti"),
                                                                    br(),
                                                                    h4(strong(em("Legacy Sampling"))),
                                                                    tags$li("Legacy sites are sites that have been selected in a previous probability sample and are to be automatically included in the current probability sample."),
-                                                                   tags$li("Upload a POINT sample frame which contains the Legacy sites you would like included in the design. All sites in the sample frame file will be considered legacy sites."),
-                                                                   tags$li("If your Legacy sample frame has different Strata, Category or Auxiliary variable names than your design sample frame, select the corresponding attribute(s) from the legacy sample frame. These inputs will not appear if the names match your design sample frame.")
+                                                                   tags$li("Upload a POINT sample frame which contains the Legacy sites you would like included in the design. All sites in the legacy file will be considered legacy sites."),
+                                                                   tags$li("If your Legacy sample frame has different Strata, Category or Auxiliary variable names than your design sample frame, select the corresponding attribute(s) from the legacy sample frame. These inputs will not appear if the names match your design sample frame."),
+                                                                   tags$li("The number of legacy sites must be greater than number of base sites in at least one stratum.")
                                                    ))),
                                                  tags$ol(
                                                    bsCollapsePanel(title = h4(strong("Determine Survey Sample Sizes")), value="samplesize",
@@ -1241,7 +1242,7 @@ server <- function(input, output, session) {
       #User legacy helper
       helper(icon = "circle-question",type = "inline",
              title = "Legacy Sample Frame",
-             content = c("Legacy Sample Frame is a POINT or MULTIPOINT shapefile which contains sites that have been selected in a previous probability sample and are to be automatically included in a current probability sample. If the user transforms the samples frames CRS to NAD83/Albers Conus, the legacy object will also be transformed."),
+             content = c("Legacy Sample Frame is a POINT or MULTIPOINT shapefile which contains sites that have been selected in a previous probability sample and are to be automatically included in a current probability sample. If the user transforms the samples frames CRS to NAD83/Albers Conus, the legacy object will also be transformed. The number of legacy sites must be greater than number of base sites in at least one stratum."),
              size = "s", easyClose = TRUE, fade = TRUE)
   })
   
@@ -1557,7 +1558,6 @@ server <- function(input, output, session) {
   ####Design####
   DESIGN <- eventReactive(input$goButton,{
     
-    
     #Validates there is a complete sample frame added
     CRS <- st_crs(sfobject())
     
@@ -1565,8 +1565,18 @@ server <- function(input, output, session) {
       need(input$filemap != FALSE, 
            "Please input a Sample Frame."),
       need(!is.na(CRS),  
-           "Please input the required file .prj of the sample frame.")
-    )
+           "Please input the required file .prj of the sample frame."),
+      if(!is.null(input$legacy)) {
+        sumSTRAT<- c() #empty vector
+        for(i in 1:S()) {
+          sumSTRAT[[paste0("strat", i)]] = input[[paste0("strat",i,"_base")]]
+        }
+        sumSTRAT <- sum(unlist(sumSTRAT))
+        legacypoints<- npts(legacyobject())
+        need(legacypoints < sumSTRAT,
+             "The number of legacy sites is greater than number of base sites in at least one stratum. 
+      Please check that all strata have fewer legacy sites than base sites.")
+    })
     
     show_modal_spinner(spin = 'flower', text = 'Processing...If the Design is taking too long or has timed out, consider visiting the apps GitHub site
                        and launching it locally for much improved processing.')
@@ -1839,8 +1849,6 @@ server <- function(input, output, session) {
     } else {
       print("No Design Errors Found. Way To Go!")
     }
-    
-    
   })
   
   
