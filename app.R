@@ -1083,7 +1083,18 @@ server <- function(input, output, session) {
     
     map <- st_read(paste(uploaddirectory, shpdf$name[grep(pattern="*.shp$", shpdf$name)], sep="/")) %>% 
       mutate(None="None") %>% relocate(None)
+
     
+    if(!is.null(input$legacy)){
+    legacyobject <- legacyobject()
+    geometry<-class(legacyobject$geometry[[1]])
+    frame_type<-strsplit(geometry," ")[[2]]
+    
+    #Removes legacyobjects from sframe
+    if(frame_type=="POINT" || frame_type=="MULTIPOINT") {
+      map <- map[!st_geometry(map) %in% st_geometry(legacyobject), , drop = FALSE]
+      }
+    }
     map <- st_zm(map)
   })
   
@@ -1112,6 +1123,12 @@ server <- function(input, output, session) {
       mutate(None="None") %>% relocate(None)
     map <- st_zm(map)
   })
+  
+  
+  
+  
+  
+  
   
   #Stratum Event
   observe({
@@ -1468,7 +1485,7 @@ server <- function(input, output, session) {
       st_geometry(sfobject) <- NULL
       sumdata <- cbind(sfobject, Dist)
     } else if (frame_type=="POINT" || frame_type=="MULTIPOINT") {
-      sumdata <- dbfdata() %>% mutate(Dist = 1)
+      sumdata <- sfobject() %>% st_drop_geometry() %>% mutate(Dist = 1)
     } else {
       Dist <- st_length(sfobject)
       Dist <- as.data.frame(Dist)
@@ -1480,8 +1497,6 @@ server <- function(input, output, session) {
   
   output$SF_SUM <- renderDataTable({
     req(dbfdata(), sfobject(), input$stratum, input$caty)
-    
-    
     
     if(input$stratum != "None" || input$caty != "None"){
       Summary <- sumdata() %>%
@@ -1731,6 +1746,7 @@ server <- function(input, output, session) {
       legacyobject <- NULL
     }
     
+    
     if(!is.null(input$legacy_strat)) {
       legacy_strat <- input$legacy_strat
     } else {
@@ -1748,6 +1764,8 @@ server <- function(input, output, session) {
     } else {
       legacy_aux <- NULL
     }
+    
+
     
     ####Additional Attribute Conditionals####
     aux_var <- NULL
@@ -1781,7 +1799,6 @@ server <- function(input, output, session) {
     if(input$NAD83 == TRUE) {
       sfobject <- st_transform(sfobject, crs = 5070)
     }
-    
     
     #Removes stop_df if calculate button has been previously pressed
     if(exists('stop_df')) {
@@ -2107,7 +2124,6 @@ server <- function(input, output, session) {
   ####Download Shapefile####
   output$shp_btn <- renderUI({
     req(!is.data.frame(DESIGN()))
-    #req(DESIGN())
     downloadButton("download_shp", HTML("Download Survey <br/> Site Shapefile"), icon=icon("compass"), style="color: #fff; background-color: #337ab7; border-color: #2e6da4")
   })
   
@@ -2128,8 +2144,8 @@ server <- function(input, output, session) {
       if (length(Sys.glob(name.glob)) > 0) file.remove(Sys.glob(name.glob))
       DES_SD <- sp_rbind(DESIGN())
       DES_SD <- DES_SD %>% filter(!(is.na(wgt))) %>% select(-None) #%>% 
-        #mutate(xcoord = unlist(map(DES_SD$geometry, 1)),
-          #     ycoord = unlist(map(DES_SD$geometry, 2)), .after = lat_WGS84) 
+      #  mutate(xcoord = unlist(map(DES_SD$geometry, 1)),
+       #        ycoord = unlist(map(DES_SD$geometry, 2)), .after = lat_WGS84) 
       
       st_write(DES_SD, dsn = name.shp, ## layer = "shpExport",
                driver = "ESRI Shapefile", quiet = TRUE)
