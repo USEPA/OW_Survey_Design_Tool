@@ -29,7 +29,7 @@ options(shiny.maxRequestSize = 10000*1024^2)
 #Creates new operator %!in%
 `%!in%` <- Negate(`%in%`)
 
-####Instructions####
+####EPA Template####
 # Define UI
 ui <- div(fixedPage(theme=bs_theme(version=3, bootswatch="yeti"), 
                     tags$html(class = "no-js", lang="en"),
@@ -256,8 +256,9 @@ ui <- div(fixedPage(theme=bs_theme(version=3, bootswatch="yeti"),
         </div>
         <article class="article">'
 	),
+	####Instructions####
   # Application title 
-  titlePanel(span("Survey Design Tool (v. 1.0.2)", 
+  titlePanel(span("Survey Design Tool (v. 1.1.0)", 
                   style = "font-weight: bold; font-size: 28px")),
   navbarPage(id = "inTabset", 
              title = "",
@@ -294,7 +295,7 @@ ui <- div(fixedPage(theme=bs_theme(version=3, bootswatch="yeti"),
                                                      tags$ul(
                                                        tags$li(strong("Equal Probability Sampling")," - equal inclusion probability. Selection where all units of the population have the same probability of being selected."),
                                                        tags$li(strong("Stratified Sampling")," - Selection where the sample frame is divided into non-overlapping strata which independent random samples are calculated."),
-                                                       tags$li(strong("Unequal Probability Sampling")," - unequal inclusion probability. Selection where the chance of being included is calculated relative to the distribution of a categorical variable across the population. This type of sampling can give smaller populations a greater chance of being selected."), 
+                                                       tags$li(strong("Unequal Probability Sampling")," - unequal inclusion probability. Selection where the chance of being included is calculated relative to the distribution of a categorical variable across the population which does not guarantee a user specified sample size. This type of sampling can give smaller populations a greater chance of being selected."), 
                                                        tags$li(strong("Proportional Probability Sampling")," - proportional inclusion probability. Selection where the chance of being included is proportional to the values of a positive auxiliary variable. For example, if you have many strata in your design, this will ensure each stratum has a sample."))),
                                                    br(),
                                                    bsCollapsePanel(title = h4(strong("Designing the Survey")), value="design",
@@ -319,7 +320,7 @@ ui <- div(fixedPage(theme=bs_theme(version=3, bootswatch="yeti"),
                                                  tags$ol(
                                                    bsCollapsePanel(title = h4(strong("Determine Survey Sample Sizes")), value="samplesize",
                                                                    p("Setting an appropriate sample size and considering how they should be allocated across a sample frame is a fundamental step in designing a successful survey. Many surveys, especially those used for environmental monitoring, are limited by budgetary and logistical constraints. The designer must determine a sample size which can overcome these constraints while ensuring the survey estimates the parameter(s) of interest with a low margin of error.
-                                      The designer can consider a few elements when determining a survey sample size:"),
+                                                                      The designer can consider a few elements when determining a survey sample size:"),
                                       tags$ul(
                                         tags$li("Select a spatially balanced survey using the spatial balance metrics provided. Typically, estimates from spatially balanced surveys are more precise (vary less) than estimates from non-spatially balanced surveys."),
                                         tags$li("Consider what will be measured in the survey. If you anticipate the parameter of interest to result in low variation across the survey, a smaller sample size can yield a low margin of error estimate. Conversely, if you anticipate the parameter of interest to result in high variation, you should consider increasing the sample size to account for a higher margin of error."),
@@ -341,17 +342,18 @@ ui <- div(fixedPage(theme=bs_theme(version=3, bootswatch="yeti"),
                                                    tags$li("The process of calculating your Survey Design can take a while. The spinner will stop when your Survey Design is complete. If you have errors in your Design inputs, a message with the error will be displayed under 'Design Errors'. "),
                                                    tags$li("A table of your Survey Design will appear if successful. A table will be displayed with totals of your sample sizes allocated across strata and categories, if used."),
                                                    tags$li("The Population Estimate Simulation module can give the user insight on the survey estimates potential margin of error if the input sample size(s) are used. Condition classes assigned to each site are randomly selected using user specified probability weights. Typically, margin of error will decrease if the condition class distribution is unequally distributed.
-                                               The user can choose the number of condition classes used, modify the probability of being selected, and refresh the simulation to view different condition scenarios. The user can adjust the sample size and refresh the design to determine an appropriate margin of error for the survey."),
+                                                            The user can choose the number of condition classes used, modify the probability of being selected, and refresh the simulation to view different condition scenarios. The user can adjust the sample size and refresh the design to determine an appropriate margin of error for the survey."),
                                                tags$li("Choose a Spatial Balance Metric. All spatial balance metrics provided have a lower bound of zero, which indicates perfect spatial balance. As the metric value increases, the spatial balance decreases. This is useful in comparing survey designs."),
                                                tags$li("Click the 'Download Survey Site Shapefile' button to download a zip file which contains a POINT shapefile of your designs survey sample sites."),
-                                               tags$li("To download the design attributes table, use the buttons to choose how you would like it to be saved. Please note the Lat/Longs are transformed to WGS84 coordinate system. The xcoord and ycoord are Conus Albers (a projected CRS) coordinates which is an area-preserving projection. These coordinates can be used for the local neighborhood variance estimator when calculating population estimates."),
+                                               tags$li("To download the Probability Survey Site Results table, use the buttons to choose how you would like it to be saved. Please note the Lat/Longs are transformed to WGS84 coordinate system. The xcoord and ycoord are Conus Albers (a projected CRS) coordinates which is an area-preserving projection. These coordinates can be used for the local neighborhood variance estimator when calculating population estimates."),
+                                               tags$li("To download the Design Setup Attributes table, use the buttons to choose how you would like it to be saved. We strongly encourage users to download and retain this information for future reference. The table includes the spurvey function call for your design, the random seed used, and the spsurvey and R versions."),
                                                br(),
                                                h4(strong("Survey Map")),
                                                tags$li("The Survey Map tab provides an interactive and static map of the sample frame and the survey sample sites.")
                                                  )),
                                  bsCollapsePanel(title = h3(strong("Adjust Survey Weights Tab")), value="adjust",
                                                  p("Adjusting initial survey design weights is necessary when implementation results in the use of replacement sites or when it is desired to have final weights sum to known frame size of the desired population. This includes samples that are smaller or larger than planned, instances where an oversample is used, or samples impacted by frame error or nonresponse error. Adjusted weights are equal to initial weight * framesize/sum(initial weights). The adjustment is done separately for each 
-                                      Category specified in Weighting Category input. The tool allows the user to manually enter a desired population Frame Size or an automated calculation of the frame size by totaling the initial weights and adjusting it by the users site Evaluation Status inputs. By using the automated method, the output will render two adjusted weights:"),
+                                                    Category specified in Weighting Category input. The tool allows the user to manually enter a desired population Frame Size or an automated calculation of the frame size by totaling the initial weights and adjusting it by the users site Evaluation Status inputs. By using the automated method, the output will render two adjusted weights:"),
                                       tags$ul(
                                         tags$li(strong("WGT_TP_EXTENT")," - Weights based on the evaluation of all target and non-target probability sites. These weights are only used to estimate extent for target and non-target populations."),
                                         tags$li(strong("WGT_TP_CORE")," - Weights based on the evaluation of the target population based on sampled probability sites. These weights can be used to estimate condition for the 'target population'. Current NARS population estimates only use WGT_TP_CORE for all estimates related to condition.")
@@ -580,7 +582,7 @@ ui <- div(fixedPage(theme=bs_theme(version=3, bootswatch="yeti"),
                         
                         # Press button for analysis 
                         actionButton("goButton", strong("Calculate Survey Design"), icon=icon("circle-play"), 
-                                     style="color: #fff; background-color: #337ab7; border-color: #2e6da4")),#sidebarPanel
+                                     style="color: #fff; background-color: #337ab7; border-color: #2e6da4; font-size:130%")),#sidebarPanel
                       mainPanel(
                         uiOutput('mytabs'),
                         conditionalPanel(condition = "output.mytabs",
@@ -599,8 +601,16 @@ ui <- div(fixedPage(theme=bs_theme(version=3, bootswatch="yeti"),
                           conditionalPanel(condition = "input.addSF_SUM",
                                            br(),
                                            fixedRow(
+                                             h3(HTML("<center><b>Sample Frame Summary</b></center>")),
                                              column(4,
-                                                    DT::dataTableOutput("SF_SUM") %>% withSpinner(color="#0275d8"))))
+                                                    DT::dataTableOutput("SF_SUM") %>% withSpinner(color="#0275d8"))),
+                                           br(),
+                                           fixedRow(
+                            conditionalPanel(condition = "output.LEGACY_SUM",
+                                             h3(HTML("<center><b>Legacy Sample Frame Summary</b></center>"))),
+                                             column(4,
+                                                    DT::dataTableOutput("LEGACY_SUM") %>% withSpinner(color="#0275d8")))
+                                           )
                       ) #mainPanel
              ), #tabPanel (Prepare and Run Survey Design)
              ####Design Results####
@@ -694,18 +704,28 @@ ui <- div(fixedPage(theme=bs_theme(version=3, bootswatch="yeti"),
                             tabPanel(strong("Design"),
                                      mainPanel(width=8,
                                        fixedRow(
+                                         
                                          column(12, offset= 3,
                                               br(),
-                                                conditionalPanel(condition = "output.table",
-                                                                 h3(HTML("<center><b>Probability Survey Site Results</b></center>"))))),
+                                              conditionalPanel(condition = "output.table",
+                                                                 h3(HTML("<center><b>Probability Survey Site Results</b></center>")))),
                                        br(),
                                        fixedRow(
                                          column(12, offset = 2, 
                                                 uiOutput("shp_btn"))),
                                        br(),
+                                       fixedRow(
                                        column(12,
                                        DT::dataTableOutput("table"),
-                                       style = "width:600px; overflow-x: scroll;"))),
+                                       style = "width:600px;")),
+                                       br(), 
+                                       fixedRow(
+                                       column(12, offset= 3,
+                                              conditionalPanel(condition = "output.call",
+                                       h3(HTML("<center><b>Design Setup Attributes</b></center>"))))),
+                                       column(12,
+                                              DT::dataTableOutput("call"),
+                                              style = "width:600px;")))),
                             
                             tabPanel(title=strong("Survey Map"),
                                      br(),
@@ -1164,23 +1184,23 @@ server <- function(input, output, session) {
   })
   
   
-  observe({
-    req(!is.null(input$legacy_strat))
-    legacy_cols <- legacyobject() %>% select_if(~!is.numeric(.x))
-    updateSelectInput(session, "legacy_strat", selected = "", choices = colnames(legacy_cols))
-  })
+ # observe({
+  #  req(!is.null(input$legacy_strat))
+   # legacy_cols <- legacyobject() %>% select_if(~!is.numeric(.x))
+  #  updateSelectInput(session, "legacy_strat", selected = "", choices = colnames(legacy_cols))
+#  })
   
-  observe({
-    req(!is.null(input$legacy_cat))
-    legacy_cols <- legacyobject() %>% select_if(~!is.numeric(.x))
-    updateSelectInput(session, "legacy_cat", selected = "", choices = colnames(legacy_cols))
-  })
+#  observe({
+#    req(!is.null(input$legacy_cat))
+#    legacy_cols <- legacyobject() %>% select_if(~!is.numeric(.x))
+#    updateSelectInput(session, "legacy_cat", selected = "", choices = colnames(legacy_cols))
+#  })
   
-  observe({
-    req(!is.null(input$legacy_aux))
-    legacy_cols <- legacyobject() %>% select_if(~!is.character(.x))
-    updateSelectInput(session, "legacy_aux", selected = "", choices = colnames(legacy_cols))
-  })
+#  observe({
+#    req(!is.null(input$legacy_aux))
+#    legacy_cols <- legacyobject() %>% select_if(~!is.character(.x))
+#    updateSelectInput(session, "legacy_aux", selected = "", choices = colnames(legacy_cols))
+#  })
   
   #Stratum Length
   S <- reactive({
@@ -1268,11 +1288,13 @@ server <- function(input, output, session) {
   #Render selectInput if stratum name is NOT in design shapefiles column names.
   output$legacystrat <- renderUI({
     req(input$stratum != "None" && input$stratum %!in% colnames(legacyobject()))
+    
+    legacy_cols <- legacyobject() %>% st_drop_geometry() %>% select_if(~!is.numeric(.x))
     selectInput(inputId = "legacy_strat",
                 label = strong("Select Stratum from Legacy File"),
-                selected = "",
+                selected = "None",
                 multiple = FALSE,
-                choices = colnames(legacyobject()),
+                choices = colnames(legacy_cols),
                 width = "200px") %>%
       helper(icon = "circle-question",type = "inline",
              title = "Legacy Stratum",
@@ -1283,11 +1305,12 @@ server <- function(input, output, session) {
   #Render selectInput if category name is NOT in design shapefiles column names.
   output$legacycat <- renderUI({
     req(input$caty != "None" && input$caty %!in% colnames(legacyobject()))
+    legacy_cols <- legacyobject() %>% st_drop_geometry() %>% select_if(~!is.numeric(.x))
     selectInput(inputId = "legacy_cat",
                 label = strong("Select Category from Legacy File"),
-                selected = "",
+                selected = "None",
                 multiple = FALSE,
-                choices = colnames(legacyobject()),
+                choices = colnames(legacy_cols),
                 width = "200px") %>%
       helper(icon = "circle-question",type = "inline",
              title = "Legacy Category",
@@ -1298,11 +1321,12 @@ server <- function(input, output, session) {
   #Render selectInput if auxiliary variable name is NOT in design shapefiles column names.
   output$legacyaux <- renderUI({
     req(input$addoptions==TRUE && input$aux_var != "None" && input$aux_var %!in% colnames(legacyobject()))
+    legacy_cols <- legacyobject() %>% st_drop_geometry() %>% select_if(~is.numeric(.x))
     selectInput(inputId = "legacy_aux",
                 label = strong("Select Auxiliary Variable from Legacy File"),
                 selected = "",
                 multiple = FALSE,
-                choices = colnames(legacyobject()),
+                choices = colnames(legacy_cols),
                 width = "200px") %>%
       helper(icon = "circle-question",type = "inline",
              title = "Legacy Auxiliary",
@@ -1479,12 +1503,12 @@ server <- function(input, output, session) {
     geometry<-class(sfobject$geometry[[1]])
     frame_type<-strsplit(geometry," ")[[2]]
     
-    if (frame_type=="MULTIPOLYGON" || frame_type=="POLYGON") {
+    if(frame_type=="MULTIPOLYGON" || frame_type=="POLYGON") {
       Dist <- st_area(sfobject)
       Dist <- as.data.frame(Dist)
       st_geometry(sfobject) <- NULL
       sumdata <- cbind(sfobject, Dist)
-    } else if (frame_type=="POINT" || frame_type=="MULTIPOINT") {
+    } else if(frame_type=="POINT" || frame_type=="MULTIPOINT" && is.null(input$legacy)) {
       sumdata <- sfobject() %>% st_drop_geometry() %>% mutate(Dist = 1)
     } else {
       Dist <- st_length(sfobject)
@@ -1492,8 +1516,8 @@ server <- function(input, output, session) {
       st_geometry(sfobject) <- NULL
       sumdata <- cbind(sfobject, Dist)
     }
+    sumdata
   })
-  
   
   output$SF_SUM <- renderDataTable({
     req(dbfdata(), sfobject(), input$stratum, input$caty)
@@ -1510,7 +1534,7 @@ server <- function(input, output, session) {
                   janitor::adorn_totals(.) %>%
                   mutate(STRATUM = replace(STRATUM, n(), str_c(STRATUM[n()], "_", 
                                                                first(STRATUM)))))
-        
+      
       rows <- nrow(Summary)
       DT::datatable(Summary, rownames=F, options = list(pageLength = rows, dom = 't')) %>% 
         formatStyle('CATEGORY',
@@ -1529,6 +1553,62 @@ server <- function(input, output, session) {
         formatStyle('RESOURCE_units', fontWeight = 'bold')
     }
   })
+  
+  
+  ####Legacy Summary####
+  legacysum <- reactive({
+    req(legacyobject())
+    sumdata <- legacyobject() %>% st_drop_geometry() %>% mutate(Dist = 1)
+  })
+  
+  output$LEGACY_SUM <- renderDataTable({
+    req(legacyobject())
+  
+  if(input$stratum %in% colnames(legacyobject()) && input$caty %in% colnames(legacyobject())) {
+    if(input$stratum != "None" || input$caty != "None"){
+      Summary <- legacysum() %>%
+        rename(STRATUM = input$stratum,
+               CATEGORY = input$caty) %>%
+        group_by(STRATUM, CATEGORY) %>%
+        summarise(RESOURCE_units = round(sum(Dist)), .groups = 'drop') %>%
+        mutate(`Proportion_%` = round((RESOURCE_units/sum(RESOURCE_units))*100, 1)) %>%
+        group_split(STRATUM) %>% 
+        map_dfr(~ .x %>% 
+                  janitor::adorn_totals(.) %>%
+                  mutate(STRATUM = replace(STRATUM, n(), str_c(STRATUM[n()], "_", 
+                                                               first(STRATUM)))))
+      
+      rows <- nrow(Summary)
+      DT::datatable(Summary, rownames=F, options = list(pageLength = rows, dom = 't')) %>% 
+        formatStyle('CATEGORY',
+                    target = 'row',
+                    fontWeight = styleEqual(c("-"), c('bold')))
+      
+    } else {
+      Summary <- legacysum() %>%
+        rename(GROUP = None) %>%
+        group_by(GROUP) %>%
+        summarise(RESOURCE_units = sum(Dist), .groups = 'drop') %>%
+        mutate(RESOURCE_units = round(RESOURCE_units))
+      
+      rows <- nrow(Summary)
+      DT::datatable(Summary, rownames=F, options = list(pageLength = rows, dom = 't')) %>%
+        formatStyle('RESOURCE_units', fontWeight = 'bold')
+    }
+    } else{
+    Summary <- legacysum() %>%
+      rename(GROUP = None) %>%
+      group_by(GROUP) %>%
+      summarise(RESOURCE_units = sum(Dist), .groups = 'drop') %>%
+      mutate(RESOURCE_units = round(RESOURCE_units))
+    
+    rows <- nrow(Summary)
+    DT::datatable(Summary, rownames=F, options = list(pageLength = rows, dom = 't')) %>%
+      formatStyle('RESOURCE_units', fontWeight = 'bold')
+    }
+  })
+  
+  
   
   #Updates Aux var type based on category input
   observe({
@@ -1607,19 +1687,19 @@ server <- function(input, output, session) {
     #Unstratified 
     if (input$stratum == "None") {
       stratum_var <- NULL
-      strata_n <- input$strat1_base
+      n_base <- input$strat1_base
       #Stratified
     } else {
       stratum_var <- input$stratum
       #Creates Stratum named vector
-      strata_n <- c() #empty vector
+      n_base <- c() #empty vector
       for(i in 1:S()) {
-        strata_n[[paste0("strat", i)]] = input[[paste0("strat",i,"_base")]]
+        n_base[[paste0("strat", i)]] = input[[paste0("strat",i,"_base")]]
         #Renames vectors
         name<-input[[paste0('strat',i)]]
-        names(strata_n)[i] <- name
+        names(n_base)[i] <- name
       }
-      strata_n <- unlist(strata_n)
+      n_base <- unlist(n_base)
     }
     
     ####Category Conditionals####
@@ -1677,52 +1757,52 @@ server <- function(input, output, session) {
     
     #Equal Probability
     if(input$stratum == "None" && input$caty == "None") {
-      replace_n <- input$Over1
+      n_over <- input$Over1
       #Stratified Equal Probability
     } else if (input$stratum != "None" && input$caty == "None") {
       #Creates Replacement sites List
-      replace_n <- list()
+      n_over <- list()
       for(i in 1:S()) {
-        replace_n[[paste0("Over", i)]] = input[[paste0('Over',i)]]
+        n_over[[paste0("Over", i)]] = input[[paste0('Over',i)]]
         stratname <- input[[paste0("strat", i)]]
-        names(replace_n)[i] <- stratname
+        names(n_over)[i] <- stratname
       }
       #Unstratified Unequal Probability
     } else if(input$stratum == "None" && input$caty != "None") {
       #Creates replacement named vector
-      replace_n <- c() #empty vector
+      n_over <- c() #empty vector
       for(i in 1:S()) {
         for(x in 1:C()[i]) {
-          replace_n[[paste0("caty", x)]] = input$Over1
+          n_over[[paste0("caty", x)]] = input$Over1
           #Renames vectors
           catname <- input[[paste0("S1_C",x)]]
-          names(replace_n)[x] <- catname
+          names(n_over)[x] <- catname
         }
       }
-      replace_n <- unlist(replace_n)
+      n_over <- unlist(n_over)
       #Stratified Unequal Probability (Where n_over changes among strata) 
       #} else if(input$stratum != "None" && input$caty != "None" && replace_con != 1) {
     }else{
       #Creates replacement List
-      replace_n <- list() #empty list
+      n_over <- list() #empty list
       for(i in 1:S()) {
         for (x in 1:C()[i]) {
-          replace_n[[paste0("strat", i)]][paste0("S",i, "_C",x)] = input[[paste0('Over',i)]]
+          n_over[[paste0("strat", i)]][paste0("S",i, "_C",x)] = input[[paste0('Over',i)]]
           #Renames Category names in list
           catname <- input[[paste0("S",i,"_C",x)]]
-          names(replace_n[[i]])[x] <- catname
+          names(n_over[[i]])[x] <- catname
         }
         stratname <- input[[paste0("strat", i)]]
-        names(replace_n)[i] <- stratname
+        names(n_over)[i] <- stratname
       }
     }  
     #Stratified Unequal Probability (Where n_over DOES NOT change among strata) 
     # } else{
-    #   replace_n <- list()
+    #   n_over <- list()
     #    for(i in 1:S()) {
-    #      replace_n[[paste0("Over", i)]] = input[[paste0('Over',i)]]
+    #      n_over[[paste0("Over", i)]] = input[[paste0('Over',i)]]
     #      stratname <- input[[paste0("strat", i)]]
-    #      names(replace_n)[i] <- stratname
+    #      names(n_over)[i] <- stratname
     #    }
     #   }
     
@@ -1732,44 +1812,44 @@ server <- function(input, output, session) {
       over <- total + input[[paste0('Over',i)]]
     }
     if (over == 0) {
-      replace_n <- NULL
+      n_over <- NULL
     }
     
     ####Legacy Conditionals####    
     
     if(!is.null(input$legacy) && input$NAD83 == TRUE) {
-      legacyobject <- legacyobject()
-      legacyobject <- st_transform(legacyobject, crs = 5070)
+      legacy_sites <- legacyobject()
+      legacy_sites <- st_transform(legacy_sites, crs = 5070)
     } else if(!is.null(input$legacy)) {
-      legacyobject <- legacyobject()
+      legacy_sites <- legacyobject()
     } else {
-      legacyobject <- NULL
+      legacy_sites <- NULL
     }
     
     
     if(!is.null(input$legacy_strat)) {
-      legacy_strat <- input$legacy_strat
+      legacy_stratum_var <- input$legacy_strat
     } else {
-      legacy_strat <- NULL
+      legacy_stratum_var <- NULL
     }
     
     if(!is.null(input$legacy_cat)) {
-      legacy_cat <- input$legacy_cat
+      legacy_caty_var <- input$legacy_cat
     } else {
-      legacy_cat <- NULL
+      legacy_caty_var <- NULL
     }
     
     if(!is.null(input$legacy_aux)) {
-      legacy_aux <- input$legacy_aux
+      legacy_aux_var <- input$legacy_aux
     } else {
-      legacy_aux <- NULL
+      legacy_aux_var <- NULL
     }
     
 
     
     ####Additional Attribute Conditionals####
     aux_var <- NULL
-    mindist <- NULL
+    mindis <- NULL
     maxtry <- 10
     n_near <- NULL
     DesignID <- "Site"
@@ -1779,7 +1859,7 @@ server <- function(input, output, session) {
       aux_var <- input$aux_var
     }
     if (input$addoptions == TRUE && !is.na(input$mindist)) {
-      mindist <- input$mindist
+      mindis <- input$mindist
     }
     if (input$addoptions == TRUE && input$maxtry != 10) {
       maxtry <- input$maxtry
@@ -1808,18 +1888,18 @@ server <- function(input, output, session) {
     if(input$designtype=="GRTS") {
       
       design <- try(grts(sfobject,
-                         n_base = strata_n,
+                         n_base = n_base,
                          stratum_var = stratum_var,
                          caty_var = caty_var,
                          caty_n = caty_n,
-                         n_over = replace_n,
+                         n_over = n_over,
                          aux_var = aux_var,
                          #legacy_var = legacy_var,
-                         legacy_sites = legacyobject,
-                         legacy_stratum_var = legacy_strat,
-                         legacy_caty_var = legacy_cat,
-                         legacy_aux_var = legacy_aux,
-                         mindis = mindist,
+                         legacy_sites = legacy_sites,
+                         legacy_stratum_var = legacy_stratum_var,
+                         legacy_caty_var = legacy_caty_var,
+                         legacy_aux_var = legacy_aux_var,
+                         mindis = mindis,
                          maxtry = maxtry,
                          n_near = n_near,
                          pt_density = pt_density,
@@ -1828,18 +1908,18 @@ server <- function(input, output, session) {
     
     else {
       design <- try(irs(sfobject,
-                        n_base = strata_n,
+                        n_base = n_base,
                         stratum_var = stratum_var,
                         caty_var = caty_var,
                         caty_n = caty_n,
-                        n_over = replace_n,
+                        n_over = n_over,
                         aux_var = aux_var,
                         #legacy_var = legacy_var,
-                        legacy_sites = legacyobject,
-                        legacy_stratum_var = legacy_strat,
-                        legacy_caty_var = legacy_cat,
-                        legacy_aux_var = legacy_aux,
-                        mindis = mindist,
+                        legacy_sites = legacy_sites,
+                        legacy_stratum_var = legacy_stratum_var,
+                        legacy_caty_var = legacy_caty_var,
+                        legacy_aux_var = legacy_aux_var,
+                        mindis = mindis,
                         maxtry = maxtry,
                         n_near = n_near,
                         pt_density = pt_density,
@@ -1853,9 +1933,21 @@ server <- function(input, output, session) {
       stop_df
       #If grts or irs is unsuccessful, reactive returns list (design)
     } else {
+      # find the call list
+      call_list <- as.list(design$design$call)
+      # only replace specific elements
+      replace_names <- names(call_list)[!names(call_list) %in% c("", "sframe","legacy_sites")]
+      call_list[replace_names] <- lapply(replace_names, function(x) eval(call_list[[x]]))
+      # save new call list as a call
+      new_call <- as.call(call_list)
+      if (input$addoptions == TRUE) {
+        rseed <- input$seed
+      }
+      
+      design$design <- data.frame(call = deparse1(new_call), seed = rseed, spsurvey_version = packageVersion("spsurvey"), r_version = R.version.string)
+      
       design
     }
-    
   })
   
   
@@ -2082,6 +2174,28 @@ server <- function(input, output, session) {
   
   output$balance <-  renderPrint({
     sbresult()
+  })
+  
+  ####Call Output####
+  output$call <- renderDataTable({
+    req(!is.data.frame(DESIGN()))
+    
+    call <- DESIGN()$design
+    
+    DT::datatable(
+      call,
+      callback=JS('$("button.buttons-copy").css("background","#337ab7").css("color", "#fff");
+                   $("button.buttons-csv").css("background","#337ab7").css("color", "#fff");
+                   $("button.buttons-excel").css("background","#337ab7").css("color", "#fff");
+                   return table;'),
+      extensions = c("Buttons"),
+      rownames = FALSE,
+      options = list(dom = 'Bt',
+                     buttons = list(
+                       list(extend = 'copy', filename = paste("Design_Setup", Sys.Date(), sep="")),
+                       list(extend = 'csv', filename = paste("Design_Setup", Sys.Date(), sep="")),
+                       list(extend = 'excel', filename = paste("Design_Setup", Sys.Date(), sep="")))
+      ))
   })
   
   
