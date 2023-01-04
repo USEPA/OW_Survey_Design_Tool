@@ -1,7 +1,7 @@
 # Survey Design Tool
 *Current version: 1.1.1 Last updated: 11/15/2022
 ## How to Launch the Tool
-* Visit https://owshiny.epa.gov/survey-design-tool to launch the tool from EPA's Office of Water R shiny server. If using a large sample frame or if your design uses >2GB of memory, consider running the tool locally from your own workstation for faster processing. 
+* Visit https://owshiny.epa.gov/survey-design-tool to launch the tool from EPA's Office of Water Shiny server. If using a large sample frame or if your design uses >2GB of memory, consider running the tool locally from your own workstation for faster processing. 
 * To launch the tool locally, click the green 'Code' button and download the zip file which contains the code repository. Open the <b>app.R</b> file in RStudio for local app deployment. RStudio will recognize the Shiny script and provide a Run App button at the top of the editor pane (look for the green play triangle).
      * <b>Note:</b> Requires the R package <b>spsurvey Version <span>&#8805;</span>5.1.0</b>.
 
