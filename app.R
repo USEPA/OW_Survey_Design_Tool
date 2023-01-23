@@ -34,6 +34,11 @@ options(shiny.maxRequestSize = 10000*1024^2)
 ui <- div(fixedPage(theme=bs_theme(version=3, bootswatch="yeti"), 
                     tags$html(class = "no-js", lang="en"),
                     tags$head(
+			    tags$style(
+                        #Controls tabsetPanel display
+                      HTML(".nav:not(.nav-hidden) {
+                            display: block !important;
+                            }")),
                       HTML(
                         "<!-- Google Tag Manager -->
 		<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
@@ -266,7 +271,7 @@ ui <- div(fixedPage(theme=bs_theme(version=3, bootswatch="yeti"),
              inverse = TRUE,
              # Panel with instructions for using this tool
              tabPanel(title=span(strong("Step 1: Instructions for Use"), 
-                                 style = "font-weight: bold; font-size: 16px"), value='instructions',
+                                 style = "font-weight: bold; font-size: 20px"), value='instructions',
                       bsCollapse(id = "instructions",   
                                  bsCollapsePanel(title = h1(strong("Overview")), value="Overview",
                                       p("This R Shiny app allows for the calculation of spatially balanced survey designs of point, linear, or areal resources using the Generalized Random-Tessellation Stratified (GRTS) algorithm,", tags$a(href= "https://cfpub.epa.gov/ncer_abstracts/index.cfm/fuseaction/display.files/fileID/13339", "Stevens and Olsen (2004).", target="blank"), 
@@ -489,7 +494,7 @@ ui <- div(fixedPage(theme=bs_theme(version=3, bootswatch="yeti"),
              ####Prepare Design####
              # Panel to import and prepare survey design
              tabPanel(title=span(strong('Step 2: Prepare Survey Design'), 
-                                 style = "font-weight: bold; font-size: 16px"), value='Step 2: Prepare Survey Design',
+                                 style = "font-weight: bold; font-size: 20px"), value='Step 2: Prepare Survey Design',
                       sidebarPanel(
                         
                         h4(strong(HTML("<center>Select the Survey Sample Frame<center/>"))),
@@ -615,7 +620,7 @@ ui <- div(fixedPage(theme=bs_theme(version=3, bootswatch="yeti"),
              ), #tabPanel (Prepare and Run Survey Design)
              ####Design Results####
              tabPanel(title=span(strong("Step 3: Survey Design Results"), 
-                                 style = "font-weight: bold; font-size: 16px"),
+                                 style = "font-weight: bold; font-size: 20px"),
                       value="Step 3: Survey Design Results",
                 conditionalPanel(condition = "input.goButton",
                       sidebarLayout(
@@ -770,7 +775,7 @@ ui <- div(fixedPage(theme=bs_theme(version=3, bootswatch="yeti"),
              ),#tabPanel(Survey Design)
              ####Adjust Weights####
              tabPanel(title=span(strong("Step 4: Adjust Survey Weights"), 
-                                 style = "font-weight: bold; font-size: 16px"), value="Step 4: Adjust Survey Weights",
+                                 style = "font-weight: bold; font-size: 20px"), value="Step 4: Adjust Survey Weights",
                       sidebarPanel(
                         h4(strong(HTML("<center>Select the Weight Adjustment File<center/>"))),
                         fileInput(
