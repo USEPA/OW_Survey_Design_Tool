@@ -1,25 +1,13 @@
-library(shiny)
-library(spsurvey)
-library(janitor)
-library(DT)
-library(zip)
-library(foreign)
-library(sf)
-library(sp)
-library(leaflet)
-library(mapview)
-library(ggspatial)
-library(bslib)
-library(shinybusy)
-library(shinycssloaders)
-library(shinyhelper)
-library(shinyBS)
-library(dplyr)
-library(ggplot2)
-library(purrr)
-library(tidyr)
-library(stringr)
+packages <- c("shiny", "spsurvey", "janitor", "DT", "zip", "foreign", "sf", "sp", "leaflet", "mapview", "ggspatial", "bslib", "shinybusy", 
+              "shinycssloaders", "shinyhelper", "shinyBS", "dplyr", "ggplot2", "purrr", "tidyr", "stringr", "shinyjs")
+#installed_packages <- packages %in% rownames(installed.packages())
+#if(any(installed_packages == FALSE)) {
+#  install.packages(packages[!installed_packages])
+#}
 
+
+# Packages loading
+lapply(packages, library, character.only = TRUE)
 
 rseed <- sample(10000,1)
 #state_name <- state.name
@@ -33,8 +21,9 @@ options(shiny.maxRequestSize = 10000*1024^2)
 # Define UI
 ui <- div(fixedPage(theme=bs_theme(version=3, bootswatch="yeti"), 
                     tags$html(class = "no-js", lang="en"),
+                    useShinyjs(),
                     tags$head(
-			    tags$style(
+                      tags$style(
                         #Controls tabsetPanel display
                       HTML(".nav:not(.nav-hidden) {
                             display: block !important;
@@ -338,7 +327,7 @@ ui <- div(fixedPage(theme=bs_theme(version=3, bootswatch="yeti"),
                                       tags$li("Set the sample size of Base sites you desire for each stratum."),
                                       tags$li("If you supplied a Category attribute, these categories will automatically populate. Choose the sample sizes for each. NOTICE: the sum of the sample sizes must equal the base site sample size."),
                                       tags$li("Choose the sample size of the Replacement Sites you desire, if any. Replacement sites are an additional set of sites that can be used to replace the main sample list sites when they are found to be non-target or inaccessible. When replacing a site with a replacement, the user must FOLLOW THE ORDER of the design output and select a replacement site of the same Stratum, if used. If replacement sites are used improperly it may result in spatial imbalance. 
-                                              The tool attempts to distribute the replacement sites proportionately among sample sizes for the Categories. If the replacement proportion for one or more Categories is not a whole number, the proportion is rounded to the next higher integer."),
+                                              The tool attempts to distribute the replacement sites proportionately among sample sizes for the Categories. If the replacement proportion for one or more Categories is not a whole number, the proportion is rounded to the next higher integer. Choose a reasonable replacment sample size as requesting too many unused sites can impact the spatial balance of your design."),
                                       tags$li("Once your design has been prepared, click the 'Calculate Survey Design' button to be transported to the Survey Design Results tab.")
                                                    ))),
                                  bsCollapsePanel(title = h3(strong("Survey Design Results Tab")), value="survey",
@@ -491,6 +480,7 @@ ui <- div(fixedPage(theme=bs_theme(version=3, bootswatch="yeti"),
                                       endorsement, recommendation or favoring by EPA.  The EPA seal and logo shall not be used in any manner to imply endorsement of any commercial product or activity 
                                       by EPA or the United States Government.'),
                       br(), hr()),
+             
              ####Prepare Design####
              # Panel to import and prepare survey design
              tabPanel(title=span(strong('Step 2: Prepare Survey Design'), 
@@ -623,7 +613,10 @@ ui <- div(fixedPage(theme=bs_theme(version=3, bootswatch="yeti"),
                                  style = "font-weight: bold; font-size: 20px"),
                       value="Step 3: Survey Design Results",
                 conditionalPanel(condition = "input.goButton",
+                                 tagList(span("Remove/Restore Sidebar", style = "font-weight: bold; font-size: 25px; font-style:italic;",
+                                              actionLink("sidebar_button","", icon = icon("bars")))),
                       sidebarLayout(
+                        div(class="sidebar", 
                         sidebarPanel(
                           conditionalPanel(condition = "output.error",
                                            h4(HTML("<center><b>Design Errors</b></center>"))),
@@ -703,34 +696,25 @@ ui <- div(fixedPage(theme=bs_theme(version=3, bootswatch="yeti"),
                                                                 "<b>Mean-Absolute Error</b> This statistic can take on a value between zero and infinity.",
                                                                 "<b>Chi-Squared Loss</b> This statistic can take on a value between zero and infinity."),
                                                     size = "s", easyClose = TRUE, fade = TRUE)), width = 5
-                        ),#sidebarPanel
+                        )),#sidebarPanel
                         mainPanel(
+                          
                           tabsetPanel(
-                            tabPanel(strong("Design"),
-                                     mainPanel(width=8,
-                                       fixedRow(
-                                         
-                                         column(12, offset= 3,
+                            tabPanel(title=strong("Design"),
+                                     mainPanel(
                                               br(),
                                               conditionalPanel(condition = "output.table",
-                                                                 h3(HTML("<center><b>Probability Survey Site Results</b></center>")))),
+                                                                 h3(HTML("<center><b>Probability Survey Site Results</b></center>"))),
                                        br(),
-                                       fixedRow(
-                                         column(12, offset = 2, 
-                                                uiOutput("shp_btn"))),
+                                         
+                                                uiOutput("shp_btn"),
                                        br(),
-                                       fixedRow(
-                                       column(12,
-                                       DT::dataTableOutput("table"),
-                                       style = "width:600px;")),
+                                         dataTableOutput(outputId = "table"),
+                                       style="width: 110%;",
                                        br(), 
-                                       fixedRow(
-                                       column(12, offset= 3,
                                               conditionalPanel(condition = "output.call",
-                                       h3(HTML("<center><b>Design Setup Attributes</b></center>"))))),
-                                       column(12,
-                                              DT::dataTableOutput("call"),
-                                              style = "width:600px;")))),
+                                       h3(HTML("<center><b>Design Setup Attributes</b></center>"))),
+                                              DT::dataTableOutput("call"))),
                             
                             tabPanel(title=strong("Survey Map"),
                                      br(),
@@ -1077,6 +1061,25 @@ server <- function(input, output, session) {
   
   observe_helpers()
   
+  
+  observeEvent(input$sidebar_button, {
+    shinyjs::toggle(selector = ".sidebar")
+    js_maintab <- paste0('$(".tab-pane div[role=',"'main'",']")')
+    
+    if((input$sidebar_button %% 2) != 0) {
+      runjs(paste0('
+          width_percent = parseFloat(',js_maintab,'.css("width")) / parseFloat(',js_maintab,'.parent().css("width"));
+            ',js_maintab,'.css("width","100%");
+          '))
+    } else {
+      runjs(paste0('
+          width_percent = parseFloat(',js_maintab,'.css("width")) / parseFloat(',js_maintab,'.parent().css("width"));
+            ',js_maintab,'.css("width","");
+          '))
+    }
+  })
+  
+  
   dbfdata <- reactive({
     
     req(input$filemap)
@@ -1359,9 +1362,8 @@ server <- function(input, output, session) {
                #Auxiliary variable helper
                helper(icon = "circle-question",type = "inline",
                       title = "Auxiliary Variable",
-                      content = c("Numeric attribute which represents the proportional (to size) inclusion probability variable (auxiliary variable). 
-                         This selection type will result in an unstratified GRTS sample where each site in the sample frame has inclusion probability proportional to a positive, continuous variable. 
-                         Larger values of the auxiliary variable result in higher inclusion probabilities."),
+                      content = c("Used for proportional probability selection where the selection for each sampling unit in the population is proportional to a positive <b>Auxiliary Variable</b>.
+                                   Larger values of the auxiliary variable result in higher inclusion probabilities. Can be used in unstratified or stratified sampling."),
                       size = "s", easyClose = TRUE, fade = TRUE),
              
              #Reproducible seed input
@@ -1412,7 +1414,7 @@ server <- function(input, output, session) {
                #n_near helper
                helper(icon = "circle-question",type = "inline",
                       title = "Nearest Neighbor Replacements",
-                      content = c("An integer from 1 to 10 specifying the number of nearest neighbor replacement sites to be selected for each base site. For infinite sample frames, the distance between a site and its nearest neighbor depends on point density. This tool does not offer stratum-specific nearest neighbor requirements."),
+                      content = c("An integer from 1 to 10 specifying the number of nearest neighbor replacement sites to be selected for each base site. For point sample frames, the distance between a site and its nearest neighbor depends on point density. This tool does not offer stratum-specific nearest neighbor requirements."),
                       size = "s", easyClose = TRUE, fade = TRUE),
              #Point Density input
              numericInput(inputId = "pt_density", 
@@ -1505,6 +1507,10 @@ server <- function(input, output, session) {
     req(dbfdata(), sfobject(), input$stratum, input$caty)
     
     sfobject <- sfobject()
+    if(input$NAD83 == TRUE) {
+      sfobject <- st_transform(sfobject, crs = 5070)
+    }
+    
     geometry<-class(sfobject$geometry[[1]])
     frame_type<-strsplit(geometry," ")[[2]]
     
@@ -1949,7 +1955,7 @@ server <- function(input, output, session) {
         rseed <- input$seed
       }
       
-      design$design <- data.frame(call = deparse1(new_call), seed = rseed, spsurvey_version = packageVersion("spsurvey"), r_version = R.version.string)
+      design$design <- data.frame(call = deparse1(new_call), seed = rseed, spsurvey_version = getNamespaceVersion("spsurvey"), r_version = R.version.string)
       
       design
     }
@@ -2128,7 +2134,7 @@ server <- function(input, output, session) {
     #Create Plots
     plot <- ggplot(cat_ests, aes(x = Category, y = Estimate.P)) +
       geom_bar(aes(fill = Category, color = Category), alpha = 0.5, stat="identity", position = position_dodge()) +
-      geom_errorbar(aes(ymin = LCB, ymax = UCB, color = Category), size=2, width=0) +
+      geom_errorbar(aes(ymin = LCB, ymax = UCB, color = Category), linewidth=2, width=0) +
       scale_x_discrete(labels = function(x) str_wrap(x, width = 8)) +
       scale_fill_manual(values = colors) +
       scale_color_manual(values = colors) +
@@ -2195,7 +2201,7 @@ server <- function(input, output, session) {
                    return table;'),
       extensions = c("Buttons"),
       rownames = FALSE,
-      options = list(dom = 'Bt',
+      options = list(dom = 'B',
                      buttons = list(
                        list(extend = 'copy', filename = paste("Design_Setup", Sys.Date(), sep="")),
                        list(extend = 'csv', filename = paste("Design_Setup", Sys.Date(), sep="")),
@@ -2230,8 +2236,9 @@ server <- function(input, output, session) {
                    return table;'),
       extensions = c("Buttons"),
       rownames = FALSE,
-      options = list(dom = 'Bfrtip',
-                     scrollX=TRUE,
+      options = list(dom = 'Blrtip',
+                     #autowidth = TRUE,
+                     scrollX = TRUE,
                      buttons = list(
                        list(extend = 'copy', filename = paste("Survey_Design_", Sys.Date(), sep="")),
                        list(extend = 'csv', filename = paste("Survey_Design_", Sys.Date(), sep="")),
@@ -2239,6 +2246,8 @@ server <- function(input, output, session) {
                        list(extend = 'pdf', filename = paste("Survey_Design_", Sys.Date(), sep="")))
       ))
   })
+  
+
   
   ####Download Shapefile####
   output$shp_btn <- renderUI({
@@ -2348,7 +2357,7 @@ server <- function(input, output, session) {
                                             linetype = "dashed", size = 0.5), 
             panel.background = element_rect(fill = "aliceblue"))
     print(plot)
-  }, height = 500, width = 700)  
+  })  
   
   
   ####Weight Adjustment####
