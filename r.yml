@@ -20,3 +20,4 @@ packages:
     - name: shinyBS
     - name: dplyr
     - name: tidyr
+    - name: shinyjs
