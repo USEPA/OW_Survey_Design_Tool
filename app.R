@@ -2174,7 +2174,7 @@ server <- function(input, output, session) {
   
   ####Spatial Balance####
   sbresult <- eventReactive(input$balancebtn, {
-    req(input$caty == "None")
+    #req(input$caty == "None")
     
     if(input$stratum != "None") {
       sp_balance(DESIGN()$sites_base, sfobject(), stratum_var = input$stratum, metrics = input$balance)
