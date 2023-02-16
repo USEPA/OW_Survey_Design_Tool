@@ -1064,7 +1064,7 @@ server <- function(input, output, session) {
   
   observeEvent(input$sidebar_button, {
     shinyjs::toggle(selector = ".sidebar")
-    js_maintab <- paste0('$(".tab-pane div[role=',"'main'",']")')
+    js_maintab <- paste0('$(".tab-pane.active div[role=',"'main'",']")')
     
     if((input$sidebar_button %% 2) != 0) {
       runjs(paste0('
