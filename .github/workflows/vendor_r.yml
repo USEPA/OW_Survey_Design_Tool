@@ -1,5 +1,8 @@
 on:
   workflow_dispatch:
+  push:
+    branches: 
+      - cloud-gov-updates
 
 jobs:
   download_and_vendor_dependencies:
