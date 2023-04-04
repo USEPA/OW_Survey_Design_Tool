@@ -81,16 +81,16 @@ jobs:
 
     - name: Add additional files to repo if not already there
       run: |
-        if [ ! -f "manifest*.yml" ]; 
-          then cp scripts/include/manifest.yml .
+        if [ ! ls "manifest*.yml" 1> /dev/null 2>&1 ]; then
+          cp scripts/include/manifest.yml .
           git add manifest.yml
         fi
-        if [ ! -f ".cfignore" ]; 
-          then cp scripts/include/.cfignore .
+        if [ ! -f ".cfignore" ]; then
+          cp scripts/include/.cfignore .
           git add .cfignore
         fi
-        if [ ! -f "shiny.R" ]; 
-          then cp scripts/include/shiny.R .
+        if [ ! -f "shiny.R" ]; then
+          cp scripts/include/shiny.R .
           git add shiny.R
         fi
 
