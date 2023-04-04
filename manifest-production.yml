@@ -4,6 +4,7 @@ applications:
   routes:
     - route: survey-design-tool.app.cloud.gov
   disk_quota: 2G
+  stack: cflinuxfs4
   buildpacks:
     - r_buildpack
   command: R -f shiny.R

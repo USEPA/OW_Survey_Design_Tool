@@ -27,6 +27,7 @@ jobs:
         git config --global --add safe.directory $(realpath .)
         git config user.name github-actions
         git config user.email github-actions@github.com
+        git config --global core.autocrlf input
         sudo apt --purge autoremove -y libmariadb-dev libmariadb-dev-compat
 
     - name: Setup R
