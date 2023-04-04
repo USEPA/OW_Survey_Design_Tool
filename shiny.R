@@ -2,9 +2,9 @@ library_path <- paste("Library Path: ", Sys.getenv(c("LD_LIBRARY_PATH")))
 print(paste("LD_LIBRARY_PATH: ", library_path))
 
 lib_dir <- '/home/vcap/deps/0/r/lib'
-local_lib_dir <- 'lib'
+local_lib_dir <- 'r-lib'
 
-if(dir.exists(lib_dir))
+if(dir.exists(lib_dir) & dir.exists(local_lib_dir))
 {
   # Get the list of libs
   lib_tars <- list.files(local_lib_dir)
@@ -22,5 +22,4 @@ if(dir.exists(lib_dir))
 print(list.files(lib_dir))
 
 library(shiny)
-
 runApp(host="0.0.0.0", port=strtoi(Sys.getenv("PORT")))
