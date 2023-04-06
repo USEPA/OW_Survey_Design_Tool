@@ -1,9 +1,0 @@
-applications:
-- name: survey-design-tool
-  memory: 2000M
-  routes:
-    - route: survey-design-tool.app.cloud.gov
-  disk_quota: 2G
-  buildpacks:
-    - r_buildpack
-  command: R -f shiny.R
