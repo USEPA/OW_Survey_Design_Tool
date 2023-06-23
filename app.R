@@ -1,4 +1,4 @@
-packages <- c("shiny", "spsurvey", "janitor", "DT", "zip", "foreign", "sf", "sp", "leaflet", "mapview", "ggspatial", "bslib", "shinybusy", 
+packages <- c("shiny", "spsurvey", "janitor", "DT", "zip", "foreign", "sf", "leaflet", "mapview", "ggspatial", "bslib", "shinybusy", 
               "shinycssloaders", "shinyhelper", "shinyBS", "dplyr", "ggplot2", "purrr", "tidyr", "stringr", "shinyjs")
 #installed_packages <- packages %in% rownames(installed.packages())
 #if(any(installed_packages == FALSE)) {
@@ -2292,7 +2292,7 @@ server <- function(input, output, session) {
     
     surveypts <- sp_rbind(DESIGN())
     surveypts <- surveypts %>% filter(!(is.na(stratum))) %>% filter(!(is.na(caty))) %>%
-      st_transform(CRS("+proj=longlat  +datum=WGS84"))
+      st_transform(crs=4269)
     
     sfobject <- sfobject()
     geometry<-class(sfobject$geometry[[1]])
@@ -2307,7 +2307,7 @@ server <- function(input, output, session) {
     }
     
     frame <- sfobject %>%
-      st_transform(CRS("+proj=longlat  +datum=WGS84")) 
+      st_transform(crs=4269) 
     
     m<-mapview(surveypts, zcol = input$color)
     
