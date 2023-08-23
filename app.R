@@ -795,7 +795,8 @@ ui <- div(fixedPage(theme=bs_theme(version=3, bootswatch="yeti"),
                           #Weight Category helper
                           helper(icon = "circle-question",type = "inline",
                                  title = "Weight Category",
-                                 content = c("For unequal probability designs, choose the column in the Weight Adjustment file which contains the weight category. The default is None, which assumes every site is in the same category and an equal probability design is being adjusted."),
+                                 content = c("Choose the column in the Weight Adjustment file which contains the weight adjustment category. A weight adjustment category represents if a Stratum and/or a multi-density category was used in the design as implemented. If the design was unequally stratified, this attribute should contain a combination of the stratum and category used (i.e. Stratum-Category). 
+                                             The default is None, which assumes every site is in the same category and an equal probability design is being adjusted."),
                                  size = "s", easyClose = TRUE, fade = TRUE),
                         
                         selectInput(inputId = "adjsitesampled",
