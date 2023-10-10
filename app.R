@@ -1885,10 +1885,10 @@ server <- function(input, output, session) {
       pt_density <- input$pt_density
     } 
     
-    sfobject <- sfobject()
+    sample_frame <- sfobject()
     
     if(input$NAD83 == TRUE) {
-      sfobject <- st_transform(sfobject, crs = 5070)
+      sample_frame <- st_transform(sample_frame, crs = 5070)
     }
     
     #Removes stop_df if calculate button has been previously pressed
@@ -1898,7 +1898,7 @@ server <- function(input, output, session) {
     
     if(input$designtype=="GRTS") {
       
-      design <- try(grts(sfobject,
+      design <- try(grts(sample_frame,
                          n_base = n_base,
                          stratum_var = stratum_var,
                          caty_var = caty_var,
@@ -1918,7 +1918,7 @@ server <- function(input, output, session) {
     }
     
     else {
-      design <- try(irs(sfobject,
+      design <- try(irs(sample_frame,
                         n_base = n_base,
                         stratum_var = stratum_var,
                         caty_var = caty_var,
