@@ -1948,17 +1948,14 @@ server <- function(input, output, session) {
       #If grts or irs is unsuccessful, reactive returns list (design)
     } else {
       # find the call list
-      call_list <- as.list(design$design$call)
+     call_list <- as.list(design$design$call)
       # only replace specific elements
       replace_names <- names(call_list)[!names(call_list) %in% c("", "sframe","legacy_sites")]
       call_list[replace_names] <- lapply(replace_names, function(x) eval(call_list[[x]]))
       # save new call list as a call
       new_call <- as.call(call_list)
-      if (input$addoptions == TRUE) {
-        rseed <- input$seed
-      }
       
-      design$design <- data.frame(call = deparse1(new_call), seed = rseed, spsurvey_version = getNamespaceVersion("spsurvey"), r_version = R.version.string)
+      design$design <- data.frame(call = deparse1(new_call))
       
       design
     }
@@ -2252,41 +2249,78 @@ server <- function(input, output, session) {
   
 
   
-  ####Download Shapefile####
+ ####Download Shapefile and README####
   output$shp_btn <- renderUI({
     req(!is.data.frame(DESIGN()))
     downloadButton("download_shp", HTML("Download Survey <br/> Site Shapefile"), icon=icon("compass"), style="color: #fff; background-color: #337ab7; border-color: #2e6da4")
   })
   
-  
-  output$download_shp <- downloadHandler(
-    filename <- function() {
-      paste(format(Sys.Date(), "%Y-%m-%d"), "_Survey_Design.zip", sep="")
-      
+  output$download_shp  <- downloadHandler(
+    filename = function() {
+      shpdf <- input$filemap
+           paste0(gsub('.{4}$', '', shpdf$name[1]), "_Survey_Design_", format(Sys.Date(), "%Y-%m-%d"), 
+                  ".zip", sep="")
     },
     content = function(file) {
       tmp.path <- dirname(file)
       
+      shpdf <- input$filemap
       name.base <- file.path(tmp.path, "Survey_Sites")
-      name.glob <- paste0(name.base, ".*")
       name.shp  <- paste0(name.base, ".shp")
-      name.zip  <- paste0(name.base, ".zip")
+      name.glob <- paste0(name.base, ".*")
       
-      if (length(Sys.glob(name.glob)) > 0) file.remove(Sys.glob(name.glob))
-      DES_SD <- sp_rbind(DESIGN())
-      DES_SD <- DES_SD %>% filter(!(is.na(wgt))) %>% select(-None) #%>% 
-      #  mutate(xcoord = unlist(map(DES_SD$geometry, 1)),
-       #        ycoord = unlist(map(DES_SD$geometry, 2)), .after = lat_WGS84) 
+      name.base2 <- file.path(tmp.path, shpdf$name[grep(pattern="*.shp$", shpdf$name)])
+      name.glob2  <- paste0(tmp.path, "/", shpdf$name)
       
-      st_write(DES_SD, dsn = name.shp, ## layer = "shpExport",
-               driver = "ESRI Shapefile", quiet = TRUE)
+     
+      #if(length(Sys.glob(name.glob)) > 0) file.remove(Sys.glob(name.glob))
+           DES_SD <- sp_rbind(DESIGN())
+           DES_SD <- DES_SD %>% filter(!(is.na(wgt))) %>% select(-None)
       
-      zip::zipr(zipfile = name.zip, files = Sys.glob(name.glob))
-      req(file.copy(name.zip, file))
+           st_write(DES_SD, dsn = name.shp,
+                    driver = "ESRI Shapefile", quiet = TRUE, append=FALSE)
+           
+           sfobject <- sfobject()
+           st_write(sfobject, dsn = name.base2,
+                    driver = "ESRI Shapefile", quiet = TRUE, append=FALSE)
       
-      if (length(Sys.glob(name.glob)) > 0) file.remove(Sys.glob(name.glob))
-    }  
-  )
+           if(input$addoptions == TRUE) {
+             seed <- input$seed
+           }else{
+             seed <- rseed
+           }
+      README <- writeLines(c(
+        "Thank you for using EPA's Office of Water Survey Design Tool.",
+        "Please read this file in its entirety.",
+        "",
+        "This .zip contains all of the necessary files associated with your survey design.",
+        "It is important that you keep them bundled together so that if you need",
+        "to reproduce your results in the future or ask for clarification, we will",
+        "have all the tools we need to be able to efficiently help.",
+        "",
+        "The .zip contains three files:",
+        "1. The original sample frame used to create the design.",
+        "2. The sites selected by the survey design.",
+        "3. This README.",
+        "",
+        "For questions, please contact OW's Garrett Stillings (Stillings.Garrett@epa.gov)",
+        "and/or ORD's Michael Dumelle (Dumelle.Michael@epa.gov).",
+        "",
+        paste("seed number:", seed, sep = " "),
+        paste("spsurvey call:", DESIGN()$design, sep = " "),
+        paste("sample frame:", shpdf$name, sep=" "),
+        paste("spsurvey version:", as.character(packageVersion("spsurvey")), sep = " "),
+        paste("R version:", paste(R.version$major, R.version$minor, sep = ".")
+      )),
+      con ="README.txt")
+      
+      fs <- c(Sys.glob(name.glob2), Sys.glob(name.glob), "README.txt")
+      
+      zip::zipr(zipfile = file, files = fs)
+      if(file.exists(paste0(file, ".zip"))) {file.rename(paste0(file, ".zip"), file)}
+    },
+    contentType = "application/zip"
+  ) 
   
   ####Mapping####
   
