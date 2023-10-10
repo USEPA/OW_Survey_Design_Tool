@@ -712,11 +712,8 @@ ui <- div(fixedPage(theme=bs_theme(version=3, bootswatch="yeti"),
                                                 uiOutput("shp_btn"),
                                        br(),
                                          dataTableOutput(outputId = "table"),
-                                       style="width: 110%;",
-                                       br(), 
-                                              conditionalPanel(condition = "output.call",
-                                       h3(HTML("<center><b>Design Setup Attributes</b></center>"))),
-                                              DT::dataTableOutput("call"))),
+                                       style="width: 110%;"
+				     )),
                             
                             tabPanel(title=strong("Survey Map"),
                                      br(),
@@ -2186,29 +2183,6 @@ server <- function(input, output, session) {
   output$balance <-  renderPrint({
     sbresult()
   })
-  
-  ####Call Output####
-  output$call <- renderDataTable({
-    req(!is.data.frame(DESIGN()))
-    
-    call <- DESIGN()$design
-    
-    DT::datatable(
-      call,
-      callback=JS('$("button.buttons-copy").css("background","#337ab7").css("color", "#fff");
-                   $("button.buttons-csv").css("background","#337ab7").css("color", "#fff");
-                   $("button.buttons-excel").css("background","#337ab7").css("color", "#fff");
-                   return table;'),
-      extensions = c("Buttons"),
-      rownames = FALSE,
-      options = list(dom = 'B',
-                     buttons = list(
-                       list(extend = 'copy', filename = paste("Design_Setup", Sys.Date(), sep="")),
-                       list(extend = 'csv', filename = paste("Design_Setup", Sys.Date(), sep="")),
-                       list(extend = 'excel', filename = paste("Design_Setup", Sys.Date(), sep="")))
-      ))
-  })
-  
   
   ####Design Table####
   output$table <- renderDataTable(server = FALSE, {
