@@ -24,7 +24,7 @@ jobs:
 
     steps:
     - name: Checkout Code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         fetch-depth: 1
         ref: cloud-gov
@@ -35,7 +35,7 @@ jobs:
         if [ -d "main-branch" ]; then rm -fr main-branch; fi
 
     - name: Checkout default branch to main-branch path
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         fetch-depth: 1
         path: main-branch
@@ -68,7 +68,7 @@ jobs:
 
     steps:
     - name: Checkout Code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         fetch-depth: 1
         ref: cloud-gov
@@ -160,7 +160,6 @@ jobs:
       with:
         name: debug-outputs
         path: debug-outputs
-
 
     - name: Commit & Push
       if: ${{ success() }}
