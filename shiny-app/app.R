@@ -339,7 +339,7 @@ ui <- div(fixedPage(theme=bs_theme(version=3, bootswatch="yeti"),
                                                    tags$li("The Population Estimate Simulation module can give the user insight on the survey estimates potential margin of error if the input sample size(s) are used. Condition classes assigned to each site are randomly selected using user specified probability weights. Typically, margin of error will decrease if the condition class distribution is unequally distributed.
                                                             The user can choose the number of condition classes used, modify the probability of being selected, and refresh the simulation to view different condition scenarios. The user can adjust the sample size and refresh the design to determine an appropriate margin of error for the survey."),
                                                tags$li("Choose a Spatial Balance Metric. All spatial balance metrics provided have a lower bound of zero, which indicates perfect spatial balance. As the metric value increases, the spatial balance decreases. This is useful in comparing survey designs."),
-                                               tags$li("Click the 'Download Survey Site Shapefile' button to download a zip file which contains a POINT shapefile of your designs survey sample sites."),
+                                               tags$li("Click the 'Download Survey Design' button to download a zip file which contains a POINT shapefile of your designs survey sample sites, the users sample frame, and README which includes information about your design."),
                                                tags$li("To download the Probability Survey Site Results table, use the buttons to choose how you would like it to be saved. Please note the Lat/Longs are transformed to WGS84 coordinate system. The xcoord and ycoord are Conus Albers (a projected CRS) coordinates which is an area-preserving projection. These coordinates can be used for the local neighborhood variance estimator when calculating population estimates."),
                                                tags$li("To download the Design Setup Attributes table, use the buttons to choose how you would like it to be saved. We strongly encourage users to download and retain this information for future reference. The table includes the spurvey function call for your design, the random seed used, and the spsurvey and R versions."),
                                                br(),
@@ -2203,22 +2203,23 @@ server <- function(input, output, session) {
     
     DT::datatable(
       DESIGN,
-      callback=JS('$("button.buttons-copy").css("background","#337ab7").css("color", "#fff");
-                   $("button.buttons-csv").css("background","#337ab7").css("color", "#fff");
-                   $("button.buttons-excel").css("background","#337ab7").css("color", "#fff");
-                   $("button.buttons-pdf").css("background","#337ab7").css("color", "#fff");
-                   return table;'),
-      extensions = c("Buttons"),
-      rownames = FALSE,
-      options = list(dom = 'Blrtip',
-                     #autowidth = TRUE,
-                     scrollX = TRUE,
-                     buttons = list(
-                       list(extend = 'copy', filename = paste("Survey_Design_", Sys.Date(), sep="")),
-                       list(extend = 'csv', filename = paste("Survey_Design_", Sys.Date(), sep="")),
-                       list(extend = 'excel', filename = paste("Survey_Design_", Sys.Date(), sep="")),
-                       list(extend = 'pdf', filename = paste("Survey_Design_", Sys.Date(), sep="")))
-      ))
+      # callback=JS('$("button.buttons-copy").css("background","#337ab7").css("color", "#fff");
+      #              $("button.buttons-csv").css("background","#337ab7").css("color", "#fff");
+      #              $("button.buttons-excel").css("background","#337ab7").css("color", "#fff");
+      #              $("button.buttons-pdf").css("background","#337ab7").css("color", "#fff");
+      #              return table;'),
+      # extensions = c("Buttons"),
+      # rownames = FALSE,
+      # options = list(dom = 'Blrtip',
+      #                #autowidth = TRUE,
+      #                scrollX = TRUE,
+      #                buttons = list(
+      #                  list(extend = 'copy', filename = paste("Survey_Design_", Sys.Date(), sep="")),
+      #                  list(extend = 'csv', filename = paste("Survey_Design_", Sys.Date(), sep="")),
+      #                  list(extend = 'excel', filename = paste("Survey_Design_", Sys.Date(), sep="")),
+      #                  list(extend = 'pdf', filename = paste("Survey_Design_", Sys.Date(), sep="")))
+      # )
+      )
   })
   
 
@@ -2226,10 +2227,10 @@ server <- function(input, output, session) {
  ####Download Shapefile and README####
   output$shp_btn <- renderUI({
     req(!is.data.frame(DESIGN()))
-    downloadButton("download_shp", HTML("Download Survey <br/> Site Shapefile"), icon=icon("compass"), style="color: #fff; background-color: #337ab7; border-color: #2e6da4")
+    downloadButton("download_shp", HTML("Download Survey <br/> Design"), icon=icon("compass"), style="color: #fff; background-color: #337ab7; border-color: #2e6da4")
   })
   
-  output$download_shp  <- downloadHandler(
+   output$download_shp  <- downloadHandler(
     filename = function() {
       shpdf <- input$filemap
            paste0(gsub('.{4}$', '', shpdf$name[1]), "_Survey_Design_", format(Sys.Date(), "%Y-%m-%d"), 
@@ -2263,32 +2264,63 @@ server <- function(input, output, session) {
            }else{
              seed <- rseed
            }
+           
+           DESIGN <- DES_SD %>% 
+             mutate(xcoord = unlist(map(DES_SD$geometry, 1)),
+                    ycoord = unlist(map(DES_SD$geometry, 2)), .after = lat_WGS84)
+           st_geometry(DESIGN) <- NULL
+           DESIGN <- DESIGN %>% filter(!(is.na(wgt))) %>% 
+             mutate(rep_seed = rseed, .after= "caty")
+           
+           write.csv(DESIGN, file.path(tmp.path, "Survey_Sites.csv"), row.names = FALSE)
+           name.glob3  <- paste0(tmp.path, "/Survey_Sites.csv")
+           
+      sample_frame_name <- paste0(gsub('.{4}$', '', shpdf$name[1]))
+                                  
       README <- writeLines(c(
         "Thank you for using EPA's Office of Water Survey Design Tool.",
         "Please read this file in its entirety.",
         "",
-        "This .zip contains all of the necessary files associated with your survey design.",
-        "It is important that you keep them bundled together so that if you need",
-        "to reproduce your results in the future or ask for clarification, we will",
-        "have all the tools we need to be able to efficiently help.",
+        "This .zip contains all of the necessary files associated with your survey",
+        "design. It is important that you keep them bundled together and saved in a",
+        "secure location, so that if you need to reproduce your results in the future",
+        "or ask for clarification, we will have all the tools we need to be able to",
+        "efficiently help.",
         "",
         "The .zip contains three files:",
-        "1. The original sample frame used to create the design.",
+        "",
+        "1. The original sample frame used to create the design (as its own .zip)",
+        paste("    a. ", sample_frame_name, ".dbf", " (a database file)", sep = ""), 
+        paste("    b. ", sample_frame_name, ".prj", " (a projection file)", sep = ""), 
+        paste("    c. ", sample_frame_name, ".shp", " (a main file)", sep = ""), 
+        paste("    d. ", sample_frame_name, ".shx", " (an index file)", sep = ""), 
+        "",
         "2. The sites selected by the survey design.",
-        "3. This README.",
+        paste("    a. Survey_Sites.dbf (a database file)", sep = ""), 
+        paste("    b. Survey_Sites.prj (a projection file)", sep = ""), 
+        paste("    c. Survey_Sites.shp (a main file)", sep = ""), 
+        paste("    d. Survey_Sites.shx (an index file)", sep = ""), 
+        paste("    e. Survey_Sites.csv (a flat file)", sep = ""), 
+        "",
+        "3. This README, which describes all files associated with your design and",
+        "and contains relevant R software code and metadata used to carry out the design.",
         "",
         "For questions, please contact OW's Garrett Stillings (Stillings.Garrett@epa.gov)",
         "and/or ORD's Michael Dumelle (Dumelle.Michael@epa.gov).",
         "",
+        "R software code and metatdata:",
+        "",
         paste("seed number:", seed, sep = " "),
         paste("spsurvey call:", DESIGN()$design, sep = " "),
-        paste("sample frame:", shpdf$name, sep=" "),
         paste("spsurvey version:", as.character(packageVersion("spsurvey")), sep = " "),
-        paste("R version:", paste(R.version$major, R.version$minor, sep = ".")
-      )),
+        paste("CRS: 5070", sep = " "),
+        paste("R version:", R.version$major, R.version$minor, sep = "."),
+        paste("Date:", date(), sep = " "),
+        ""
+      ),
       con ="README.txt")
       
-      fs <- c(Sys.glob(name.glob2), Sys.glob(name.glob), "README.txt")
+      fs <- c(Sys.glob(name.glob2), Sys.glob(name.glob), Sys.glob(name.glob3), "README.txt")
       
       zip::zipr(zipfile = file, files = fs)
       if(file.exists(paste0(file, ".zip"))) {file.rename(paste0(file, ".zip"), file)}
