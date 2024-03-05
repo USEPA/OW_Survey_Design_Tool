@@ -9,6 +9,7 @@ packages <- c("shiny", "spsurvey", "janitor", "DT", "zip", "foreign", "sf", "lea
 # Packages loading
 lapply(packages, library, character.only = TRUE)
 
+
 rseed <- sample(10000,1)
 #state_name <- state.name
 
@@ -25,9 +26,11 @@ ui <- div(fixedPage(theme=bs_theme(version=3, bootswatch="yeti"),
                     tags$head(
                       tags$style(
                         #Controls tabsetPanel display
-                      HTML(".nav:not(.nav-hidden) {
-                            display: block !important;
-                            }")),
+                      HTML(".nav:not(.nav-hidden) {display: block !important;}
+                           .dataTables_scrollBody {transform:rotateX(180deg);}
+                           .dataTables_scrollBody table {transform:rotateX(180deg);}
+                           .has-feedback .form-control {padding-right: 0px;}
+                           ")),
                       HTML(
                         "<!-- Google Tag Manager -->
 		<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
@@ -252,7 +255,7 @@ ui <- div(fixedPage(theme=bs_theme(version=3, bootswatch="yeti"),
 	),
 	####Instructions####
   # Application title 
-  titlePanel(span("Survey Design Tool (v. 1.1.0)", 
+  titlePanel(span("Survey Design Tool (v. 2.0.0)", 
                   style = "font-weight: bold; font-size: 28px")),
   navbarPage(id = "inTabset", 
              title = "",
@@ -341,7 +344,6 @@ ui <- div(fixedPage(theme=bs_theme(version=3, bootswatch="yeti"),
                                                tags$li("Choose a Spatial Balance Metric. All spatial balance metrics provided have a lower bound of zero, which indicates perfect spatial balance. As the metric value increases, the spatial balance decreases. This is useful in comparing survey designs."),
                                                tags$li("Click the 'Download Survey Design' button to download a zip file which contains a POINT shapefile of your designs survey sample sites, the users sample frame, and README which includes information about your design."),
                                                tags$li("A table of the users Probability Survey Site Results is presented for review. Please note the Lat/Longs are transformed to WGS84 coordinate system. The xcoord and ycoord are Conus Albers (a projected CRS) coordinates which is an area-preserving projection. These coordinates can be used for the local neighborhood variance estimator when calculating population estimates."),
-                                              
                                                br(),
                                                h4(strong("Survey Map")),
                                                tags$li("The Survey Map tab provides an interactive and static map of the sample frame and the survey sample sites.")
@@ -354,6 +356,7 @@ ui <- div(fixedPage(theme=bs_theme(version=3, bootswatch="yeti"),
                                         tags$li(strong("WGT_TP_CORE")," - Weights based on the evaluation of the target population based on sampled probability sites. These weights can be used to estimate condition for the 'target population'. Current NARS population estimates only use WGT_TP_CORE for all estimates related to condition.")
                                       ),
                                       p(tags$a(href="https://rdrr.io/cran/spsurvey/man/adjwgt.html", "Weights Adjustment Example", target= "_blank")),
+                                      p(tags$a(href="https://rdrr.io/cran/spsurvey/man/adjwgtNR.html", "Weights Adjustment Example (Non-response)", target= "_blank")),
                                       tags$ol(
                                         h4(strong("Weight Adjustment File Setup Examples")),
                                         fixedRow(column(4,
@@ -383,22 +386,22 @@ ui <- div(fixedPage(theme=bs_theme(version=3, bootswatch="yeti"),
                                                                      tags$tr(
                                                                        tags$td(align = "center", "Site_02_Replace"),
                                                                        tags$td(align = "center", "2"),
-                                                                       tags$td(align = "center", "Target-Replacement-Sampled"),
+                                                                       tags$td(align = "center", "Target-Sampled"),
                                                                      ), 
                                                                      tags$tr(
                                                                        tags$td(align = "center", "Site_03"),
                                                                        tags$td(align = "center", "2"),
-                                                                       tags$td(align = "center", "Target-Access_Denied"),
+                                                                       tags$td(align = "center", "Access_Denied"),
                                                                      ), 
                                                                      tags$tr(
                                                                        tags$td(align = "center", "Site_03_Replace"),
                                                                        tags$td(align = "center", "2"),
-                                                                       tags$td(align = "center", "Target-Replacement-Sampled"),
+                                                                       tags$td(align = "center", "Target-Sampled"),
                                                                      ), 
                                                                      tags$tr(
                                                                        tags$td(align = "center", "Site_04"),
                                                                        tags$td(align = "center", "2"),
-                                                                       tags$td(align = "center", "Target-Sampled-Additional"),
+                                                                       tags$td(align = "center", "Target-Sampled"),
                                                                      )))),
                                                  column(5, offset = 1,
                                                         tags$table(border = 5, 
@@ -431,40 +434,38 @@ ui <- div(fixedPage(theme=bs_theme(version=3, bootswatch="yeti"),
                                                                        tags$td(align = "center", "Site_02_Replace"),
                                                                        tags$td(align = "center", "2nd Order"),
                                                                        tags$td(align = "center", "3"),
-                                                                       tags$td(align = "center", "Target-Replacement-Sampled"),
+                                                                       tags$td(align = "center", "Target-Sampled"),
                                                                      ), 
                                                                      tags$tr(
                                                                        tags$td(align = "center", "Site_03"),
                                                                        tags$td(align = "center", "3rd Order"),
                                                                        tags$td(align = "center", "4"),
-                                                                       tags$td(align = "center", "Target-Access_Denied"),
+                                                                       tags$td(align = "center", "Access_Denied"),
                                                                      ), 
                                                                      tags$tr(
                                                                        tags$td(align = "center", "Site_03_Replace"),
                                                                        tags$td(align = "center", "3rd Order"),
                                                                        tags$td(align = "center", "4"),
-                                                                       tags$td(align = "center", "Target-Replacement-Sampled"),
+                                                                       tags$td(align = "center", "Target-Sampled"),
                                                                      ), 
                                                                      tags$tr(
                                                                        tags$td(align = "center", "Site_04"),
                                                                        tags$td(align = "center", "1st Order"),
                                                                        tags$td(align = "center", "2"),
-                                                                       tags$td(align = "center", "Target-Sampled-Additional"),
+                                                                       tags$td(align = "center", "Target-Sampled"),
                                                                      ))))),
                                         br(),
                                         h4(strong("Weight Adjustment Inputs")),
                                         tags$li("Upload the file which contains the required weight adjustment inputs. See below for the descriptions of each input."),
-                                        tags$li("Select the column which has the initial unadjusted weights for each site. The sum of these weights is how the tool calculates the frame size. You also have the option to input the frame size manually."),
-                                        tags$li("Select the Weighting Category column. A weight adjustment category represents if a Stratum and/or a multi-density category was used in the design as implemented. If the design was unequally stratified, this attribute should contain a combination of the stratum and category used (i.e. Stratum-Category). 
-                                             The default is None, which assumes every site is in the same category and an equal probability design is being adjusted."),
-                                        tags$li("Select the column which contains the Site Evaluation Attributes which categorically evaluate which sites are target and non-target sites and which have been sampled, including Replacement sites both as replacement and additional (e.g., Target-Sampled, Non-Target, Target-Landowner Denial, Target-Sampled-Additional). 
-                                              These inputs aid in the automated calculation of the Frame Size used for both the TP_EXTENT and TP_CORE Weights. To manually enter the Frame Size by Category, ignore the 3 inputs below and click the 'Adjust the Frame Size Manually' radio button."),
+                                        tags$li("Select the column which has the initial unadjusted weights for each site."),                                        
+                                        tags$li("Select the column which contains the Site Evaluation Attributes which categorically evaluate which sites are target-sampled, non-response (not sampled) and non-target (not sampled) sites."),
                                         tags$ul(
-                                          tags$li("Select the attribute(s) which indicate if the site was a Target site (Base and Replacement sites) and has been sampled. If available, this input should include additional Replacement sites which were added to the design and not used as replacement (e.g., Target-Sampled, Target-Sampled-Additional)."),
-                                          tags$li("Select the attribute(s) which indicate if the site was a Target Replacement site added to the survey as an additional site and not as a replacement (e.g., Target-Sampled-Additional)."),
-                                          tags$li("Select the attribute(s) which indicate if the site was a Non-Target site and was not sampled (e.g., Non-Target).")
+                                          tags$li("Select the attribute(s) which indicate if the site was a Target site (Base and Replacement sites) and has been sampled. If available, this input should include additional Replacement sites which were added to the design and not used as replacement."),
+                                          tags$li("Select the attribute(s) which indicate if the site was a Non-Response site and was not sampled (e.g. Landowner Denials, Inaccessible, Target-Not Sampled). Non-target sites should NOT be included in this input.")
                                         ),
-                                        tags$li("Press the radio button if you wish to input the frame size manually. Based on if you entered a weighting category, the number of frame sizes needed will be generated. The adjusted weights will now be based on this Frame Size."),
+                                        tags$li("Select the Weighting Category column. A weight adjustment category represents if a Stratum and/or a multi-density category was used in the design as implemented. If the design was unequally stratified, this attribute should contain a combination of the stratum and category used (i.e. Stratum-Category). 
+                                             The default is all sites are in the same category, which assumes every site is in the same category and an equal probability design is being adjusted."),
+                                        tags$li("Input the initial sample frame size(s). Based on if you entered a weighting category, a frame size input for each weight category will be generated."),
                                         tags$li("Press the 'Calculate Adjusted Survey Weights' button for the adjusted weight output.")
                                       ))),
                       hr(),
@@ -713,7 +714,7 @@ ui <- div(fixedPage(theme=bs_theme(version=3, bootswatch="yeti"),
                                        br(),
                                          dataTableOutput(outputId = "table"),
                                        style="width: 110%;"
-				     )),
+                                       )),
                             
                             tabPanel(title=strong("Survey Map"),
                                      br(),
@@ -768,93 +769,105 @@ ui <- div(fixedPage(theme=bs_theme(version=3, bootswatch="yeti"),
                           #Weight file helper
                           helper(icon = "circle-question",type = "inline",
                                  title = "Weight Adjustment File",
-                                 content = c("Choose the .csv file which contains all base sites which were given initial weights and replacement sites which were sampled. This should include all target sites sampled, replacement sites sampled (including additional sites used as oversamples), not evaluated and non-target sites which were sampled, but were given an initial weight.",
+                                 content = c("Choose the .csv file which contains all sites which were evaluated in the design. This should include all target sites sampled, sites evaluated as non-target, replacement sites sampled (including additional sites used as oversamples) and non-response sites such as landowner denials and inaccessible sites.",
                                              "<b>See Instructions For Use tab for examples on how to setup the Weight Adjustment File.</b>"),
                                  size = "s", easyClose = TRUE, fade = TRUE),
                         hr(),
-                        h4(strong(HTML("<center>Set Adjustment Inputs<center/>"))),
-                        selectInput(inputId = "adjwgt",
-                                    label = strong("Select Attribute Containing Initial Site Weights"),
-                                    choices = "",
-                                    selected = NULL,
-                                    multiple = FALSE, 
-                                    width = "300px") %>%
-                          #Weight helper
-                          helper(icon = "circle-question",type = "inline",
-                                 title = "Site Weights",
-                                 content = c("Choose the column in the Weight Adjustment file which contains the initial site weights. Replace Replacement sites with Base sites. Set additional Replacement site weights to 0."),
-                                 size = "s", easyClose = TRUE, fade = TRUE),
-                        
-                        selectInput(inputId = "adjwgtcat",
-                                    label = strong("Select Attribute Containing Weight Categories"),
-                                    choices = "",
-                                    selected = NULL,
-                                    multiple = FALSE, 
-                                    width = "300px") %>%
-                          #Weight Category helper
-                          helper(icon = "circle-question",type = "inline",
-                                 title = "Weight Category",
-                                 content = c("Choose the column in the Weight Adjustment file which contains the weight adjustment category. A weight adjustment category represents if a Stratum and/or a multi-density category was used in the design as implemented. If the design was unequally stratified, this attribute should contain a combination of the stratum and category used (i.e. Stratum-Category). 
-                                             The default is None, which assumes every site is in the same category and an equal probability design is being adjusted."),
-                                 size = "s", easyClose = TRUE, fade = TRUE),
-                        
-                        selectInput(inputId = "adjsitesampled",
-                                    label = strong("Select Attribute Containing Site Evaluations"),
-                                    choices = "",
-                                    selected = NULL,
-                                    multiple = FALSE, 
-                                    width = "300px") %>%
-                          #Site Info helper
-                          helper(icon = "circle-question",type = "inline",
-                                 title = "Site Evaluation Attributes",
-                                 content = c("Choose the column in the Weight Adjustment file which contains attributes defining if the site was sampled, not sampled, and/or non-target."),
-                                 size = "s", easyClose = TRUE, fade = TRUE),
-                        hr(),
-                        strong(HTML("Select Site Evaluation Attributes")) %>%
-                          #Site eval helper
-                          helper(icon = "circle-question",type = "inline",
-                                 title = "Site Evaluation Attributes",
-                                 content = c("<b>Sampled Target Sites:</b> Choose the attribute which defines if the site was sampled and found to be member of the target population. This should also include additional sampled replacement sites.",
-                                             "<b>Additional Replacements:</b> Choose the attribute which defines if the site is a replacement site and was added to the design without replacing a base site.",
-                                             "<b>Non-Target Sites:</b> Choose the attribute which defines if the site was not sampled and found to NOT be a member of the target population.",
-                                             "<b>You are not required to input target sites which have not been sampled for reasons such as landowner denials, site was inaccessible, or not evaluated.</b>"),
-                                 size = "s", easyClose = TRUE, fade = TRUE),
-                        #Select Site Attribute(s) That Apply to Your Dataset
-                        column(12, offset = 1,
-                               selectInput(inputId = "sampled_site",
-                                           label = strong("Sampled Sites"),
+                        column(12,
+                               h4(strong(HTML("<center>Set Adjustment Inputs<center/>"))),
+                               selectInput(inputId = "adjwgt",
+                                           label = strong("Select Column Containing Initial Site Weights"),
                                            choices = "",
                                            selected = NULL,
-                                           multiple = TRUE,
-                                           width = "200px"), 
-                               selectInput(inputId = "addoversample_site",
-                                           label = strong("Additional Replacements"),
+                                           multiple = FALSE, 
+                                           width = "200px") %>%
+                                 #Weight helper
+                                 helper(icon = "circle-question",type = "inline",
+                                        title = "Site Weights",
+                                        content = c("Choose the column in the Weight Adjustment file which contains the initial survey design weights for each site."),
+                                        size = "s", easyClose = TRUE, fade = TRUE),
+                               
+                               selectInput(inputId = "adjsiteeval",
+                                           label = strong("Select Column Containing Site Evaluations"),
                                            choices = "",
                                            selected = NULL,
-                                           multiple = TRUE,
-                                           width = "200px"), 
-                               selectInput(inputId = "nontarget_site",
-                                           label = strong("Non-Target Sites"),
+                                           multiple = FALSE, 
+                                           width = "200px") %>%
+                                 #Site Evaluation helper
+                                 helper(icon = "circle-question",type = "inline",
+                                        title = "Site Evaluation Attributes",
+                                        content = c("Choose the column in the Weight Adjustment file which contains site evaluations of if the site was target and sampled, not sampled (target or non-response), and/or non-target."),
+                                        size = "s", easyClose = TRUE, fade = TRUE)
+                        ),
+                        conditionalPanel(condition = "input.adjsiteeval != ''",
+                                         column(12,
+                                                hr(),
+                                                strong(HTML("<center>Select Site Evaluation Attributes<center/>")) %>%
+                                                  #Site eval helper
+                                                  helper(icon = "circle-question",type = "inline",
+                                                         title = "Site Evaluation Attributes",
+                                                         content = c("<b>Sampled Target Sites:</b> Choose the class(es) which defines if the site was sampled and found to be member of the target population. This should also include additional sampled replacement sites.",
+                                                                     "<b>Non-Response Sites:</b> Choose the class(es) which defines if the site was a member of the target population, but was not sampled.",
+                                                                     "<b>If a site was not evaluated as a sampled target site or a non-response site, it will be evaluated as a non-target site.</b>"),
+                                                         size = "s", easyClose = TRUE, fade = TRUE)),
+                                         column(12, offset = 1,
+                                                
+                                                
+                                                #Select Site Attribute(s) That Apply to Your Dataset
+                                                selectInput(inputId = "sampled_site",
+                                                            label = strong("Sampled Sites"),
+                                                            choices = "",
+                                                            selected = NULL,
+                                                            multiple = TRUE,
+                                                            width = "200px"), 
+                                                selectInput(inputId = "nonresponse_site",
+                                                            label = strong("Non-Response Sites"),
+                                                            choices = "",
+                                                            selected = NULL,
+                                                            multiple = TRUE,
+                                                            width = "200px")),
+                        ),
+                        column(12,
+                               hr(),
+                               selectInput(inputId = "adjwgtcat",
+                                           label = strong("Select Column Containing Weight Categories"),
                                            choices = "",
-                                           selected = NULL,
-                                           multiple = TRUE,
-                                           width = "200px")),
-                        checkboxInput(inputId = "frameadj", 
-                                      label= strong("Adjust the Weighting Category Frame Size Manually"), 
-                                      value = FALSE, 
-                                      width = NULL),
-                        hr(),
+                                           selected = "",
+                                           multiple = FALSE, 
+                                           width = "200px") %>%
+                                 #Weight Category helper
+                                 helper(icon = "circle-question",type = "inline",
+                                        title = "Weight Adjustment Category",
+                                        content = c("Choose the column in the Weight Adjustment file which contains the weight adjustment category. A weight adjustment category represents if a Stratum and/or a multi-density category was used in the design as implemented. If the design was unequally stratified, this attribute should contain a combination of the stratum and category used (i.e. Stratum-Category). 
+                                The default selection assumes every site is in the same category.")),
+                               size = "s", easyClose = TRUE, fade = TRUE),
+                        conditionalPanel(condition = "output.frame",
+                                         column(12,
+                                                strong(HTML("<center>Input Weight Category <br/>Frame Size<center/>")) %>%
+                                                  #framesize helper
+                                                  helper(icon = "circle-question",type = "inline",
+                                                         title = "Frame Size",
+                                                         content = c("Set the Frame Size for each Weight Category from the surveys sampling frame."),
+                                                         size = "s", easyClose = TRUE, fade = TRUE))
+                        ),
                         uiOutput("frame"),
-                        
                         # Press button for analysis 
                         actionButton("adjButton", HTML("<b>Calculate Adjusted <br/> Survey Weights</b>"), icon=icon("circle-play"), 
                                      style="color: #fff; background-color: #337ab7; border-color: #2e6da4")
                       ), #sidebarPanel
                       mainPanel(
                         conditionalPanel(condition = "input.adjButton",
-                        uiOutput("table_download"),
-                        DT::dataTableOutput("adjtable"),
-                        style = "width:600px; overflow-x: scroll;")
+                                         span(h3(strong("Export Data As:")), style = "color:#337ab7;"),
+                                         downloadButton("dwnldcsv", icon=NULL, "CSV", 
+                                                        style = "background-color:#337AB7;
+                                                                               color:#FFFFFF;
+                                                                               border-color:#BEBEBE;
+                                                                               border-style:solid;
+                                                                               border-width:1px;
+                                                                               border-radius:2px;
+                                                                               font-size:16px;")),
+                        br(),
+                        DT::dataTableOutput("adjtable"), style = "font-weight:bold; font-size:90%;"
                       )#mainPanel
              )#tabPanel(Adjust Weights)
   ) #navbarPage
@@ -1945,7 +1958,7 @@ server <- function(input, output, session) {
       #If grts or irs is unsuccessful, reactive returns list (design)
     } else {
       # find the call list
-     call_list <- as.list(design$design$call)
+      call_list <- as.list(design$design$call)
       # only replace specific elements
       replace_names <- names(call_list)[!names(call_list) %in% c("", "sframe","legacy_sites")]
       call_list[replace_names] <- lapply(replace_names, function(x) eval(call_list[[x]]))
@@ -2171,18 +2184,19 @@ server <- function(input, output, session) {
   
   ####Spatial Balance####
   sbresult <- eventReactive(input$balancebtn, {
-    #req(input$caty == "None")
+   # req(input$caty == "None")
     
-    if(input$stratum != "None") {
-      sp_balance(DESIGN()$sites_base, sfobject(), stratum_var = input$stratum, metrics = input$balance)
-    } else {
+    #if(input$stratum != "None") {
+    #  sp_balance(DESIGN()$sites_base, sfobject(), stratum_var = input$stratum, metrics = input$balance)
+    #} else {
       sp_balance(DESIGN()$sites_base, sfobject(), metrics = input$balance)  
-    } 
+   # } 
   })
   
   output$balance <-  renderPrint({
     sbresult()
   })
+  
   
   ####Design Table####
   output$table <- renderDataTable(server = FALSE, {
@@ -2224,13 +2238,13 @@ server <- function(input, output, session) {
   
 
   
- ####Download Shapefile and README####
+  ####Download Shapefile and README####
   output$shp_btn <- renderUI({
     req(!is.data.frame(DESIGN()))
     downloadButton("download_shp", HTML("Download Survey <br/> Design"), icon=icon("compass"), style="color: #fff; background-color: #337ab7; border-color: #2e6da4")
   })
   
-   output$download_shp  <- downloadHandler(
+  output$download_shp  <- downloadHandler(
     filename = function() {
       shpdf <- input$filemap
            paste0(gsub('.{4}$', '', shpdf$name[1]), "_Survey_Design_", format(Sys.Date(), "%Y-%m-%d"), 
@@ -2327,6 +2341,33 @@ server <- function(input, output, session) {
     },
     contentType = "application/zip"
   ) 
+
+  # output$download_shp <- downloadHandler(
+  #   filename <- function() {
+  #     paste(format(Sys.Date(), "%Y-%m-%d"), "_Survey_Design.zip", sep="")
+  # 
+  #   },
+  #   content = function(file) {
+  #     tmp.path <- dirname(file)
+  # 
+  #     name.base <- file.path(tmp.path, "Survey_Sites")
+  #     name.glob <- paste0(name.base, ".*")
+  #     name.shp  <- paste0(name.base, ".shp")
+  #     name.zip  <- paste0(name.base, ".zip")
+  # 
+  #     if (length(Sys.glob(name.glob)) > 0) file.remove(Sys.glob(name.glob))
+  #     DES_SD <- sp_rbind(DESIGN())
+  #     DES_SD <- DES_SD %>% filter(!(is.na(wgt))) %>% select(-None)
+  # 
+  #     st_write(DES_SD, dsn = name.shp,
+  #              driver = "ESRI Shapefile", quiet = TRUE)
+  # 
+  #     zip::zipr(zipfile = name.zip, files = Sys.glob(name.glob))
+  #     req(file.copy(name.zip, file))
+  # 
+  #     if (length(Sys.glob(name.glob)) > 0) file.remove(Sys.glob(name.glob))
+  #   }
+  # )
   
   ####Mapping####
   
@@ -2357,11 +2398,11 @@ server <- function(input, output, session) {
     
     if(frame_type=="linear") {
       m@map <- m@map %>%
-        addPolylines(data=frame, color="#024970") %>%
+        addPolylines(data=frame, color="blue") %>%
         addProviderTiles("OpenTopoMap")}
     else if(frame_type=="area") {
       m@map <- m@map %>%
-        addPolygons(data=frame, color="#024970") %>%
+        addPolygons(data=frame, color="blue") %>%
         addProviderTiles("OpenTopoMap")}
     else {
       m@map <- m@map %>%
@@ -2410,52 +2451,43 @@ server <- function(input, output, session) {
   
   
   #Adjustment Weight Input
-  observeEvent(adjdata(), {
-    adj_cols <- adjdata() %>% select_if(~is.numeric(.x)) 
-    updateSelectInput(session, "adjwgt", selected = NULL, choices = c("Required" = "", colnames(adj_cols)))
-  })
+  observe({
+    req(adjdata())
+    adj_cols_wgt <- adjdata() %>% select_if(~is.numeric(.x))
+    updateSelectInput(session, "adjwgt", selected = NULL, choices = c("Required" = "", colnames(adj_cols_wgt)))
+  })  
   
-  #Adjustment Weight Category Input
-  observeEvent(adjdata(), {
-    adj_cols <- adjdata() %>% select_if(~!is.numeric(.x)) 
-    updateSelectInput(session, "adjwgtcat", selected = NULL, choices = c("None", colnames(adj_cols)))
-  })
-  
-  #Adjustment Site Input
-  observeEvent(adjdata(), {
-    adj_cols <- adjdata() %>% select_if(~!is.numeric(.x)) 
-    updateSelectInput(session, "adjsitesampled", selected = NULL, choices = c("Required" = "", colnames(adj_cols)))
-  })
-  
-  #Sites Sampled Reactive
-  sampled_choices <- reactive({ 
-    adjdata() %>% select(input$adjsitesampled) %>% unique() %>% pull()
+  observe({
+    req(adjdata())
+    adj_cols_cat <- adjdata() %>% select_if(~!is.numeric(.x)) %>% colnames()
+    adj_cols_eval <- adjdata() %>% select_if(~!is.numeric(.x)) %>% colnames() 
+    
+    #Adjustment Weight Category Input
+    updateSelectInput(session, "adjwgtcat", selected = isolate(input$adjwgtcat), choices = c("All Same Category"="", adj_cols_cat[! adj_cols_cat %in% input$adjsiteeval]))
+    
+    #Adjustment Site Input
+    updateSelectInput(session, "adjsiteeval", selected = isolate(input$adjsiteeval), choices = c("Required" = "", adj_cols_eval[! adj_cols_eval %in% input$adjwgtcat]))
   })
   
   
-  #Sites sampled Events
-  observeEvent(input$adjsitesampled, {
-    updateSelectInput(session,'sampled_site', selected = NULL, choices = c("Required" = "", sampled_choices()))
+  observe({
+    req(input$adjsiteeval != "")
+    sampled_choices <- adjdata() %>% filter(!(.data[[input$adjsiteeval]] %in% c(.env$input$nonresponse_site)))%>% unique() %>% pluck(input$adjsiteeval)
+    nonresponse_choices <- adjdata() %>% filter(!(.data[[input$adjsiteeval]] %in% c(.env$input$sampled_site)))%>% unique() %>% pluck(input$adjsiteeval)
+    
+    updateSelectInput(session,'sampled_site', selected = isolate(input$sampled_site), choices = c("Required" = "", sampled_choices))
+    updateSelectInput(session,'nonresponse_site', selected = isolate(input$nonresponse_site), choices = nonresponse_choices)
   })
   
-  #Additional Oversample sampled Events
-  observeEvent(input$adjsitesampled, {
-    updateSelectInput(session,'addoversample_site', selected = NULL, choices = c(sampled_choices()))
-  })
-  
-  #Sites sampled Events
-  observeEvent(input$adjsitesampled, {
-    updateSelectInput(session,'nontarget_site', selected = NULL, choices = c(sampled_choices()))
-  })
   
   catname <- reactive({ 
     adjdata() %>% pluck(input$adjwgtcat) %>% unique()
   })
   
   output$frame <- renderUI({
-    req(input$frameadj==TRUE)
+    req(input$adjsiteeval!="")
     
-    if (input$adjwgtcat != "None") {
+    if(input$adjwgtcat != ""){
       lapply(catname(), function(i) {
         numericInput(
           inputId=paste0("CAT_", i),
@@ -2465,106 +2497,84 @@ server <- function(input, output, session) {
       })
     } else {
       numericInput(
-        inputId = "CAT_1",
-        label = "Frame Size",
-        value = 0,
+        inputId="CAT_1",
+        label="Total Frame Size",
+        value=0,
         width = "200px")
     }
   })
   
-  output$table_download <- renderUI({
-    req(adjbutton())
-    downloadButton("adjdownload", HTML("<b>Download Adjusted <br/> Weights Table</b>"), style="color: #fff; background-color: #337ab7; border-color: #2e6da4")
-  })
+  
   
   #Weight Adjustment
   adjbutton <- eventReactive(input$adjButton,{
     validate(
       need(input$adjwgt != "", 
            "Please input initial site weights."),
-      need(input$adjsitesampled != "", 
+      need(input$adjsiteeval != "", 
            "Please input site evaluations."),
       need(input$sampled_site != "", 
-           "Please input attribute(s) which indicate site has been sampled."),
+           "Please input attribute(s) which indicate site has been sampled.")
     )
     
-    adjdata <- adjdata() %>% mutate(None = "None")
+    adjdata <- adjdata() %>% filter(!is.na(.data[[input$adjsiteeval]]))
     
     wgt <- adjdata %>% pluck(input$adjwgt)
+    EvalStatus <- adjdata %>% pluck(input$adjsiteeval)
     
-    if (input$adjwgtcat == "None") {
-      wtcat <- NULL
+    if(input$adjwgtcat!=""){
+      MARClass <- adjdata %>% pluck(input$adjwgtcat)
     } else {
-      wtcat <- adjdata %>% pluck(input$adjwgtcat)
+      MARClass <- "CAT_1"
     }
     
+    datalist <- list()
+    for(n in catname()) {
+      framesize <- input[[paste0("CAT_",n)]]
+      datalist[[n]] <- framesize
+    } 
+    framesize <- do.call(cbind.data.frame, datalist)
+    framesize <- unlist(framesize)
     
-    sites <- adjdata %>% 
-      mutate(SITES_SAMPLED = case_when(.data[[input$adjsitesampled]] %in% .env$input$sampled_site ~ TRUE,
-                                       TRUE ~ FALSE)) %>% pluck("SITES_SAMPLED") 
+    adjdata$WGT_TP_EXTENT <-adjwgt(wgt = wgt, wgtcat = MARClass, 
+                                   framesize = framesize, sites = NULL)
     
-    #Calculate Sample Frame Size
-    if (input$frameadj == FALSE) {
-      tpextentframesize <- adjdata %>% 
-        filter(!(.data[[input$adjsitesampled]] %in% .env$input$addoversample_site)) %>%
-        group_by(.data[[input$adjwgtcat]]) %>% 
-        summarize(SUM = sum(.data[[input$adjwgt]])) %>%
-        pivot_wider(names_from = .data[[input$adjwgtcat]], values_from = "SUM") %>% unlist()
+    if(!is.null(input$nonresponse_site)) {
       
-      tpcoreframesize <- adjdata %>% 
-        filter(!(.data[[input$adjsitesampled]] %in% c(.env$input$nontarget_site, .env$input$addoversample_site))) %>%
-        group_by(.data[[input$adjwgtcat]]) %>% 
-        summarize(SUM = sum(.data[[input$adjwgt]])) %>%
-        pivot_wider(names_from = .data[[input$adjwgtcat]], values_from = "SUM") %>% unlist()
-      
-      
-      WGT_TP_EXTENT <- adjwgt(wgt, wtcat, tpextentframesize, sites)
-      WGT_TP_CORE <- adjwgt(wgt, wtcat, tpcoreframesize, sites)
-      
-      df <- cbind(adjdata, WGT_TP_EXTENT, WGT_TP_CORE)
-    }
-    else {
-      if(input$adjwgtcat != "None") {
-        datalist <- list()
-        for (n in catname()) {
-          framesize <- input[[paste0("CAT_",n)]]
-          datalist[[n]] <- framesize
-        } 
-        framesize <- do.call(cbind.data.frame, datalist)
-        framesize <- unlist(framesize)
-        
-        ADJWGT <- adjwgt(wgt, wtcat, framesize, sites)
-        
-        #adjdata <- adjdata()
-        df <- cbind(adjdata, ADJWGT)
-      } else {
-        framesize <- input$CAT_1
-        ADJWGT <- adjwgt(wgt, wtcat, framesize, sites)
-        df <- cbind(adjdata, ADJWGT)
-      }
+      TNRClass <-  input$nonresponse_site
+      TRClass <- input$sampled_site
+      adjdata$WGT_TP_CORE <- adjwgtNR(adjdata$WGT_TP_EXTENT, MARClass, EvalStatus, TNRClass, TRClass)
     }
     
-    df <- df %>% select(!(None))
-    df
-    
+    adjdata
   })
   
   
   output$adjtable <- renderDataTable({
-    if(input$adjButton) {
-      adjbutton() 
-    } else {
-      adjdata()  
-    }
+    DT::datatable(
+      if(input$adjButton) {
+        adjbutton() 
+      } else {
+        adjdata()  
+      }, 
+      filter = list(position = 'top'),
+      rownames = FALSE,
+      options = list(
+        autowidth = TRUE,
+        scrollX = TRUE,
+        searchHighlight = TRUE)
+    )
   })
   
-  output$adjdownload <- downloadHandler(
+  
+  output$dwnldcsv <- downloadHandler(
     filename = function() {
       paste("Survey_adjwgts_", Sys.Date(), ".csv", sep="")
     },
     content = function(file) {
       write.csv(adjbutton(), file, row.names = FALSE)
-    })
+    }
+  )
   
   #session$onSessionEnded(stopApp) 
 }
