@@ -2524,17 +2524,19 @@ server <- function(input, output, session) {
     
     if(input$adjwgtcat!=""){
       MARClass <- adjdata %>% pluck(input$adjwgtcat)
+      
+      datalist <- list()
+      for(n in catname()) {
+        framesize <- input[[paste0("CAT_",n)]]
+        datalist[[n]] <- framesize
+      } 
+      framesize <- do.call(cbind.data.frame, datalist)
+      framesize <- unlist(framesize)
     } else {
-      MARClass <- "CAT_1"
+      MARClass <- adjdata %>% mutate(WGT_CATEGORY = "Total Frame Size") %>% pluck("WGT_CATEGORY")
+      
+      framesize <- c("Total Frame Size" = input$CAT_1)
     }
-    
-    datalist <- list()
-    for(n in catname()) {
-      framesize <- input[[paste0("CAT_",n)]]
-      datalist[[n]] <- framesize
-    } 
-    framesize <- do.call(cbind.data.frame, datalist)
-    framesize <- unlist(framesize)
     
     adjdata$WGT_TP_EXTENT <-adjwgt(wgt = wgt, wgtcat = MARClass, 
                                    framesize = framesize, sites = NULL)
