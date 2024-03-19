@@ -3,7 +3,6 @@ print(paste("LD_LIBRARY_PATH: ", library_path))
 
 lib_dir <- "/home/vcap/deps/0/r/lib"
 local_lib_dir <- "lib"
-local_bin_dir <- "bin"
 
 if (dir.exists(lib_dir)) {
   if (dir.exists(local_lib_dir)) {
@@ -21,12 +20,6 @@ if (dir.exists(lib_dir)) {
 
     Sys.setenv(PROJ_LIB = lib_dir)
 
-  }
-  if (dir.exists(local_bin_dir)) {
-    untar(paste(local_bin_dir, "pandoc.tar.gz", sep = "/"), exdir = local_bin_dir)
-    Sys.setenv(RMARKDOWN_PANDOC = local_bin_dir)
-    Sys.setenv(PATH = paste("/home/vcap/app/",
-      local_bin_dir, ":${PATH}", sep = ""))
   }
   print(list.files(lib_dir))
 }
