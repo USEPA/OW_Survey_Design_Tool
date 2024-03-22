@@ -2223,16 +2223,16 @@ server <- function(input, output, session) {
       #              $("button.buttons-pdf").css("background","#337ab7").css("color", "#fff");
       #              return table;'),
       # extensions = c("Buttons"),
-      # rownames = FALSE,
-      # options = list(dom = 'Blrtip',
-      #                #autowidth = TRUE,
-      #                scrollX = TRUE,
-      #                buttons = list(
-      #                  list(extend = 'copy', filename = paste("Survey_Design_", Sys.Date(), sep="")),
-      #                  list(extend = 'csv', filename = paste("Survey_Design_", Sys.Date(), sep="")),
-      #                  list(extend = 'excel', filename = paste("Survey_Design_", Sys.Date(), sep="")),
-      #                  list(extend = 'pdf', filename = paste("Survey_Design_", Sys.Date(), sep="")))
-      # )
+      rownames = FALSE,
+      options = list(dom = 'Blrtip',
+                     autowidth = TRUE,
+                     scrollX = TRUE
+                     # buttons = list(
+                     #   list(extend = 'copy', filename = paste("Survey_Design_", Sys.Date(), sep="")),
+                     #   list(extend = 'csv', filename = paste("Survey_Design_", Sys.Date(), sep="")),
+                     #   list(extend = 'excel', filename = paste("Survey_Design_", Sys.Date(), sep="")),
+                     #   list(extend = 'pdf', filename = paste("Survey_Design_", Sys.Date(), sep="")))
+      )
       )
   })
   
