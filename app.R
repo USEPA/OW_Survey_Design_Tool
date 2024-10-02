@@ -1,13 +1,33 @@
-packages <- c("shiny", "spsurvey", "janitor", "DT", "zip", "foreign", "sf", "leaflet", "mapview", "ggspatial", "bslib", "shinybusy", 
-              "shinycssloaders", "shinyhelper", "shinyBS", "dplyr", "ggplot2", "purrr", "tidyr", "stringr", "shinyjs")
+#packages <- c("shiny", "spsurvey", "janitor", "DT", "zip", "foreign", "sf", "leaflet", "mapview", "ggspatial", "bslib", "shinybusy", 
+#              "shinycssloaders", "shinyhelper", "shinyBS", "dplyr", "ggplot2", "purrr", "tidyr", "stringr", "shinyjs")
 #installed_packages <- packages %in% rownames(installed.packages())
 #if(any(installed_packages == FALSE)) {
 #  install.packages(packages[!installed_packages])
 #}
-
+library(shiny)
+library(spsurvey)
+library(janitor)
+library(DT)
+library(zip)
+library(foreign)
+library(sf)
+library(leaflet)
+library(mapview)
+library(ggspatial)
+library(bslib)
+library(shinybusy)
+library(shinycssloaders)
+library(shinyhelper)
+library(shinyBS)
+library(dplyr)
+library(ggplot2)
+library(purrr)
+library(tidyr)
+library(stringr)
+library(shinyjs)
 
 # Packages loading
-lapply(packages, library, character.only = TRUE)
+#lapply(packages, library, character.only = TRUE)
 
 
 rseed <- sample(10000,1)
@@ -350,7 +370,7 @@ ui <- div(fixedPage(theme=bs_theme(version=3, bootswatch="yeti"),
                                                  )),
                                  bsCollapsePanel(title = h3(strong("Adjust Survey Weights Tab")), value="adjust",
                                                  p("Adjusting initial survey design weights is necessary when implementation results in the use of replacement sites or when it is desired to have final weights sum to known frame size of the desired population. This includes samples that are smaller or larger than planned, instances where an oversample is used, or samples impacted by frame error or nonresponse error. Adjusted weights are equal to initial weight * framesize/sum(initial weights). The adjustment is done separately for each 
-                                                    Category specified in Weighting Category input. The tool allows the user to manually enter a desired population Frame Size or an automated calculation of the frame size by totaling the initial weights and adjusting it by the users site Evaluation Status inputs. By using the automated method, the output will render two adjusted weights:"),
+                                                    Category specified in Weighting Category input. The tool allows the user to manually enter a desired population Frame Size. The output will render two adjusted weights:"),
                                       tags$ul(
                                         tags$li(strong("WGT_TP_EXTENT")," - Weights based on the evaluation of all target and non-target probability sites. These weights are only used to estimate extent for target and non-target populations."),
                                         tags$li(strong("WGT_TP_CORE")," - Weights based on the evaluation of the target population based on sampled probability sites. These weights can be used to estimate condition for the 'target population'. Current NARS population estimates only use WGT_TP_CORE for all estimates related to condition.")
@@ -1043,7 +1063,7 @@ ui <- div(fixedPage(theme=bs_theme(version=3, bootswatch="yeti"),
               </li>
             </ul>
             <p class="footer__last-updated">
-              Last updated on March 30, 2022
+              Last updated on September 30, 2024
             </p>
           </div>
         </div>
@@ -2334,7 +2354,7 @@ server <- function(input, output, session) {
       ),
       con ="README.txt")
       
-      fs <- c(Sys.glob(name.glob2), Sys.glob(name.glob), Sys.glob(name.glob3), "README.txt")
+      fs <- c(Sys.glob(name.glob2), Sys.glob(name.glob), Sys.glob(name.glob3), "README.txt") %>% unique()
       
       zip::zipr(zipfile = file, files = fs)
       if(file.exists(paste0(file, ".zip"))) {file.rename(paste0(file, ".zip"), file)}
@@ -2533,24 +2553,27 @@ server <- function(input, output, session) {
       framesize <- do.call(cbind.data.frame, datalist)
       framesize <- unlist(framesize)
     } else {
-      MARClass <- adjdata %>% mutate(WGT_CATEGORY = "Total Frame Size") %>% pluck("WGT_CATEGORY")
+      MARClass <- adjdata %>% mutate(WGT_CATEGORY = "None") %>% pluck("WGT_CATEGORY")
       
-      framesize <- c("Total Frame Size" = input$CAT_1)
+      framesize <- c("None" = input$CAT_1)
     }
     
     adjdata$WGT_TP_EXTENT <-adjwgt(wgt = wgt, wgtcat = MARClass, 
                                    framesize = framesize, sites = NULL)
+    adjdata$WGT_TP_CORE <-adjwgt(wgt = wgt, wgtcat = MARClass, 
+                                   framesize = framesize, sites = NULL)
     
-    if(!is.null(input$nonresponse_site)) {
+    nonresponse <- EvalStatus[EvalStatus %!in% input$sampled_site]
+    
+    if(!is.null(input$nonresponse_site) || length(nonresponse > 0)) {
       
-      TNRClass <-  input$nonresponse_site
+      TNRClass <- input$nonresponse_site
       TRClass <- input$sampled_site
       adjdata$WGT_TP_CORE <- adjwgtNR(adjdata$WGT_TP_EXTENT, MARClass, EvalStatus, TNRClass, TRClass)
     }
     
     adjdata
   })
-  
   
   output$adjtable <- renderDataTable({
     DT::datatable(
