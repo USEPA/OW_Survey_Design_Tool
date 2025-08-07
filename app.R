@@ -886,7 +886,15 @@ server <- function(input, output, session) {
     #DesignID Input
     fixedRow(
       column(6, offset=1,
-             
+             #Nearest neighbor input
+             checkboxInput(inputId = "n_near", 
+                           label = strong("Use Nearest Neighbor to choose Replacement Sites?"), 
+                           value = FALSE) %>%
+               #n_near helper
+               helper(icon = "circle-question",type = "inline",
+                      title = "Nearest Neighbor Replacements",
+                      content = c("An integer from 1 to 10 specifying the number of nearest neighbor replacement sites to be selected for each base site. For point sample frames, the distance between a site and its nearest neighbor depends on point density."),
+                      size = "s", easyClose = TRUE, fade = TRUE),
              #Auxiliary variable input
              selectInput(inputId = "aux_var",
                          label = strong("Auxiliary Variable"),
@@ -941,16 +949,6 @@ server <- function(input, output, session) {
                       title = "Maximum Attempts",
                       content = c("The number of maximum attempts to apply the minimum distance algorithm to obtain the desired minimum distance between sites. Each iteration takes roughly as long as the standard GRTS algorithm. Successive iterations will always contain at least as many sites satisfying the minimum distance requirement as the previous iteration. The algorithm stops when the minimum distance requirement is met or there are maximum attempt iterations. The default number of maximum iterations is 10."),
                       size = "s", easyClose = TRUE, fade = TRUE),
-             
-             #Nearest neighbor input
-             numericInput(inputId = "n_near", 
-                          label = strong("Nearest Neighbor Replacement Sites"), 
-                          value = NA, min = 1, max = 10, width="200px") %>%
-               #n_near helper
-               helper(icon = "circle-question",type = "inline",
-                      title = "Nearest Neighbor Replacements",
-                      content = c("An integer from 1 to 10 specifying the number of nearest neighbor replacement sites to be selected for each base site. For point sample frames, the distance between a site and its nearest neighbor depends on point density. This tool does not offer stratum-specific nearest neighbor requirements."),
-                      size = "s", easyClose = TRUE, fade = TRUE),
              #Point Density input
              numericInput(inputId = "pt_density", 
                           label = strong("Point Density"), 
@@ -1002,8 +1000,8 @@ server <- function(input, output, session) {
                           helper(icon = "circle-question",type = "inline",
                                  title = "Replacement Sites",
                                  content = c("Define number of Replacement sites needed for a stratum.",
-                                             "Replacement sites are a set of spatially balanced sites that can be used for the replacement of a non-target or inaccessible sites.
-                                                Misuse can cause spatial imbalance in your survey."),
+                                             "Replacement sites are a set of spatially balanced sites that can be used for the replacement of a non-target or inaccessible sites. The default replacement option is <b>Reverse Hierarchical Ordering</b>.
+                                              A Nearest Neighbor option can be applied in Optional Design Attributes."),
                                  size = "s", easyClose = TRUE, fade = TRUE)),
                  
                  conditionalPanel(condition="input.caty != 'None'",
@@ -1410,8 +1408,9 @@ server <- function(input, output, session) {
     if (input$addoptions == TRUE && input$maxtry != 10) {
       maxtry <- input$maxtry
     }
-    if (input$addoptions == TRUE && !is.na(input$n_near)) {
-      n_near <- input$n_near
+    if (input$addoptions == TRUE && input$n_near==TRUE) {
+      n_near <- n_over
+      n_over <- NULL
     } 
     if (input$addoptions == TRUE && input$DesignID != "Site") {
       DesignID <- input$DesignID
