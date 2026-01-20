@@ -1,6 +1,7 @@
 source("global.R")
 addResourcePath(prefix = 'www', directoryPath = './www')
 
+
 ui <- div(fixedPage(theme=bs_theme(version=3, bootswatch="yeti"), 
                     tags$html(class = "no-js", lang="en"),
                     useShinyjs(),
@@ -29,17 +30,21 @@ ui <- div(fixedPage(theme=bs_theme(version=3, bootswatch="yeti"),
 	                               style = "font-weight: bold; font-size: 17px"), value='instructions',
 	                    bsCollapse(id = "instructions",   
 	                               bsCollapsePanel(title = h1(strong("Overview")), value="Overview",
-	                                               p("This application allows for the calculation of spatially balanced survey designs of point, linear, or areal resources using the Generalized Random-Tessellation Stratified (GRTS) algorithm,", tags$a(href= "https://cfpub.epa.gov/ncer_abstracts/index.cfm/fuseaction/display.files/fileID/13339", "Stevens and Olsen (2004).", target="blank"), 
-	                                                 "The Survey Design Tool utilizes functions found within the R package", tags$a(href="https://cran.r-project.org/package=spsurvey", "spsurvey: Spatial Sampling Design and Analysis", target="blank"), "and presents an easy-to-use user interface for many sampling design features including stratification, unequal and proportional inclusion probabilities, replacement (oversample) sites, and legacy (historical) sites. 
-                                      The output of the Survey Design Tool contains sites designed and balanced by user specified inputs and allows the user to export sampling locations as a point shapefile or a flat file. The output also provides design weights which can be used in categorical and continuous variable analyses (i.e., population estimates). 
-                                      The tool also gives the user the ability to adjust initial survey design weights when implementation results in the use of replacement sites or when it is desired to have final weights sum to a known frame size."), 
-                                      
-                                      p("This app does not include all possible design options and tools found in the spsurvey package. Please review the package", tags$a(href= "https://www.rdocumentation.org/packages/spsurvey", "Documentation", target="blank"), "and", tags$a(href= "https://github.com/USEPA/spsurvey", "Vignettes", target="blank"), "for more options and details.  
-                                      For further survey discussion and use cases, visit the website for", tags$a(href="https://www.epa.gov/national-aquatic-resource-surveys", "EPAs National Aquatic Resource Surveys (NARS)", target="blank"), 
-                                      "which are designed to assess the quality of the nation's coastal waters, lakes and reservoirs, rivers and streams, and wetlands using GRTS survey designs. We encourage users to consult with a statistician about your design to prevent design issues and errors."),
-                                      p("For Survey Design Tool questions, bugs, feedback, or tool modification suggestions, please contact Garrett Stillings at", tags$a(href="mailto:stillings.garrett@epa.gov", "stillings.garrett@epa.gov.", target="blank"),
-                                        "The application code and test datasets are offered at the", tags$a(href="https://github.com/USEPA/OW_Survey_Design_Tool", "Survey Design Tool GitHub page.", target="blank"), 
-                                        "For statistical survey design and analysis, and other technical questions, please contact Michael Dumelle at", tags$a(href="mailto:dumelle.michael@epa.gov", "dumelle.michael@epa.gov.", target="blank")),
+	                                               tags$head(
+	                                                 tags$style(HTML("
+      /* Remove any icon/space added after links by theme CSS */
+       #introduction a::after { content: none !important; }
+       #introduction a { margin: 0 !important; padding: 0 !important; }
+    "))
+	                                               ),
+	                                               div(id="introduction",
+	                                                   tagList(
+	                                                     p(HTML('This application allows for the calculation of spatially balanced survey designs of point, linear, or areal resources using the Generalized Random-Tessellation Stratified (GRTS) algorithm, <a href="https://cfpub.epa.gov/ncer_abstracts/index.cfm/fuseaction/display.files/fileID/13339" target="_blank" rel="noopener noreferrer">Stevens and Olsen (2004).</a> The Survey Design Tool utilizes functions found within the R package <a href="https://cran.r-project.org/package=spsurvey" target="_blank" rel="noopener noreferrer">spsurvey: Spatial Sampling Design and Analysis</a> and presents an easy-to-use user interface for many sampling design features including stratification, unequal and proportional inclusion probabilities, replacement (oversample) sites, and legacy (historical) sites. The output of the Survey Design Tool contains sites designed and balanced by user specified inputs and allows the user to export sampling locations as a point shapefile or a flat file. The output also provides design weights which can be used in categorical and continuous variable analyses (i.e., population estimates). The tool also gives the user the ability to adjust initial survey design weights when implementation results in the use of replacement sites or when it is desired to have final weights sum to a known frame size.')),
+	                                                     
+	                                                     p(HTML('This app does not include all possible design options and tools found in the spsurvey package. Please review the package <a href="https://www.rdocumentation.org/packages/spsurvey" target="_blank" rel="noopener noreferrer">Documentation</a> and <a href="https://github.com/USEPA/spsurvey" target="_blank" rel="noopener noreferrer">Vignettes</a> for more options and details. For further survey discussion and use cases, visit the website for <a href="https://www.epa.gov/national-aquatic-resource-surveys" target="_blank" rel="noopener noreferrer">EPAs National Aquatic Resource Surveys (NARS)</a> which are designed to assess the quality of the nation&#39;s coastal waters, lakes and reservoirs, rivers and streams, and wetlands using GRTS survey designs. We encourage users to consult with a statistician about your design to prevent design issues and errors.')),
+	                                                     
+	                                                     p(HTML('For Survey Design Tool questions, bugs, feedback, or tool modification suggestions, please contact Garrett Stillings at <a href="mailto:stillings.garrett@epa.gov">stillings.garrett@epa.gov.</a> The application code and test datasets are offered at the <a href="https://github.com/USEPA/OW_Survey_Design_Tool" target="_blank" rel="noopener noreferrer">Survey Design Tool GitHub page.</a> For statistical survey design and analysis, and other technical questions, please contact Michael Dumelle at <a href="mailto:dumelle.michael@epa.gov">dumelle.michael@epa.gov.</a>'))
+	                                                   )),
                                       h4(strong("Vignette")),
                                       h4(strong(tags$ul(
                                         tags$li(tags$a(href="https://cran.r-project.org/web/packages/spsurvey/vignettes/sampling.html",
@@ -1770,17 +1775,19 @@ server <- function(input, output, session) {
       name.base2 <- file.path(tmp.path, shpdf$name[grep(pattern="*.shp$", shpdf$name)])
       name.glob2  <- paste0(tmp.path, "/", shpdf$name)
       
-     
-      #if(length(Sys.glob(name.glob)) > 0) file.remove(Sys.glob(name.glob))
-           DES_SD <- sp_rbind(DESIGN())
-           DES_SD <- DES_SD %>% filter(!(is.na(wgt))) %>% select(-None)
       
-           st_write(DES_SD, dsn = name.shp,
-                    driver = "ESRI Shapefile", quiet = TRUE, append=FALSE)
+      #if(length(Sys.glob(name.glob)) > 0) file.remove(Sys.glob(name.glob))
+      
+      #Cleaning names to allow for smoother writing to shapefile
+      DES_SD <- sp_rbind(DESIGN()) %>% select(-None) %>% filter(!(is.na(wgt))) %>% janitor::clean_names() %>%
+        rename_with(toupper, .cols = -geometry)
+   
+          st_write(DES_SD, dsn = name.shp,
+                   driver = "ESRI Shapefile", quiet = TRUE, append=FALSE, delete_layer = TRUE)
            
-           sfobject <- sfobject()
-           st_write(sfobject, dsn = name.base2,
-                    driver = "ESRI Shapefile", quiet = TRUE, append=FALSE)
+          
+          st_write(sfobject(), dsn = name.base2,
+                   driver = "ESRI Shapefile", quiet = TRUE, append=FALSE, delete_layer = TRUE)
       
            if(input$addoptions == TRUE) {
              seed <- input$seed
@@ -1790,10 +1797,10 @@ server <- function(input, output, session) {
            
            DESIGN <- DES_SD %>% 
              mutate(xcoord = unlist(map(DES_SD$geometry, 1)),
-                    ycoord = unlist(map(DES_SD$geometry, 2)), .after = lat_WGS84)
+                    ycoord = unlist(map(DES_SD$geometry, 2)), .after = LAT_WGS84)
            st_geometry(DESIGN) <- NULL
-           DESIGN <- DESIGN %>% filter(!(is.na(wgt))) %>% 
-             mutate(rep_seed = rseed, .after= "caty")
+           DESIGN <- DESIGN %>% filter(!(is.na(WGT))) %>% 
+             mutate(rep_seed = rseed, .after= "CATY")
            
            write.csv(DESIGN, file.path(tmp.path, "Survey_Sites.csv"), row.names = FALSE)
            # name.glob3  <- paste0(tmp.path, "/Survey_Sites.csv")
