@@ -1319,16 +1319,17 @@ server <- function(input, output, session) {
       #Unstratified Unequal Probability
     } else if(input$stratum == "None" && input$caty != "None") {
       #Creates replacement named vector
-      n_over <- c() #empty vector
-      for(i in 1:S()) {
-        for(x in 1:C()[i]) {
-          n_over[[paste0("caty", x)]] = input$Over1
-          #Renames vectors
-          catname <- input[[paste0("S1_C",x)]]
-          names(n_over)[x] <- catname
-        }
-      }
-      n_over <- unlist(n_over)
+      n_over <- input$Over1 #empty vector
+      # for(i in 1:S()) {
+      #   for(x in 1:C()[i]) {
+      #     n_over[[paste0("caty", x)]] = input$Over1
+      #     #Renames vectors
+      #     catname <- input[[paste0("S1_C",x)]]
+      #     names(n_over)[x] <- catname
+      #   }
+      # }
+      # n_over <- unlist(n_over)
+     
       #Stratified Unequal Probability (Where n_over changes among strata) 
       #} else if(input$stratum != "None" && input$caty != "None" && replace_con != 1) {
     }else{
@@ -1790,9 +1791,9 @@ server <- function(input, output, session) {
                    driver = "ESRI Shapefile", quiet = TRUE, append=FALSE, delete_layer = TRUE)
       
            if(input$addoptions == TRUE) {
-             seed <- input$seed
+             rseed <- input$seed
            }else{
-             seed <- rseed
+             rseed <- rseed
            }
            
            DESIGN <- DES_SD %>% 
@@ -1840,7 +1841,7 @@ server <- function(input, output, session) {
         "",
         "R software code and metadata:",
         "",
-        paste("seed number:", seed, sep = " "),
+        paste("seed number:", rseed, sep = " "),
         paste(""),
         paste("sf/spsurvey call:"),
         paste0("sample_frame <- sf::st_read(“user_defined_path/", sample_frame_name, ".shp”)"),
