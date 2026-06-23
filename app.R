@@ -227,7 +227,7 @@ ui <- div(fixedPage(theme=bs_theme(version=3, bootswatch="yeti"),
 	                                                 tags$li("Select the column which has the initial unadjusted weights for each site."),                                        
 	                                                 tags$li("Select the column which contains the Site Evaluation Attributes which categorically evaluate which sites are target-sampled, non-response (not sampled) and non-target (not sampled) sites."),
 	                                                 tags$ul(
-	                                                   tags$li("Select the attribute(s) which indicate if the site was a Target site (Base and Replacement sites) and has been sampled. If available, this input should include additional Replacement sites which were added to the design and not used as replacement."),
+	                                                   tags$li("Select the attribute(s) which indicate if the site was a Target site (Base and Replacement sites) and has been sampled. If available, this input should include additional Replacement sites which were added to the design and not used as replacement. Users should also include sites from non-responsive sites if they wish to calculate weights for a `Not Assessed` response. Otherwise, do not include Non-Response sites in this input."),
 	                                                   tags$li("Select the attribute(s) which indicate if the site was a Non-Response site and was not sampled (e.g. Landowner Denials, Inaccessible, Target-Not Sampled). Non-target sites should NOT be included in this input.")
 	                                                 ),
 	                                                 tags$li("Select the Weighting Category column. A weight adjustment category represents if a Stratum and/or an Unequal Probability Category was used in the design as implemented. If the design was unequally stratified, this attribute should contain a combination of the stratum and category used (i.e. Stratum-Category). 
@@ -552,7 +552,7 @@ ui <- div(fixedPage(theme=bs_theme(version=3, bootswatch="yeti"),
 	                                                #Site eval helper
 	                                                helper(icon = "circle-question",type = "inline",
 	                                                       title = "Site Evaluation Attributes",
-	                                                       content = c("<b>Sampled Target Sites:</b> Choose the class(es) which defines if the site was sampled and found to be member of the target population. This should also include additional sampled replacement sites.",
+	                                                       content = c("<b>Sampled/Response Target Sites:</b> Choose the class(es) which defines if the site was sampled and found to be member of the target population. This should also include additional sampled replacement sites or if user wants a response (i.e. weight) for a site.",
 	                                                                   "<b>Non-Response Sites:</b> Choose the class(es) which defines if the site was a member of the target population, but was not sampled.",
 	                                                                   "<b>If a site was not evaluated as a sampled target site or a non-response site, it will be evaluated as a non-target site.</b>"),
 	                                                       size = "s", easyClose = TRUE, fade = TRUE)),
@@ -561,7 +561,7 @@ ui <- div(fixedPage(theme=bs_theme(version=3, bootswatch="yeti"),
 	                                              
 	                                              #Select Site Attribute(s) That Apply to Your Dataset
 	                                              selectInput(inputId = "sampled_site",
-	                                                          label = strong("Sampled Sites"),
+	                                                          label = strong("Sampled and Response Sites"),
 	                                                          choices = "",
 	                                                          selected = NULL,
 	                                                          multiple = TRUE,
@@ -1514,7 +1514,7 @@ server <- function(input, output, session) {
     
     Summary <- sp_rbind(DESIGN())
     st_geometry(Summary) <- NULL
-    Summary <- Summary %>% filter(!(is.na(wgt))) %>%
+    Summary <- Summary %>% #filter(!(is.na(wgt))) %>%
       group_by(siteuse, stratum, caty) %>%
       summarise(SITES = n(), .groups = 'drop') %>%
       group_split(siteuse) %>% 
@@ -1738,7 +1738,7 @@ server <- function(input, output, session) {
       mutate(xcoord = unlist(map(DES_SD$geometry, 1)),
              ycoord = unlist(map(DES_SD$geometry, 2)), .after = lat_WGS84)
     st_geometry(DES_SD) <- NULL
-    DESIGN<- DES_SD %>% filter(!(is.na(wgt))) %>% 
+    DESIGN<- DES_SD %>% #filter(!(is.na(wgt))) %>% 
       select(-None) %>% 
       mutate(rep_seed = rseed, .after= "caty")
     
@@ -1780,7 +1780,8 @@ server <- function(input, output, session) {
       #if(length(Sys.glob(name.glob)) > 0) file.remove(Sys.glob(name.glob))
       
       #Cleaning names to allow for smoother writing to shapefile
-      DES_SD <- sp_rbind(DESIGN()) %>% select(-None) %>% filter(!(is.na(wgt))) %>% janitor::clean_names() %>%
+      DES_SD <- sp_rbind(DESIGN()) %>% select(-None) %>% #filter(!(is.na(wgt))) %>% 
+        janitor::clean_names() %>%
         rename_with(toupper, .cols = -geometry)
    
           st_write(DES_SD, dsn = name.shp,
@@ -1800,7 +1801,7 @@ server <- function(input, output, session) {
              mutate(xcoord = unlist(map(DES_SD$geometry, 1)),
                     ycoord = unlist(map(DES_SD$geometry, 2)), .after = LAT_WGS84)
            st_geometry(DESIGN) <- NULL
-           DESIGN <- DESIGN %>% filter(!(is.na(WGT))) %>% 
+           DESIGN <- DESIGN %>% #filter(!(is.na(WGT))) %>% 
              mutate(rep_seed = rseed, .after= "CATY")
            
            write.csv(DESIGN, file.path(tmp.path, "Survey_Sites.csv"), row.names = FALSE)
@@ -1847,9 +1848,9 @@ server <- function(input, output, session) {
         paste0("sample_frame <- sf::st_read(“user_defined_path/", sample_frame_name, ".shp”)"),
         paste(DESIGN()$design, sep = " "),
         paste(""),
+        paste("R version:", R.version$major, R.version$minor, sep = "."),
         paste("spsurvey version:", as.character(packageVersion("spsurvey")), sep = " "),
         paste("CRS: 5070", sep = " "),
-        paste("R version:", R.version$major, R.version$minor, sep = "."),
         paste("Survey Design Tool version: 2.0.0"),
         paste("Date:", date(), sep = " "),
         ""
@@ -1952,7 +1953,7 @@ server <- function(input, output, session) {
     req(input$adjsiteeval!="")
     
     if(input$adjwgtcat != ""){
-      lapply(catname(), function(i) {
+      lapply(str_sort(catname()), function(i) {
         numericInput(
           inputId=paste0("CAT_", i),
           label=paste0(i, "-Frame Size"),
@@ -2004,13 +2005,24 @@ server <- function(input, output, session) {
     
     adjdata$WGT_TP_EXTENT <-adjwgt(wgt = wgt, wgtcat = MARClass, 
                                    framesize = framesize, sites = NULL)
+
     
     if(!is.null(input$nonresponse_site)) {
       
       TNRClass <-  input$nonresponse_site
       TRClass <- input$sampled_site
+      
       adjdata$WGT_TP_CORE <- adjwgtNR(adjdata$WGT_TP_EXTENT, MARClass, EvalStatus, TNRClass, TRClass)
     }
+    
+    if(is.null(input$nonresponse_site)) {
+      
+      TNRClass <- NULL
+      TRClass <- input$sampled_site
+      
+      adjdata$WGT_TP_CORE <- adjwgtNR(adjdata$WGT_TP_EXTENT, MARClass, EvalStatus, TNRClass, TRClass)
+    }
+    
     
     adjdata
   })
